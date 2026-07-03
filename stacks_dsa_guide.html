@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STACKS.DSA — Beginner to Pro Mastery Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #050e05;
+    --bg2:       #081208;
+    --surface:   #0a160a;
+    --surface2:  #0f1f0f;
+    --phosphor:  #00ff41;
+    --phosphor2: #00cc33;
+    --phosphor3: #008822;
+    --dim:       #005511;
+    --dimmer:    #002208;
+    --amber:     #ffb300;
+    --red:       #ff3300;
+    --cyan:      #00ffcc;
+    --blue:      #0099ff;
+    --border:    #00440a;
+    --border2:   #007714;
+    --white:     #e8ffe8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--phosphor);
+    font-family: 'Share Tech Mono', monospace;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── CRT OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.6) 100%);
+    pointer-events: none;
+    z-index: 9998;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 12px; height: 18px;
+    background: var(--phosphor);
+    z-index: 10000;
+    pointer-events: none;
+    animation: blink 1s step-end infinite;
+    mix-blend-mode: screen;
+    transform: translate(-2px, -2px);
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--phosphor3); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    border-bottom: 2px solid var(--border2);
+    position: relative;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  /* Phosphor glow ambient */
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -20%; left: 50%;
+    width: 800px; height: 800px;
+    transform: translateX(-50%);
+    background: radial-gradient(circle, rgba(0,255,65,0.04) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .hero-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 48px;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--phosphor3);
+  }
+
+  .hero-topbar .blink-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    background: var(--phosphor);
+    border-radius: 50%;
+    margin-right: 8px;
+    animation: blink 0.8s step-end infinite;
+  }
+
+  .boot-text {
+    padding: 40px 48px 0;
+    font-size: 12px;
+    color: var(--phosphor3);
+    letter-spacing: 1px;
+  }
+
+  .boot-line {
+    display: block;
+    opacity: 0;
+    animation: bootIn 0.1s ease forwards;
+  }
+
+  .boot-line:nth-child(1)  { animation-delay: 0.1s; }
+  .boot-line:nth-child(2)  { animation-delay: 0.3s; }
+  .boot-line:nth-child(3)  { animation-delay: 0.5s; }
+  .boot-line:nth-child(4)  { animation-delay: 0.7s; }
+  .boot-line:nth-child(5)  { animation-delay: 0.9s; }
+
+  @keyframes bootIn { to { opacity: 1; } }
+
+  .hero-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 48px 40px;
+    text-align: center;
+  }
+
+  .hero-label {
+    font-size: 11px;
+    letter-spacing: 8px;
+    color: var(--phosphor3);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+
+  .hero-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(3.5rem, 12vw, 10rem);
+    font-weight: 900;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    color: var(--phosphor);
+    text-shadow:
+      0 0 20px rgba(0,255,65,0.8),
+      0 0 60px rgba(0,255,65,0.4),
+      0 0 120px rgba(0,255,65,0.2);
+    animation: flicker 8s infinite;
+    line-height: 1;
+  }
+
+  @keyframes flicker {
+    0%,100% { opacity: 1; }
+    92%  { opacity: 1; }
+    93%  { opacity: 0.8; }
+    94%  { opacity: 1; }
+    96%  { opacity: 0.6; }
+    97%  { opacity: 1; }
+  }
+
+  .hero-sub {
+    font-size: 13px;
+    color: var(--phosphor3);
+    max-width: 560px;
+    margin: 24px auto 0;
+    letter-spacing: 1px;
+    line-height: 1.7;
+  }
+
+  .hero-prompt {
+    margin-top: 40px;
+    font-size: 13px;
+    color: var(--phosphor2);
+    letter-spacing: 2px;
+  }
+
+  .hero-prompt .cur { display: inline-block; width: 9px; height: 15px; background: var(--phosphor); animation: blink 1s step-end infinite; vertical-align: middle; }
+
+  /* Stats row */
+  .stat-row {
+    display: flex;
+    gap: 0;
+    margin-top: 48px;
+    border: 1px solid var(--border2);
+    width: 100%;
+    max-width: 680px;
+  }
+
+  .stat-cell {
+    flex: 1;
+    padding: 18px;
+    text-align: center;
+    border-right: 1px solid var(--border2);
+  }
+  .stat-cell:last-child { border-right: none; }
+
+  .stat-cell .sv {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--phosphor);
+    text-shadow: 0 0 15px rgba(0,255,65,0.6);
+    display: block;
+  }
+
+  .stat-cell .sl {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--dim);
+    margin-top: 4px;
+    text-transform: uppercase;
+    display: block;
+  }
+
+  /* Nav strip */
+  .hero-nav {
+    display: flex;
+    border-top: 1px solid var(--border);
+    overflow-x: auto;
+  }
+
+  .hero-nav a {
+    flex: 1;
+    min-width: 90px;
+    padding: 14px 12px;
+    text-align: center;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--dim);
+    text-decoration: none;
+    border-right: 1px solid var(--border);
+    transition: all 0.15s;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .hero-nav a:hover {
+    color: var(--phosphor);
+    background: var(--surface);
+    text-shadow: 0 0 10px rgba(0,255,65,0.5);
+  }
+
+  .hero-nav a span {
+    display: block;
+    font-size: 8px;
+    color: var(--border2);
+    margin-bottom: 3px;
+  }
+
+  /* ── LAYOUT ── */
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 36px; }
+
+  /* ── SECTION HEADERS ── */
+  .ch-section { padding-top: 80px; }
+
+  .ch-header {
+    margin-bottom: 40px;
+    position: relative;
+  }
+
+  .ch-header::before {
+    content: '';
+    display: block;
+    height: 1px;
+    background: linear-gradient(90deg, var(--phosphor3), transparent);
+    margin-bottom: 20px;
+  }
+
+  .ch-eyebrow {
+    font-size: 10px;
+    letter-spacing: 5px;
+    color: var(--phosphor3);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ch-eyebrow::before { content: '>>'; color: var(--phosphor); }
+
+  .ch-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    font-weight: 700;
+    color: var(--phosphor);
+    text-shadow: 0 0 20px rgba(0,255,65,0.3);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    line-height: 1.1;
+  }
+
+  .ch-title .acc { color: var(--amber); text-shadow: 0 0 15px rgba(255,179,0,0.4); }
+
+  .ch-desc {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--phosphor3);
+    letter-spacing: 1px;
+  }
+
+  /* ── WEEK GRID ── */
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 60px;
+  }
+
+  .day-tile {
+    background: var(--surface);
+    padding: 22px;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .day-tile:hover {
+    background: var(--surface2);
+    box-shadow: inset 0 0 20px rgba(0,255,65,0.05);
+  }
+
+  .day-tile .dn {
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--phosphor3);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .day-tile .dn::before { content: '['; color: var(--dim); }
+  .day-tile .dn::after  { content: ']'; color: var(--dim); }
+
+  .day-tile h4 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--phosphor);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+    line-height: 1.3;
+  }
+
+  .day-tile ul { list-style: none; padding: 0; }
+  .day-tile li {
+    font-size: 11px;
+    color: var(--phosphor3);
+    padding: 2px 0 2px 18px;
+    position: relative;
+    letter-spacing: 0.5px;
+  }
+  .day-tile li::before { content: '├─'; position: absolute; left: 0; color: var(--dim); font-size: 10px; }
+  .day-tile li:last-child::before { content: '└─'; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    margin-bottom: 18px;
+    position: relative;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .card:hover {
+    border-color: var(--phosphor3);
+    box-shadow: 0 0 20px rgba(0,255,65,0.08), inset 0 0 20px rgba(0,255,65,0.03);
+  }
+
+  .card::before {
+    content: attr(data-corner);
+    position: absolute;
+    top: -1px; left: 12px;
+    font-size: 10px;
+    color: var(--phosphor3);
+    background: var(--surface);
+    padding: 0 8px;
+    letter-spacing: 2px;
+  }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+  }
+
+  .ctag {
+    font-size: 9px;
+    letter-spacing: 3px;
+    padding: 3px 10px;
+    border: 1px solid currentColor;
+    text-transform: uppercase;
+  }
+
+  .tag-b { color: var(--phosphor2); border-color: var(--phosphor3); }
+  .tag-m { color: var(--amber); border-color: #664800; }
+  .tag-h { color: var(--red); border-color: #661400; }
+  .tag-p { color: var(--cyan); border-color: #005544; }
+  .tag-a { color: var(--blue); border-color: #003366; }
+
+  .card-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--phosphor);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(0,255,65,0.3);
+  }
+
+  .card-body {
+    padding: 24px 22px;
+  }
+
+  .card-body p, .card-body li {
+    font-size: 12px;
+    color: var(--phosphor2);
+    line-height: 1.8;
+  }
+
+  .card-body ul, .card-body ol { padding-left: 18px; margin: 10px 0; }
+  .card-body li { margin-bottom: 4px; }
+
+  /* ── STACK VISUAL ── */
+  .stack-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin: 20px 0;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .stack-visual .sv-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--phosphor3);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .s-slot {
+    width: 200px;
+    border: 1px solid var(--border2);
+    border-top: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--surface);
+    font-size: 13px;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .s-slot:first-of-type {
+    border-top: 1px solid var(--border2);
+  }
+
+  .s-slot.top-s {
+    border-color: var(--phosphor3);
+    background: var(--surface2);
+    color: var(--phosphor);
+    box-shadow: 0 0 12px rgba(0,255,65,0.15);
+  }
+
+  .s-slot.top-s::after {
+    content: ' ← TOP';
+    font-size: 9px;
+    color: var(--phosphor3);
+    letter-spacing: 2px;
+    margin-left: 8px;
+  }
+
+  .s-slot .sv  { color: var(--phosphor); font-weight: 600; }
+  .s-slot .si  { font-size: 9px; color: var(--dim); }
+  .s-slot .sdim { color: var(--phosphor3); }
+
+  .s-bottom {
+    width: 200px;
+    border: 2px solid var(--phosphor3);
+    border-top: none;
+    padding: 6px;
+    text-align: center;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--dim);
+    background: var(--dimmer);
+  }
+
+  .s-arrow {
+    font-size: 1.2rem;
+    color: var(--phosphor3);
+    margin: 2px 0;
+  }
+
+  /* ── CODE BLOCKS ── */
+  .codeblock {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    margin: 18px 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .codeblock::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--phosphor3), transparent);
+  }
+
+  .cb-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  .cb-fname {
+    font-size: 10px;
+    color: var(--phosphor3);
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cb-fname::before { content: '$ cat'; color: var(--dim); }
+
+  .cb-copy {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--dim);
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+
+  .cb-copy:hover {
+    color: var(--phosphor);
+    border-color: var(--phosphor3);
+    text-shadow: 0 0 8px rgba(0,255,65,0.5);
+  }
+
+  pre {
+    padding: 20px 18px;
+    overflow-x: auto;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--phosphor2);
+  }
+
+  /* Terminal syntax */
+  .kw  { color: #ff6b6b; }
+  .fn  { color: #00ffcc; }
+  .cm  { color: #2a6633; font-style: italic; }
+  .st  { color: #adff2f; }
+  .nm  { color: var(--amber); }
+  .op  { color: #ff6b6b; }
+  .bi  { color: #aa88ff; }
+  .cl  { color: #ffee44; }
+  .slf { color: var(--amber); font-style: italic; }
+  .ph  { color: var(--phosphor); }
+
+  /* ── INFO BOXES ── */
+  .ibox {
+    display: flex;
+    gap: 14px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    border-left: 3px solid;
+    font-size: 12px;
+    line-height: 1.7;
+    background: var(--bg2);
+  }
+
+  .ibox.tip  { border-color: var(--phosphor3); }
+  .ibox.warn { border-color: var(--amber); }
+  .ibox.note { border-color: var(--cyan); }
+  .ibox.red  { border-color: var(--red); }
+
+  .ibox .ico { flex-shrink: 0; color: currentColor; }
+  .ibox p { color: var(--phosphor3); }
+  .ibox p strong { color: var(--phosphor); }
+
+  /* ── COMPLEXITY TABLE ── */
+  .ctbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    margin: 16px 0;
+    border: 1px solid var(--border2);
+  }
+
+  .ctbl th {
+    background: var(--bg2);
+    color: var(--phosphor3);
+    padding: 10px 14px;
+    text-align: left;
+    letter-spacing: 2px;
+    font-size: 9px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border2);
+    border-right: 1px solid var(--border);
+  }
+
+  .ctbl td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    color: var(--phosphor3);
+    font-size: 11px;
+  }
+
+  .ctbl tr:hover td { background: var(--surface2); }
+
+  .tg { color: var(--phosphor); font-weight: 600; text-shadow: 0 0 6px rgba(0,255,65,0.4); }
+  .ty { color: var(--amber); font-weight: 600; }
+  .tr { color: var(--red); font-weight: 600; }
+
+  /* ── PATTERN GRID ── */
+  .pat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin: 16px 0;
+  }
+
+  .pat-mini {
+    background: var(--surface);
+    padding: 18px;
+    transition: all 0.15s;
+  }
+
+  .pat-mini:hover { background: var(--surface2); }
+
+  .pat-mini h4 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--phosphor);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .pat-mini p { font-size: 11px; color: var(--phosphor3); line-height: 1.5; }
+
+  /* ── STICKY NAV ── */
+  .snav {
+    position: fixed;
+    top: 24px; right: 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    padding: 16px;
+    z-index: 9000;
+    max-width: 170px;
+    display: none;
+    box-shadow: 0 0 30px rgba(0,255,65,0.1);
+  }
+
+  @media (min-width: 1200px) { .snav { display: block; } }
+
+  .snav-t {
+    font-family: 'Orbitron', monospace;
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: var(--phosphor3);
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .snav a {
+    display: block;
+    font-size: 10px;
+    color: var(--dim);
+    text-decoration: none;
+    padding: 4px 0 4px 12px;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    letter-spacing: 1px;
+  }
+
+  .snav a:hover, .snav a.active {
+    color: var(--phosphor);
+    border-left-color: var(--phosphor3);
+    text-shadow: 0 0 8px rgba(0,255,65,0.4);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border2);
+    padding: 60px 48px 40px;
+    margin-top: 80px;
+    text-align: center;
+  }
+
+  footer .big {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    font-weight: 900;
+    color: var(--phosphor);
+    text-shadow: 0 0 30px rgba(0,255,65,0.4);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 16px;
+    animation: flicker 10s infinite;
+  }
+
+  footer p {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--dim);
+    text-transform: uppercase;
+    line-height: 2;
+  }
+
+  /* ── UTILS ── */
+  .hl  { color: var(--phosphor);  font-weight: 600; text-shadow: 0 0 8px rgba(0,255,65,0.4); }
+  .hl2 { color: var(--amber);     font-weight: 600; }
+  .hl3 { color: var(--cyan);      font-weight: 600; }
+  .hlr { color: var(--red);       font-weight: 600; }
+
+  code {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.9em;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    padding: 1px 6px;
+    color: var(--cyan);
+  }
+
+  @media (max-width: 640px) {
+    .hero-topbar, .boot-text { padding-left: 24px; padding-right: 24px; }
+    .hero-main { padding: 20px 24px 32px; }
+    .wrap { padding: 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav class="snav">
+  <div class="snav-t">/ navigate</div>
+  <a href="#overview">Overview</a>
+  <a href="#day1">Day 1 · Basics</a>
+  <a href="#day2">Day 2 · Implementation</a>
+  <a href="#day3">Day 3 · Classic Problems</a>
+  <a href="#day4">Day 4 · Monotonic Stack</a>
+  <a href="#day5">Day 5 · Advanced Apps</a>
+  <a href="#day6">Day 6 · Design</a>
+  <a href="#day7">Day 7 · Practice</a>
+</nav>
+
+<!-- ═══════════ HERO ═══════════ -->
+<header class="hero">
+  <div class="hero-topbar">
+    <span><span class="blink-dot"></span>SYSTEM ONLINE · DSA TERMINAL v3.0</span>
+    <span>VOL.IV · STACKS · PYTHON</span>
+  </div>
+
+  <div class="boot-text">
+    <span class="boot-line">&gt; INITIALIZING DSA MASTERY MODULE...</span>
+    <span class="boot-line">&gt; LOADING STACK ALGORITHMS..................[OK]</span>
+    <span class="boot-line">&gt; LOADING MONOTONIC PATTERNS...............[OK]</span>
+    <span class="boot-line">&gt; LOADING 7-DAY CURRICULUM.................[OK]</span>
+    <span class="boot-line">&gt; ALL SYSTEMS NOMINAL. READY TO EXECUTE.</span>
+  </div>
+
+  <div class="hero-main">
+    <div class="hero-label">&gt; DSA Mastery Series · Volume IV</div>
+    <div class="hero-title">STACKS</div>
+    <p class="hero-sub">LIFO. Last in, first out. Deceptively simple, outrageously powerful. Parentheses to compilers to stock prices — stacks are everywhere. Master them in 7 days.</p>
+
+    <div class="hero-prompt">
+      <span>$ python3 master_stacks.py</span>
+      <span class="cur"></span>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-cell"><span class="sv">7</span><span class="sl">Days</span></div>
+      <div class="stat-cell"><span class="sv">35+</span><span class="sl">Concepts</span></div>
+      <div class="stat-cell"><span class="sv">26+</span><span class="sl">Code Files</span></div>
+      <div class="stat-cell"><span class="sv">22+</span><span class="sl">Problems</span></div>
+    </div>
+  </div>
+
+  <div class="hero-nav">
+    <a href="#day1"><span>[01]</span>Basics</a>
+    <a href="#day2"><span>[02]</span>Implementation</a>
+    <a href="#day3"><span>[03]</span>Classic</a>
+    <a href="#day4"><span>[04]</span>Monotonic</a>
+    <a href="#day5"><span>[05]</span>Advanced</a>
+    <a href="#day6"><span>[06]</span>Design</a>
+    <a href="#day7"><span>[07]</span>Practice</a>
+  </div>
+</header>
+
+<!-- ═══════════════ OVERVIEW ═══════════════ -->
+<section id="overview" class="wrap ch-section">
+  <div class="ch-header">
+    <div class="ch-eyebrow">00 / overview</div>
+    <div class="ch-title">7-Day <span class="acc">Battle Plan</span></div>
+    <div class="ch-desc">&gt; follow this order. each day depends on the last. no skipping.</div>
+  </div>
+
+  <div class="week-grid">
+    <a href="#day1" class="day-tile">
+      <div class="dn">DAY 01</div>
+      <h4>Stack Fundamentals</h4>
+      <ul>
+        <li>What is a stack? (LIFO)</li>
+        <li>Real-world uses</li>
+        <li>push, pop, peek, isEmpty</li>
+        <li>Python list as stack</li>
+        <li>Time complexity</li>
+      </ul>
+    </a>
+    <a href="#day2" class="day-tile">
+      <div class="dn">DAY 02</div>
+      <h4>Implementations</h4>
+      <ul>
+        <li>Stack from Python list</li>
+        <li>Stack from linked list</li>
+        <li>Stack from deque (optimal)</li>
+        <li>Stack class with generics</li>
+        <li>Min stack design</li>
+      </ul>
+    </a>
+    <a href="#day3" class="day-tile">
+      <div class="dn">DAY 03</div>
+      <h4>Classic Stack Problems</h4>
+      <ul>
+        <li>Valid parentheses</li>
+        <li>Evaluate postfix (RPN)</li>
+        <li>Decode string</li>
+        <li>Remove adjacent duplicates</li>
+        <li>Backspace string compare</li>
+      </ul>
+    </a>
+    <a href="#day4" class="day-tile">
+      <div class="dn">DAY 04</div>
+      <h4>Monotonic Stack</h4>
+      <ul>
+        <li>What is monotonic?</li>
+        <li>Next greater element</li>
+        <li>Next smaller element</li>
+        <li>Daily temperatures</li>
+        <li>Stock span problem</li>
+      </ul>
+    </a>
+    <a href="#day5" class="day-tile">
+      <div class="dn">DAY 05</div>
+      <h4>Advanced Applications</h4>
+      <ul>
+        <li>Largest rectangle histogram</li>
+        <li>Trapping rain water (stack)</li>
+        <li>Asteroid collision</li>
+        <li>132 pattern</li>
+        <li>Sum of subarray minimums</li>
+      </ul>
+    </a>
+    <a href="#day6" class="day-tile">
+      <div class="dn">DAY 06</div>
+      <h4>Stack in System Design</h4>
+      <ul>
+        <li>Undo/redo mechanism</li>
+        <li>Browser history</li>
+        <li>Expression evaluator</li>
+        <li>Infix to postfix</li>
+        <li>Recursion → stack</li>
+      </ul>
+    </a>
+    <a href="#day7" class="day-tile">
+      <div class="dn">DAY 07</div>
+      <h4>Practice & Mastery</h4>
+      <ul>
+        <li>Pattern recognition guide</li>
+        <li>22+ must-solve problems</li>
+        <li>Complexity cheat sheet</li>
+        <li>Common mistakes</li>
+        <li>Interview playbook</li>
+      </ul>
+    </a>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ DAY 1 ═══════════════════════════════════ -->
+<section id="day1" class="wrap ch-section">
+  <div class="ch-header">
+    <div class="ch-eyebrow">01 / day one</div>
+    <div class="ch-title">Stack <span class="acc">Fundamentals</span></div>
+    <div class="ch-desc">&gt; before any algorithm, understand what a stack IS and why it exists</div>
+  </div>
+
+  <div class="card" data-corner="CONCEPT_1.1">
+    <div class="card-head"><span class="ctag tag-b">BASIC</span><span class="card-title">What Is a Stack?</span></div>
+    <div class="card-body">
+      <p>A stack is a <span class="hl">LIFO</span> (Last In, First Out) data structure. Think of a stack of plates — you always add to the top and remove from the top. The last plate placed is the first one taken off.</p>
+
+      <p style="margin-top:14px;margin-bottom:10px;font-size:11px;color:var(--phosphor3);">&gt; STACK STATE AFTER PUSHING 10, 25, 7, 42:</p>
+
+      <div class="stack-visual">
+        <div class="sv-label">▼ PUSH direction ▼</div>
+        <div class="s-slot top-s"><span class="sv">42</span><span class="si">idx: 3</span></div>
+        <div class="s-slot"><span class="sdim">7</span><span class="si">idx: 2</span></div>
+        <div class="s-slot"><span class="sdim">25</span><span class="si">idx: 1</span></div>
+        <div class="s-slot"><span class="sdim">10</span><span class="si">idx: 0</span></div>
+        <div class="s-bottom">▓ BOTTOM ▓</div>
+      </div>
+
+      <div class="ibox tip">
+        <span class="ico">⚡</span>
+        <p><strong>The core rule:</strong> You can ONLY interact with the TOP of the stack. You cannot access elements in the middle or bottom without first popping off everything above them. This restriction is exactly what makes stacks useful — it forces a disciplined ordering.</p>
+      </div>
+
+      <p style="margin-top:14px;font-weight:600;color:var(--phosphor);font-size:12px;">&gt; WHERE STACKS APPEAR IN THE REAL WORLD:</p>
+      <ul style="margin-top:8px;">
+        <li><span class="hl">Function call stack</span> — your CPU uses a stack for function calls. Each function call is "pushed", and when it returns, it's "popped".</li>
+        <li><span class="hl2">Undo/Redo</span> — Ctrl+Z in any editor pops from an undo stack.</li>
+        <li><span class="hl3">Browser back button</span> — visited pages are a stack; "back" = pop.</li>
+        <li><span class="hl">Parenthesis matching</span> — compilers use stacks to validate brackets.</li>
+        <li><span class="hl2">Expression evaluation</span> — calculators convert infix to postfix using stacks.</li>
+        <li><span class="hl3">DFS (Depth-First Search)</span> — explicit stack or recursion stack.</li>
+      </ul>
+
+      <table class="ctbl" style="margin-top:20px;">
+        <thead><tr><th>Operation</th><th>Description</th><th>Time</th><th>Space</th></tr></thead>
+        <tbody>
+          <tr><td><code>push(x)</code></td><td>Add x to top of stack</td><td class="tg">O(1)</td><td class="tg">O(1)</td></tr>
+          <tr><td><code>pop()</code></td><td>Remove & return top element</td><td class="tg">O(1)</td><td class="tg">O(1)</td></tr>
+          <tr><td><code>peek() / top()</code></td><td>View top element without removing</td><td class="tg">O(1)</td><td class="tg">O(1)</td></tr>
+          <tr><td><code>isEmpty()</code></td><td>Check if stack has no elements</td><td class="tg">O(1)</td><td class="tg">O(1)</td></tr>
+          <tr><td><code>size()</code></td><td>Number of elements in stack</td><td class="tg">O(1)</td><td class="tg">O(1)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" data-corner="CONCEPT_1.2">
+    <div class="card-head"><span class="ctag tag-b">BASIC</span><span class="card-title">Python List as a Stack</span></div>
+    <div class="card-body">
+      <p>Python's built-in <span class="hl">list</span> works perfectly as a stack. <code>append()</code> is push, <code>pop()</code> is pop, <code>[-1]</code> is peek. All O(1) amortized.</p>
+
+      <div class="codeblock">
+        <div class="cb-bar">
+          <div class="cb-fname">stack_list.py</div>
+          <button class="cb-copy" onclick="copyCode(this)">COPY</button>
+        </div>
+        <pre><span class="cm"># ══════════════════════════════════════════════════════</span>
+<span class="cm">#  PYTHON LIST AS STACK — the standard approach in DSA</span>
+<span class="cm"># ══════════════════════════════════════════════════════</span>
+
+stack = []
+
+<span class="cm"># ── PUSH: append to end ──────────────────────────────</span>
+stack.append(<span class="nm">10</span>)       <span class="cm"># stack: [10]</span>
+stack.append(<span class="nm">25</span>)       <span class="cm"># stack: [10, 25]</span>
+stack.append(<span class="nm">7</span>)        <span class="cm"># stack: [10, 25, 7]</span>
+stack.append(<span class="nm">42</span>)       <span class="cm"># stack: [10, 25, 7, 42]</span>
+
+<span class="cm"># ── PEEK: view top without removing ──────────────────</span>
+top = stack[<span class="op">-</span><span class="nm">1</span>]         <span class="cm"># 42 — NEVER pops</span>
+<span class="fn">print</span>(<span class="st">f"Top: {top}"</span>)     <span class="cm"># Top: 42</span>
+
+<span class="cm"># ── POP: remove and return top ────────────────────────</span>
+val = stack.pop()        <span class="cm"># returns 42, stack: [10, 25, 7]</span>
+<span class="fn">print</span>(<span class="st">f"Popped: {val}"</span>) <span class="cm"># Popped: 42</span>
+
+<span class="cm"># ── IS EMPTY ──────────────────────────────────────────</span>
+<span class="fn">print</span>(<span class="kw">not</span> stack)         <span class="cm"># False (stack has items)</span>
+<span class="fn">print</span>(<span class="fn">len</span>(stack) == <span class="nm">0</span>)  <span class="cm"># False</span>
+
+<span class="cm"># ── SIZE ──────────────────────────────────────────────</span>
+<span class="fn">print</span>(<span class="fn">len</span>(stack))        <span class="cm"># 3</span>
+
+<span class="cm"># ── SAFE POP (avoid IndexError on empty stack) ────────</span>
+<span class="kw">def</span> <span class="fn">safe_pop</span>(stack):
+    <span class="kw">return</span> stack.pop() <span class="kw">if</span> stack <span class="kw">else</span> <span class="bi">None</span>
+
+<span class="cm"># ── SAFE PEEK ─────────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">peek</span>(stack):
+    <span class="kw">return</span> stack[<span class="op">-</span><span class="nm">1</span>] <span class="kw">if</span> stack <span class="kw">else</span> <span class="bi">None</span>
+
+<span class="cm"># ── ITERATE (does NOT modify stack) ──────────────────</span>
+<span class="kw">for</span> item <span class="kw">in</span> <span class="fn">reversed</span>(stack):  <span class="cm"># top to bottom</span>
+    <span class="fn">print</span>(item)
+
+<span class="cm"># ── CLEAR THE STACK ───────────────────────────────────</span>
+stack.clear()
+<span class="cm"># or: stack = []</span></pre>
+      </div>
+
+      <div class="ibox warn">
+        <span class="ico">⚠</span>
+        <p><strong>Common mistake:</strong> Calling <code>stack.pop(0)</code> removes from the FRONT (bottom of stack) — that's a QUEUE, not a stack! Always use <code>stack.pop()</code> with no argument for stack behavior.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ DAY 2 ═══════════════════════════════════ -->
+<section id="day2" class="wrap ch-section">
+  <div class="ch-header">
+    <div class="ch-eyebrow">02 / day two</div>
+    <div class="ch-title">Stack <span class="acc">Implementations</span></div>
+    <div class="ch-desc">&gt; build it three ways. know the trade-offs. use the right tool.</div>
+  </div>
+
+  <div class="card" data-corner="CONCEPT_2.1">
+    <div class="card-head"><span class="ctag tag-b">BASIC</span><span class="card-title">Stack Class — Clean OOP</span></div>
+    <div class="card-body">
+      <div class="codeblock">
+        <div class="cb-bar">
+          <div class="cb-fname">stack_class.py</div>
+          <button class="cb-copy" onclick="copyCode(this)">COPY</button>
+        </div>
+        <pre><span class="cm"># ── Stack Class (list-backed) ────────────────────────</span>
+<span class="kw">class</span> <span class="cl">Stack</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="slf">self</span>):
+        <span class="slf">self</span>._data = []
+
+    <span class="kw">def</span> <span class="fn">push</span>(<span class="slf">self</span>, val):
+        <span class="slf">self</span>._data.append(val)         <span class="cm"># O(1) amortized</span>
+
+    <span class="kw">def</span> <span class="fn">pop</span>(<span class="slf">self</span>):
+        <span class="kw">if</span> <span class="slf">self</span>.is_empty():
+            <span class="kw">raise</span> <span class="cl">IndexError</span>(<span class="st">"Stack underflow"</span>)
+        <span class="kw">return</span> <span class="slf">self</span>._data.pop()        <span class="cm"># O(1) amortized</span>
+
+    <span class="kw">def</span> <span class="fn">peek</span>(<span class="slf">self</span>):
+        <span class="kw">if</span> <span class="slf">self</span>.is_empty():
+            <span class="kw">return</span> <span class="bi">None</span>
+        <span class="kw">return</span> <span class="slf">self</span>._data[<span class="op">-</span><span class="nm">1</span>]          <span class="cm"># O(1)</span>
+
+    <span class="kw">def</span> <span class="fn">is_empty</span>(<span class="slf">self</span>): <span class="kw">return</span> <span class="fn">len</span>(<span class="slf">self</span>._data) == <span class="nm">0</span>
+    <span class="kw">def</span> <span class="fn">size</span>(<span class="slf">self</span>):     <span class="kw">return</span> <span class="fn">len</span>(<span class="slf">self</span>._data)
+    <span class="kw">def</span> <span class="fn">__len__</span>(<span class="slf">self</span>):  <span class="kw">return</span> <span class="fn">len</span>(<span class="slf">self</span>._data)
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="slf">self</span>):  <span class="kw">return</span> <span class="st">f"Stack(top→{</span><span class="slf">self</span>._data[::<span class="op">-</span><span class="nm">1</span>]<span class="st">})"</span>
+
+<span class="cm"># ── Stack backed by Linked List (O(1) guaranteed, no resize) ─</span>
+<span class="kw">class</span> <span class="cl">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="slf">self</span>, val, next=<span class="bi">None</span>): <span class="slf">self</span>.val=val; <span class="slf">self</span>.next=next
+
+<span class="kw">class</span> <span class="cl">LinkedStack</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="slf">self</span>): <span class="slf">self</span>.head=<span class="bi">None</span>; <span class="slf">self</span>._size=<span class="nm">0</span>
+
+    <span class="kw">def</span> <span class="fn">push</span>(<span class="slf">self</span>, val):
+        <span class="slf">self</span>.head = <span class="cl">Node</span>(val, <span class="slf">self</span>.head)   <span class="cm"># new node → old head</span>
+        <span class="slf">self</span>._size += <span class="nm">1</span>
+
+    <span class="kw">def</span> <span class="fn">pop</span>(<span class="slf">self</span>):
+        <span class="kw">if</span> <span class="kw">not</span> <span class="slf">self</span>.head: <span class="kw">raise</span> <span class="cl">IndexError</span>(<span class="st">"Empty stack"</span>)
+        val = <span class="slf">self</span>.head.val
+        <span class="slf">self</span>.head = <span class="slf">self</span>.head.next         <span class="cm"># head moves down</span>
+        <span class="slf">self</span>._size -= <span class="nm">1</span>
+        <span class="kw">return</span> val
+
+    <span class="kw">def</span> <span class="fn">peek</span>(<span class="slf">self</span>): <span class="kw">return</span> <span class="slf">self</span>.head.val <span class="kw">if</span> <span class="slf">self</span>.head <span class="kw">else</span> <span class="bi">None</span>
+    <span class="kw">def</span> <span class="fn">is_empty</span>(<span class="slf">self</span>): <span class="kw">return</span> <span class="slf">self</span>.head <span class="kw">is</span> <span class="bi">None</span>
+
+<span class="cm"># ── deque: the FASTEST stack in Python ───────────────</span>
+<span class="kw">from</span> collections <span class="kw">import</span> deque
+
+stack = deque()
+stack.append(<span class="nm">10</span>)        <span class="cm"># push — O(1) GUARANTEED (not amortized)</span>
+stack.append(<span class="nm">20</span>)
+val = stack.pop()        <span class="cm"># pop  — O(1) GUARANTEED</span>
+top = stack[<span class="op">-</span><span class="nm">1</span>]          <span class="cm"># peek — O(1)</span>
+
+<span class="cm"># Use deque when performance matters.</span>
+<span class="cm"># Use list for simplicity in interview solutions.</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-corner="CONCEPT_2.2">
+    <div class="card-head"><span class="ctag tag-m">MEDIUM</span><span class="card-title">Min Stack — O(1) Get Minimum</span></div>
+    <div class="card-body">
+      <p>Design a stack that supports <code>push</code>, <code>pop</code>, <code>peek</code>, and <span class="hl">getMin()</span> — all in <strong>O(1)</strong>. The trick: maintain a parallel min-tracking stack.</p>
+
+      <div class="ibox note">
+        <span class="ico">📡</span>
+        <p><strong>Core insight:</strong> Each slot in the min-stack stores "the minimum of all elements at-or-below this point". When you push, record min(new_val, current_min). When you pop, the min-stack automatically reflects the correct minimum for remaining elements.</p>
+      </div>
+
+      <div class="codeblock">
+        <div class="cb-bar">
+          <div class="cb-fname">min_stack.py</div>
+          <button class="cb-copy" onclick="copyCode(this)">COPY</button>
+        </div>
+        <pre><span class="kw">class</span> <span class="cl">MinStack</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="slf">self</span>):
+        <span class="slf">self</span>.stack     = []   <span class="cm"># main stack</span>
+        <span class="slf">self</span>.min_stack = []   <span class="cm"># parallel: tracks current min</span>
+
+    <span class="kw">def</span> <span class="fn">push</span>(<span class="slf">self</span>, val):
+        <span class="slf">self</span>.stack.append(val)
+        <span class="cm"># min_stack top = min so far (including new val)</span>
+        current_min = <span class="fn">min</span>(val, <span class="slf">self</span>.min_stack[<span class="op">-</span><span class="nm">1</span>] <span class="kw">if</span> <span class="slf">self</span>.min_stack <span class="kw">else</span> val)
+        <span class="slf">self</span>.min_stack.append(current_min)
+
+    <span class="kw">def</span> <span class="fn">pop</span>(<span class="slf">self</span>):
+        <span class="slf">self</span>.min_stack.pop()    <span class="cm"># always pop both together</span>
+        <span class="kw">return</span> <span class="slf">self</span>.stack.pop()
+
+    <span class="kw">def</span> <span class="fn">top</span>(<span class="slf">self</span>):
+        <span class="kw">return</span> <span class="slf">self</span>.stack[<span class="op">-</span><span class="nm">1</span>]
+
+    <span class="kw">def</span> <span class="fn">get_min</span>(<span class="slf">self</span>):
+        <span class="kw">return</span> <span class="slf">self</span>.min_stack[<span class="op">-</span><span class="nm">1</span>]    <span class="cm"># O(1)!</span>
+
+<span class="cm"># Demo</span>
+ms = <span class="cl">MinStack</span>()
+ms.push(<span class="op">-</span><span class="nm">2</span>);  ms.push(<span class="nm">0</span>);  ms.push(<span class="op">-</span><span class="nm">3</span>)
+<span class="fn">print</span>(ms.get_min())  <span class="cm"># -3  (minimum in stack)</span>
+ms.pop()
+<span class="fn">print</span>(ms.top())      <span class="cm"># 0   (top after pop)</span>
+<span class="fn">print</span>(ms.get_min())  <span class="cm"># -2  (new minimum after -3 is gone)</span>
+
+<span class="cm"># ── Variant: MaxStack — same idea, track max instead ─</span>
+<span class="kw">class</span> <span class="cl">MaxStack</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="slf">self</span>): <span class="slf">self</span>.stack=[]; <span class="slf">self</span>.max_s=[]
+    <span class="kw">def</span> <span class="fn">push</span>(<span class="slf">self</span>,v):
+        <span class="slf">self</span>.stack.append(v)
+        <span class="slf">self</span>.max_s.append(<span class="fn">max</span>(v, <span class="slf">self</span>.max_s[<span class="op">-</span><span class="nm">1</span>] <span class="kw">if</span> <span class="slf">self</span>.max_s <span class="kw">else</span> v))
+    <span class="kw">def</span> <span class="fn">pop</span>(<span class="slf">self</span>): <span class="slf">self</span>.max_s.pop(); <span class="kw">return</span> <span class="slf">self</span>.stack.pop()
+    <span class="kw">def</span> <span class="fn">get_max</span>(<span class="slf">self</span>): <span class="kw">return</span> <span class="slf">self</span>.max_s[<span class="op">-</span><span class="nm">1</span>]</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ DAY 3 ═══════════════════════════════════ -->
+<section id="day3" class="wrap ch-section">
+  <div class="ch-header">
+    <div class="ch-eyebrow">03 / day three</div>
+    <div class="ch-title">Classic <span class="acc">Stack Problems</span></div>
+    <div class="ch-desc">&gt; these problems appear in 70% of interviews that include a stack question</div>
+  </div>
+
+  <div class="card" data-corner="CLASSIC_3.1">
+    <div class="card-head"><span class="ctag tag-b">BASIC</span><span class="card-title">Valid Parentheses</span></div>
+    <div class="card-body">
+      <p>Given a string of brackets, determine if it's valid. Push open brackets; on close brackets, check the top matches. Classic stack application.</p>
+      <div class="codeblock">
+        <div class="cb-bar">
+          <div class="cb-fname">valid_parens.py</div>
+          <button class="cb-copy" onclick="copyCode(this)">COPY</button>
+        </div>
+        <pre><span class="kw">def</span> <span class="fn">is_valid</span>(s):
+    stack = []
+    mapping = {<span class="st">')'</span>: <span class="st">'('</span>, <span class="st">'}'</span>: <span class="st">'{'</span>, <span class="st">']'</span>: <span class="st">'['</span>}
+
+    <span class="kw">for</span> ch <span class="kw">in</span> s:
+        <span class="kw">if</span> ch <span class="kw">in</span> mapping:              <span class="cm"># closing bracket</span>
+            top = stack.pop() <span class="kw">if</span> stack <span class="kw">else</span> <span class="st">'#'</span>
+            <span class="kw">if</span> mapping[ch] != top:     <span class="cm"># mismatch!</span>
+                <span class="kw">return</span> <span class="bi">False</span>
+        <span class="kw">else</span>:
+            stack.append(ch)            <span class="cm"># opening bracket</span>
+
+    <span class="kw">return</span> <span class="kw">not</span> stack  <span class="cm"># valid only if stack is empty at end</span>
+
+<span class="fn">print</span>(<span class="fn">is_valid</span>(<span class="st">"()[]{}"</span>))   <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="fn">is_valid</span>(<span class="st">"([)]"</span>))     <span class="cm"># False</span>
+<span class="fn">print</span>(<span class="fn">is_valid</span>(<span class="st">"{[]}"</span>))     <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="fn">is_valid</span>(<span class="st">"("</span>))        <span class="cm"># False (unclosed)</span>
+
+<span class="cm"># ── Minimum additions to make valid ─────────────────</span>
+<span class="kw">def</span> <span class="fn">min_add_to_valid</span>(s):
+    open_count = close_count = <span class="nm">0</span>
+    <span class="kw">for</span> ch <span class="kw">in</span> s:
+        <span class="kw">if</span> ch == <span class="st">'('</span>:
+            open_count += <span class="nm">1</span>
+        <span class="kw">elif</span> open_count > <span class="nm">0</span>:
+            open_count -= <span class="nm">1</span>    <span class="cm"># matched a (</span>
+        <span class="kw">else</span>:
+            close_count += <span class="nm">1</span>   <span class="cm"># unmatched )</span>
+    <span class="kw">return</span> open_count + close_count
+
+<span class="fn">print</span>(<span class="fn">min_add_to_valid</span>(<span class="st">"())"</span>))    <span class="cm"># 1</span>
+<span class="fn">print</span>(<span class="fn">min_add_to_valid</span>(<span class="st">"((("</span>))    <span class="cm"># 3</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-corner="CLASSIC_3.2">
+    <div class="card-head"><span class="ctag tag-m">MEDIUM</span><span class="card-title">Evaluate Postfix / RPN</span></div>
+    <div class="card-body">
+      <p>Reverse Polish Notation (Postfix): operators come after operands. <code>3 4 +</code> = 7. Push numbers; on operator, pop two, compute, push result.</p>
+      <div class="codeblock">
+        <div class="cb-bar">
+          <div class="cb-fname">rpn_eval.py</div>
+          <button class="cb-copy" onclick="copyCode(this)">COPY</button>
+        </div>
+        <pre><span class="kw">def</span> <span class="fn">eval_rpn</span>(tokens):
+    stack = []
+    ops = {
+        <span class="st">'+'</span>: <span class="kw">lambda</span> a,b: a+b,
+        <span class="st">'-'</span>: <span class="kw">lambda</span> a,b: a-b,
+        <span class="st">'*'</span>: <span class="kw">lambda</span> a,b: a*b,
+        <span class="st">'/'</span>: <span class="kw">lambda</span> a,b: <span class="fn">int</span>(a/b)   <span class="cm"># truncate toward zero</span>
+    }
+    <span class="kw">for</span> t <span class="kw">in</span> tokens:
+        <span class="kw">if</span> t <span class="kw">in</span> ops:
+            b = stack.pop()     <span class="cm"># second operand (popped first!)</span>
+            a = stack.pop()     <span class="cm"># first operand</span>
+            stack.append(ops[t](a, b))
+        <span class="kw">else</span>:
+            stack.append(<span class="fn">int</span>(t))
+
+    <span class="kw">return</span> stack[<span class="nm">0</span>]   <span class="cm"># final answer</span>
+
+<span class="fn">print</span>(<span class="fn">eval_rpn</span>([<span class="st">"2"</span>,<span class="st">"1"</span>,<span class="st">"+"</span>,<span class="st">"3"</span>,<span class="st">"*"</span>]))       <span class="cm"># 9  → (2+1)*3</span>
+<span class="fn">print</span>(<span class="fn">eval_rpn</span>([<span class="st">"4"</span>,<span class="st">"13"</span>,<span class="st">"5"</span>,<span class="st">"/"</span>,<span class="st">"+"</span>]))       <span class="cm"># 6  → 4+(13/5)</span>
+<span class="fn">print</span>(<span class="fn">eval_rpn</span>([<span class="st">"10"</span>,<span class="st">"6"</span>,<span class="st">"9"</span>,<span class="st">"3"</span>,<span class="st">"+"</span>,<span class="st">"-11"</span>,<span class="st">"*"</span>,<span class="st">"/"</span>,<span class="st">"*"</span>,<span class="st">"17"</span>,<span class="st">"+"</span>,<span class="st">"5"</span>,<span class="st">"+"</span>]))</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-corner="CLASSIC_3.3">
+    <div class="card-head"><span class="ctag tag-m">MEDIUM</span><span class="card-title">Decode String</span></div>
+    <div class="card-body">
+      <p>Given <code>k[encoded_string]</code>, return the decoded string. Example: <code>3[a2[bc]]</code> → <code>abcbcabcbcabcbc</code>. Two stacks: one for counts, one for strings.</p>
+      <div class="codeblock">
+        <div class="cb-bar">
+          <div class="cb-fname">decode_string.py</div>
+          <button class="cb-copy" onclick="copyCode(this)">COPY</button>
+        </div>
+        <pre><span class="kw">def</span> <span class="fn">decode_string</span>(s):
+    count_stack  = []   <span class="cm"># stack for repetition counts</span>
+    string_stack = []   <span class="cm"># stack for partial strings</span>
+    current_str  = <span class="st">""</span>
+    current_num  = <span class="nm">0</span>
+
+    <span class="kw">for</span> ch <span class="kw">in</span> s:
+        <span class="kw">if</span> ch.isdigit():
+            current_num = current_num * <span class="nm">10</span> + <span class="fn">int</span>(ch)  <span class="cm"># handle multi-digit: "12[a]"</span>
+
+        <span class="kw">elif</span> ch == <span class="st">'['</span>:
+            count_stack.append(current_num)    <span class="cm"># save count</span>
+            string_stack.append(current_str)   <span class="cm"># save current string</span>
+            current_num = <span class="nm">0</span>
+            current_str = <span class="st">""</span>
+
+        <span class="kw">elif</span> ch == <span class="st">']'</span>:
+            repeat = count_stack.pop()
+            prev   = string_stack.pop()
+            current_str = prev + current_str * repeat  <span class="cm"># expand!</span>
+
+        <span class="kw">else</span>:
+            current_str += ch
+
+    <span class="kw">return</span> current_str
+
+<span class="fn">print</span>(<span class="fn">decode_string</span>(<span class="st">"3[a]2[bc]"</span>))      <span class="cm"># "aaabcbc"</span>
+<span class="fn">print</span>(<span class="fn">decode_string</span>(<span class="st">"3[a2[c]]"</span>))       <span class="cm"># "accaccacc"</span>
+<span class="fn">print</span>(<span class="fn">decode_string</span>(<span class="st">"2[abc]3[cd]ef"</span>))  <span class="cm"># "abcabccdcdcdef"</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-corner="CLASSIC_3.4">
+    <div class="card-head"><span class="ctag tag-m">MEDIUM</span><span class="card-title">Remove Adjacent Duplicates & Asteroid Collision</span></div>
+    <div class="card-body">
+      <div class="codeblock">
+        <div class="cb-bar">
+          <div class="cb-fname">duplicates_collision.py</div>
+          <button class="cb-copy" onclick="copyCode(this)">COPY</button>
+        </div>
+        <pre><span class="cm"># ── Remove Adjacent Duplicates — O(n) ───────────────</span>
+<span class="cm"># "abbaca" → "ca" (remove pairs step by step)</span>
+<span class="kw">def</span> <span class="fn">remove_duplicates</span>(s):
+    stack = []
+    <span class="kw">for</span> ch <span class="kw">in</span> s:
+        <span class="kw">if</span> stack <span class="kw">and</span> stack[<span class="op">-</span><span class="nm">1</span>] == ch:
+            stack.pop()    <span class="cm"># adjacent duplicate → remove both</span>
+        <span class="kw">else</span>:
+            stack.append(ch)
+    <span class="kw">return</span> <span class="st">""</span>.join(stack)
+
+<span class="fn">print</span>(<span class="fn">remove_duplicates</span>(<span class="st">"abbaca"</span>))   <span class="cm"># "ca"</span>
+<span class="fn">print</span>(<span class="fn">remove_duplicates</span>(<span class="st">"azxxzy"</span>))   <span class="cm"># "ay"</span>
+
+<span class="cm"># ── Remove k adjacent duplicates ────────────────────</span>
+<span class="kw">def</span> <span class="fn">remove_k_duplicates</span>(s, k):
+    <span class="cm"># stack stores (char, count) pairs</span>
+    stack = []
+    <span class="kw">for</span> ch <span class="kw">in</span> s:
+        <span class="kw">if</span> stack <span class="kw">and</span> stack[<span class="op">-</span><span class="nm">1</span>][<span class="nm">0</span>] == ch:
+            stack[<span class="op">-</span><span class="nm">1</span>][<span class="nm">1</span>] += <span class="nm">1</span>
+            <span class="kw">if</span> stack[<span class="op">-</span><span class="nm">1</span>][<span class="nm">1</span>] == k:
+                stack.pop()         <span class="cm"># k in a row → remove all k</span>
+        <span class="kw">else</span>:
+            stack.append([ch, <span class="nm">1</span>])
+    <span class="kw">return</span> <span class="st">""</span>.join(ch * cnt <span class="kw">for</span> ch, cnt <span class="kw">in</span> stack)
+
+<span class="fn">print</span>(<span class="fn">remove_k_duplicates</span>(<span class="st">"deeedbbcccbdaa"</span>, <span class="nm">3</span>))  <span class="cm"># "aa"</span>
+
+<span class="cm"># ── Asteroid Collision ───────────────────────────────</span>
+<span class="cm"># Positive = moves right, negative = moves left</span>
+<span class="cm"># Collision only if right-moving meets left-moving</span>
+<span class="kw">def</span> <span class="fn">asteroid_collision</span>(asteroids):
+    stack = []
+    <span class="kw">for</span> a <span class="kw">in</span> asteroids:
+        <span class="kw">while</span> stack <span class="kw">and</span> a < <span class="nm">0</span> < stack[<span class="op">-</span><span class="nm">1</span>]:
+            <span class="kw">if</span> stack[<span class="op">-</span><span class="nm">1</span>] < <span class="op">-</span>a:
+                stack.pop()         <span class="cm"># right asteroid destroyed</span>
+                <span class="kw">continue</span>
+            <span class="kw">elif</span> stack[<span class="op">-</span><span class="nm">1</span>] == <span class="op">-</span>a:
+                stack.pop()         <span class="cm"># both destroyed</span>
+            <span class="kw">break</span>                   <span class="cm"># new asteroid destroyed</span>
+        <span class="kw">else</span>:
+            stack.append(a)         <span class="cm"># no collision</span>
+    <span class="kw">return</span> stack
+
+<span class="fn">print</span>(<span class="fn">asteroid_collision</span>([<span class="nm">5</span>, <span class="nm">10</span>, <span class="op">-</span><span class="nm">5</span>]))        <span class="cm"># [5, 10]</span>
+<span class="fn">print</span>(<span class="fn">asteroid_collision</span>([<span class="nm">8</span>, <span class="op">-</span><span class="nm">8</span>]))             <span class="cm"># []</span>
+<span class="fn">print</span>(<span class="fn">asteroid_collision</span>([<span class="nm">10</span>, <span class="nm">2</span>, <span class="op">-</span><span class="nm">5</span>]))         <span class="cm"># [10]</span>
+<span class="fn">print</span>(<span class="fn">asteroid_collision</span>([<span class="op">-</span><span class="nm">2</span>, <span class="op">-</span><span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">2</span>]))      <span class="cm"># [-2, -1, 1, 2]</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ DAY 4 ═══════════════════════════════════ -->
+<section id="day4" class="wrap ch-section">
+  <div class="ch-header">
+    <div class="ch-eyebrow">04 / day four</div>
+    <div class="ch-title">Monotonic <span class="acc">Stack</span></div>
+    <div class="ch-desc">&gt; the most powerful stack pattern. converts O(n²) problems to O(n).</div>
+  </div>
+
+  <div class="card" data-corner="MONO_4.1">
+    <div class="card-head"><span class="ctag tag-p">PATTERN</span><span class="card-title">What Is a Monotonic Stack?</span></div>
+    <div class="card-body">
+      <p>A monotonic stack is a stack where elements are always maintained in <span class="hl">monotonically increasing or decreasing order</span>. When a new element breaks the monotonic property, you pop elements until the property is restored.</p>
+
+      <div class="ibox note">
+        <span class="ico">⚡</span>
+        <p><strong>When to use:</strong> Any problem asking for "next greater", "next smaller", "previous greater", "previous smaller" element — monotonic stack solves it in O(n). Without it, brute force is O(n²).</p>
+      </div>
+
+      <p style="color:var(--phosphor);font-size:11px;margin-top:14px;margin-bottom:8px;">&gt; MONOTONIC INCREASING STACK — elements stay in increasing order:</p>
+      <div class="stack-visual" style="flex-direction:row;justify-content:flex-start;flex-wrap:wrap;gap:8px;align-items:center;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+          <div class="s-slot" style="width:60px;border-top:1px solid var(--border2);"><span class="sv">2</span></div>
+          <div class="s-slot" style="width:60px;"><span class="sdim">5</span></div>
+          <div class="s-slot" style="width:60px;"><span class="sdim">8</span></div>
+          <div class="s-bottom" style="width:60px;">base</div>
+          <div class="sv-label">increasing</div>
+        </div>
+        <span style="color:var(--phosphor3);font-size:1.5rem;padding:0 8px;">→</span>
+        <div style="font-size:11px;color:var(--phosphor3);max-width:300px;">
+          <p>Push 3. 3 &lt; 2 (top)? NO.</p>
+          <p>Pop 2 (2 &lt; 3), pop 5? No wait—</p>
+          <p style="margin-top:8px;color:var(--phosphor);">Key: pop WHILE stack top &lt; new element (for decreasing stack) or &gt; new element (for increasing stack). Then push.</p>
+        </div>
+      </div>
+
+      <div class="codeblock">
+        <div class="cb-bar">
+          <div class="cb-fname">monotonic_stack.py</div>
+          <button class="cb-copy" onclick="copyCode(this)">COPY</button>
+        </div>
+        <pre><span class="cm"># ── Template: Monotonic DECREASING stack ─────────────</span>
+<span class="cm"># Useful for: next greater element (NGE)</span>
+arr = [<span class="nm">4</span>, <span class="nm">5</span>, <span class="nm">2</span>, <span class="nm">10</span>, <span class="nm">8</span>]
+n = <span class="fn">len</span>(arr)
+result = [<span class="op">-</span><span class="nm">1</span>] * n        <span class="cm"># -1 = no greater element</span>
+stack = []               <span class="cm"># stores INDICES (not values)</span>
+
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+    <span class="cm"># Pop while current element > stack top element</span>
+    <span class="kw">while</span> stack <span class="kw">and</span> arr[i] > arr[stack[<span class="op">-</span><span class="nm">1</span>]]:
+        idx = stack.pop()
+        result[idx] = arr[i]     <span class="cm"># arr[i] is NGE for arr[idx]</span>
+    stack.append(i)
+
+<span class="cm"># result[i] = next greater element to the right of arr[i]</span>
+<span class="fn">print</span>(result)   <span class="cm"># [5, 10, 10, -1, -1]</span>
+<span class="cm"># arr[0]=4 → NGE is 5</span>
+<span class="cm"># arr[1]=5 → NGE is 10</span>
+<span class="cm"># arr[2]=2 → NGE is 10</span>
+<span class="cm"># arr[3]=10 → no greater → -1</span>
+<span class="cm"># arr[4]=8  → no greater → -1</span>
+
+<span class="cm"># ── Template: Monotonic INCREASING stack ─────────────</span>
+<span class="cm"># Useful for: next smaller element</span>
+result2 = [<span class="op">-</span><span class="nm">1</span>] * n
+stack2 = []
+
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+    <span class="kw">while</span> stack2 <span class="kw">and</span> arr[i] < arr[stack2[<span class="op">-</span><span class="nm">1</span>]]:  <span class="cm"># flip to &lt;</span>
+        idx = stack2.pop()
+        result2[idx] = arr[i]
+    stack2.append(i)
+
+<span class="fn">print</span>(result2)  <span class="cm"># [2, 2, -1, 8, -1]</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-corner="MONO_4.2">
+    <div class="card-head"><span class="ctag tag-p">PATTERN</span><span class="card-title">Daily Temperatures & Stock Span</span></div>
+    <div class="card-body">
+      <div class="codeblock">
+        <div class="cb-bar">
+          <div class="cb-fname">temperatures_span.py</div>
+          <button class="cb-copy" onclick="copyCode(this)">COPY</button>
+        </div>
+        <pre><span class="cm"># ── Daily Temperatures — O(n) ───────────────────────</span>
+<span class="cm"># For each day, how many days until a warmer temperature?</span>
+<span class="kw">def</span> <span class="fn">daily_temperatures</span>(temps):
+    n = <span class="fn">len</span>(temps)
+    result = [<span class="nm">0</span>] * n
+    stack = []   <span class="cm"># monotonic decreasing (by temperature)</span>
+
+    <span class="kw">for</span> i, t <span class="kw">in</span> <span class="fn">enumerate</span>(temps):
+        <span class="kw">while</span> stack <span class="kw">and</span> temps[stack[<span class="op">-</span><span class="nm">1</span>]] < t:
+            prev_day = stack.pop()
+            result[prev_day] = i - prev_day   <span class="cm"># days waited</span>
+        stack.append(i)
+
+    <span class="kw">return</span> result  <span class="cm"># 0 means no warmer day found</span>
+
+temps = [<span class="nm">73</span>,<span class="nm">74</span>,<span class="nm">75</span>,<span class="nm">71</span>,<span class="nm">69</span>,<span class="nm">72</span>,<span class="nm">76</span>,<span class="nm">73</span>]
+<span class="fn">print</span>(<span class="fn">daily_temperatures</span>(temps))
+<span class="cm"># [1, 1, 4, 2, 1, 1, 0, 0]</span>
+
+<span class="cm"># ── Stock Span Problem — O(n) ────────────────────────</span>
+<span class="cm"># Span of day i = consecutive days before i with price ≤ today</span>
+<span class="kw">def</span> <span class="fn">stock_span</span>(prices):
+    n = <span class="fn">len</span>(prices)
+    span = [<span class="nm">1</span>] * n
+    stack = []   <span class="cm"># monotonic decreasing stack of indices</span>
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+        <span class="kw">while</span> stack <span class="kw">and</span> prices[stack[<span class="op">-</span><span class="nm">1</span>]] <= prices[i]:
+            stack.pop()
+        span[i] = i - stack[<span class="op">-</span><span class="nm">1</span>] <span class="kw">if</span> stack <span class="kw">else</span> i + <span class="nm">1</span>
+        stack.append(i)
+
+    <span class="kw">return</span> span
+
+prices = [<span class="nm">100</span>, <span class="nm">80</span>, <span class="nm">60</span>, <span class="nm">70</span>, <span class="nm">60</span>, <span class="nm">75</span>, <span class="nm">85</span>]
+<span class="fn">print</span>(<span class="fn">stock_span</span>(prices))
+<span class="cm"># [1, 1, 1, 2, 1, 4, 6]</span>
+<span class="cm"># day 5 (price=75): 4 days of consecutive ≤ prices (75,60,70,60)</span>
+<span class="cm"># day 6 (price=85): 6 days (entire array so far)</span>
+
+<span class="cm"># ── Previous Greater Element ─────────────────────────</span>
+<span class="kw">def</span> <span class="fn">prev_greater</span>(arr):
+    n = <span class="fn">len</span>(arr)
+    result = [<span class="op">-</span><span class="nm">1</span>] * n
+    stack = []
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+        <span class="kw">while</span> stack <span class="kw">and</span> stack[<span class="op">-</span><span class="nm">1</span>] <= arr[i]:
+            stack.pop()
+        result[i] = stack[<span class="op">-</span><span class="nm">1</span>] <span class="kw">if</span> stack <span class="kw">else</span> <span class="op">-</span><span class="nm">1</span>
+        stack.append(arr[i])
+    <span class="kw">return</span> result
+
+<span class="fn">print</span>(<span class="fn">prev_greater</span>([<span class="nm">4</span>, <span class="nm">5</span>, <span class="nm">2</span>, <span class="nm">10</span>, <span class="nm">8</span>]))
+<span class="cm"># [-1, -1, 5, -1, 10]</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ DAY 5 ═══════════════════════════════════ -->
+<section id="day5" class="wrap ch-section">
+  <div class="ch-header">
+    <div class="ch-eyebrow">05 / day five</div>
+    <div class="ch-title">Advanced <span class="acc">Applications</span></div>
+    <div class="ch-desc">&gt; hard interview problems. the ones that separate candidates.</div>
+  </div>
+
+  <div class="card" data-corner="ADVANCED_5.1">
+    <div class="card-head"><span class="ctag tag-h">HARD</span><span class="card-title">Largest Rectangle in Histogram</span></div>
+    <div class="card-body">
+      <p>Find the largest rectangle in a histogram. For each bar, find how far left and right it can extend at its height. Monotonic increasing stack gives O(n).</p>
+
+      <div class="ibox note">
+        <span class="ico">🧠</span>
+        <p><strong>Key insight:</strong> When we find a bar shorter than the stack top, the top bar's "territory" ends. We pop it and calculate the area it could have formed — its width extends from the new stack top's position to the current index.</p>
+      </div>
+
+      <div class="codeblock">
+        <div class="cb-bar">
+          <div class="cb-fname">histogram.py</div>
+          <button class="cb-copy" onclick="copyCode(this)">COPY</button>
+        </div>
+        <pre><span class="kw">def</span> <span class="fn">largest_rectangle</span>(heights):
+    stack = []   <span class="cm"># monotonic increasing stack of indices</span>
+    max_area = <span class="nm">0</span>
+    n = <span class="fn">len</span>(heights)
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n + <span class="nm">1</span>):   <span class="cm"># +1 to flush remaining bars</span>
+        h = heights[i] <span class="kw">if</span> i < n <span class="kw">else</span> <span class="nm">0</span>
+
+        <span class="kw">while</span> stack <span class="kw">and</span> h < heights[stack[<span class="op">-</span><span class="nm">1</span>]]:
+            height = heights[stack.pop()]
+            <span class="cm"># Width: from stack top to current index</span>
+            width  = i <span class="kw">if</span> <span class="kw">not</span> stack <span class="kw">else</span> i - stack[<span class="op">-</span><span class="nm">1</span>] - <span class="nm">1</span>
+            max_area = <span class="fn">max</span>(max_area, height * width)
+
+        stack.append(i)
+
+    <span class="kw">return</span> max_area
+
+<span class="fn">print</span>(<span class="fn">largest_rectangle</span>([<span class="nm">2</span>,<span class="nm">1</span>,<span class="nm">5</span>,<span class="nm">6</span>,<span class="nm">2</span>,<span class="nm">3</span>]))   <span class="cm"># 10 (bars 5,6)</span>
+<span class="fn">print</span>(<span class="fn">largest_rectangle</span>([<span class="nm">2</span>,<span class="nm">4</span>]))              <span class="cm"># 4</span>
+
+<span class="cm"># ── Maximal Rectangle in Binary Matrix ──────────────</span>
+<span class="cm"># Extension: treat each row as a histogram!</span>
+<span class="kw">def</span> <span class="fn">maximal_rectangle</span>(matrix):
+    <span class="kw">if</span> <span class="kw">not</span> matrix <span class="kw">or</span> <span class="kw">not</span> matrix[<span class="nm">0</span>]: <span class="kw">return</span> <span class="nm">0</span>
+    n = <span class="fn">len</span>(matrix[<span class="nm">0</span>])
+    heights = [<span class="nm">0</span>] * n
+    max_area = <span class="nm">0</span>
+
+    <span class="kw">for</span> row <span class="kw">in</span> matrix:
+        <span class="cm"># Update running histogram height</span>
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(n):
+            heights[j] = heights[j] + <span class="nm">1</span> <span class="kw">if</span> row[j] == <span class="st">'1'</span> <span class="kw">else</span> <span class="nm">0</span>
+        max_area = <span class="fn">max</span>(max_area, <span class="fn">largest_rectangle</span>(heights))
+
+    <span class="kw">return</span> max_area</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-corner="ADVANCED_5.2">
+    <div class="card-head"><span class="ctag tag-h">HARD</span><span class="card-title">Sum of Subarray Minimums</span></div>
+    <div class="card-body">
+      <p>Find the sum of <code>min(subarray)</code> for all subarrays. Key: for each element, find how many subarrays it is the minimum of using monotonic stack.</p>
+      <div class="codeblock">
+        <div class="cb-bar">
+          <div class="cb-fname">subarray_mins.py</div>
+          <button class="cb-copy" onclick="copyCode(this)">COPY</button>
+        </div>
+        <pre><span class="kw">def</span> <span class="fn">sum_subarray_mins</span>(arr):
+    MOD = <span class="nm">10</span>**<span class="nm">9</span> + <span class="nm">7</span>
+    n = <span class="fn">len</span>(arr)
+    result = <span class="nm">0</span>
+    stack = []   <span class="cm"># monotonic increasing — stores indices</span>
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n + <span class="nm">1</span>):
+        <span class="kw">while</span> stack <span class="kw">and</span> (i == n <span class="kw">or</span> arr[stack[<span class="op">-</span><span class="nm">1</span>]] >= arr[i]):
+            mid = stack.pop()
+            left  = stack[<span class="op">-</span><span class="nm">1</span>] <span class="kw">if</span> stack <span class="kw">else</span> <span class="op">-</span><span class="nm">1</span>
+            right = i
+
+            <span class="cm"># arr[mid] is minimum for (mid-left) * (right-mid) subarrays</span>
+            count = (mid - left) * (right - mid)
+            result = (result + arr[mid] * count) % MOD
+
+        stack.append(i)
+
+    <span class="kw">return</span> result
+
+<span class="fn">print</span>(<span class="fn">sum_subarray_mins</span>([<span class="nm">3</span>,<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">4</span>]))
+<span class="cm"># 17</span>
+<span class="cm"># Subarrays: [3]=3, [1]=1, [2]=2, [4]=4,</span>
+<span class="cm">#            [3,1]=1, [1,2]=1, [2,4]=2,</span>
+<span class="cm">#            [3,1,2]=1, [1,2,4]=1,</span>
+<span class="cm">#            [3,1,2,4]=1   → sum = 17</span>
+
+<span class="cm"># ── 132 Pattern ─────────────────────────────────────</span>
+<span class="cm"># Find if there exists i < j < k: nums[i] < nums[k] < nums[j]</span>
+<span class="kw">def</span> <span class="fn">find132pattern</span>(nums):
+    stack = []
+    k = <span class="fn">float</span>(<span class="st">'-inf'</span>)   <span class="cm"># tracks nums[k] (the "2" in 132)</span>
+
+    <span class="kw">for</span> num <span class="kw">in</span> <span class="fn">reversed</span>(nums):   <span class="cm"># scan right to left</span>
+        <span class="kw">if</span> num < k:
+            <span class="kw">return</span> <span class="bi">True</span>       <span class="cm"># found nums[i] < k</span>
+        <span class="kw">while</span> stack <span class="kw">and</span> stack[<span class="op">-</span><span class="nm">1</span>] < num:
+            k = stack.pop()    <span class="cm"># update k: largest value less than num</span>
+        stack.append(num)
+
+    <span class="kw">return</span> <span class="bi">False</span>
+
+<span class="fn">print</span>(<span class="fn">find132pattern</span>([<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>,<span class="nm">4</span>]))      <span class="cm"># False</span>
+<span class="fn">print</span>(<span class="fn">find132pattern</span>([<span class="nm">3</span>,<span class="nm">1</span>,<span class="nm">4</span>,<span class="nm">2</span>]))      <span class="cm"># True (1,4,2)</span>
+<span class="fn">print</span>(<span class="fn">find132pattern</span>([<span class="op">-</span><span class="nm">1</span>,<span class="nm">3</span>,<span class="nm">2</span>,<span class="nm">0</span>]))     <span class="cm"># True (-1,3,0)</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ DAY 6 ═══════════════════════════════════ -->
+<section id="day6" class="wrap ch-section">
+  <div class="ch-header">
+    <div class="ch-eyebrow">06 / day six</div>
+    <div class="ch-title">Stack in <span class="acc">System Design</span></div>
+    <div class="ch-desc">&gt; real applications: undo/redo, expression evaluation, converting recursion to iteration</div>
+  </div>
+
+  <div class="card" data-corner="DESIGN_6.1">
+    <div class="card-head"><span class="ctag tag-a">APPLIED</span><span class="card-title">Undo/Redo & Browser History</span></div>
+    <div class="card-body">
+      <div class="codeblock">
+        <div class="cb-bar">
+          <div class="cb-fname">undo_redo_browser.py</div>
+          <button class="cb-copy" onclick="copyCode(this)">COPY</button>
+        </div>
+        <pre><span class="cm"># ── Undo/Redo System ────────────────────────────────</span>
+<span class="kw">class</span> <span class="cl">TextEditor</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="slf">self</span>):
+        <span class="slf">self</span>.text      = <span class="st">""</span>
+        <span class="slf">self</span>.undo_stack = []   <span class="cm"># stores previous states</span>
+        <span class="slf">self</span>.redo_stack = []   <span class="cm"># stores undone states</span>
+
+    <span class="kw">def</span> <span class="fn">type</span>(<span class="slf">self</span>, chars):
+        <span class="slf">self</span>.undo_stack.append(<span class="slf">self</span>.text)   <span class="cm"># save current</span>
+        <span class="slf">self</span>.redo_stack.clear()              <span class="cm"># new action clears redo</span>
+        <span class="slf">self</span>.text += chars
+
+    <span class="kw">def</span> <span class="fn">undo</span>(<span class="slf">self</span>):
+        <span class="kw">if</span> <span class="kw">not</span> <span class="slf">self</span>.undo_stack: <span class="kw">return</span>
+        <span class="slf">self</span>.redo_stack.append(<span class="slf">self</span>.text)
+        <span class="slf">self</span>.text = <span class="slf">self</span>.undo_stack.pop()
+
+    <span class="kw">def</span> <span class="fn">redo</span>(<span class="slf">self</span>):
+        <span class="kw">if</span> <span class="kw">not</span> <span class="slf">self</span>.redo_stack: <span class="kw">return</span>
+        <span class="slf">self</span>.undo_stack.append(<span class="slf">self</span>.text)
+        <span class="slf">self</span>.text = <span class="slf">self</span>.redo_stack.pop()
+
+editor = <span class="cl">TextEditor</span>()
+editor.type(<span class="st">"Hello"</span>)
+editor.type(<span class="st">" World"</span>)
+<span class="fn">print</span>(editor.text)    <span class="cm"># "Hello World"</span>
+editor.undo()
+<span class="fn">print</span>(editor.text)    <span class="cm"># "Hello"</span>
+editor.redo()
+<span class="fn">print</span>(editor.text)    <span class="cm"># "Hello World"</span>
+
+<span class="cm"># ── Browser History ──────────────────────────────────</span>
+<span class="kw">class</span> <span class="cl">BrowserHistory</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="slf">self</span>, homepage):
+        <span class="slf">self</span>.back_stack    = []          <span class="cm"># pages we can go back to</span>
+        <span class="slf">self</span>.forward_stack = []          <span class="cm"># pages we can go forward to</span>
+        <span class="slf">self</span>.current       = homepage
+
+    <span class="kw">def</span> <span class="fn">visit</span>(<span class="slf">self</span>, url):
+        <span class="slf">self</span>.back_stack.append(<span class="slf">self</span>.current)
+        <span class="slf">self</span>.forward_stack.clear()       <span class="cm"># visiting clears forward</span>
+        <span class="slf">self</span>.current = url
+
+    <span class="kw">def</span> <span class="fn">back</span>(<span class="slf">self</span>, steps):
+        <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(steps):
+            <span class="kw">if</span> <span class="kw">not</span> <span class="slf">self</span>.back_stack: <span class="kw">break</span>
+            <span class="slf">self</span>.forward_stack.append(<span class="slf">self</span>.current)
+            <span class="slf">self</span>.current = <span class="slf">self</span>.back_stack.pop()
+        <span class="kw">return</span> <span class="slf">self</span>.current
+
+    <span class="kw">def</span> <span class="fn">forward</span>(<span class="slf">self</span>, steps):
+        <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(steps):
+            <span class="kw">if</span> <span class="kw">not</span> <span class="slf">self</span>.forward_stack: <span class="kw">break</span>
+            <span class="slf">self</span>.back_stack.append(<span class="slf">self</span>.current)
+            <span class="slf">self</span>.current = <span class="slf">self</span>.forward_stack.pop()
+        <span class="kw">return</span> <span class="slf">self</span>.current</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-corner="DESIGN_6.2">
+    <div class="card-head"><span class="ctag tag-a">APPLIED</span><span class="card-title">Infix to Postfix & Expression Evaluator</span></div>
+    <div class="card-body">
+      <div class="codeblock">
+        <div class="cb-bar">
+          <div class="cb-fname">expression_eval.py</div>
+          <button class="cb-copy" onclick="copyCode(this)">COPY</button>
+        </div>
+        <pre><span class="cm"># ── Infix to Postfix (Shunting Yard Algorithm) ───────</span>
+<span class="kw">def</span> <span class="fn">infix_to_postfix</span>(expr):
+    precedence = {<span class="st">'+'</span>:<span class="nm">1</span>, <span class="st">'-'</span>:<span class="nm">1</span>, <span class="st">'*'</span>:<span class="nm">2</span>, <span class="st">'/'</span>:<span class="nm">2</span>, <span class="st">'^'</span>:<span class="nm">3</span>}
+    output = []
+    ops    = []
+
+    <span class="kw">for</span> token <span class="kw">in</span> expr.split():
+        <span class="kw">if</span> token.lstrip(<span class="st">'-'</span>).isdigit():
+            output.append(token)   <span class="cm"># operand → output</span>
+        <span class="kw">elif</span> token == <span class="st">'('</span>:
+            ops.append(token)
+        <span class="kw">elif</span> token == <span class="st">')'</span>:
+            <span class="kw">while</span> ops <span class="kw">and</span> ops[<span class="op">-</span><span class="nm">1</span>] != <span class="st">'('</span>:
+                output.append(ops.pop())
+            ops.pop()              <span class="cm"># remove '('</span>
+        <span class="kw">else</span>:   <span class="cm"># operator</span>
+            <span class="kw">while</span> (ops <span class="kw">and</span> ops[<span class="op">-</span><span class="nm">1</span>] != <span class="st">'('</span> <span class="kw">and</span>
+                   precedence.get(ops[<span class="op">-</span><span class="nm">1</span>], <span class="nm">0</span>) >= precedence[token]):
+                output.append(ops.pop())
+            ops.append(token)
+
+    <span class="kw">while</span> ops: output.append(ops.pop())
+    <span class="kw">return</span> <span class="st">" "</span>.join(output)
+
+<span class="fn">print</span>(<span class="fn">infix_to_postfix</span>(<span class="st">"3 + 4 * 2"</span>))          <span class="cm"># "3 4 2 * +"</span>
+<span class="fn">print</span>(<span class="fn">infix_to_postfix</span>(<span class="st">"( 3 + 4 ) * 2"</span>))      <span class="cm"># "3 4 + 2 *"</span>
+
+<span class="cm"># ── Recursion → Iterative with explicit stack ────────</span>
+<span class="cm"># Any recursive function CAN be converted to iterative</span>
+<span class="cm"># using an explicit stack. Example: DFS on a tree/graph</span>
+
+<span class="cm"># Recursive DFS (uses call stack implicitly):</span>
+<span class="kw">def</span> <span class="fn">dfs_recursive</span>(graph, node, visited=<span class="bi">None</span>):
+    <span class="kw">if</span> visited <span class="kw">is</span> <span class="bi">None</span>: visited = <span class="fn">set</span>()
+    visited.add(node)
+    <span class="kw">for</span> neighbor <span class="kw">in</span> graph[node]:
+        <span class="kw">if</span> neighbor <span class="kw">not</span> <span class="kw">in</span> visited:
+            <span class="fn">dfs_recursive</span>(graph, neighbor, visited)
+    <span class="kw">return</span> visited
+
+<span class="cm"># Iterative DFS (explicit stack — handles deep graphs):</span>
+<span class="kw">def</span> <span class="fn">dfs_iterative</span>(graph, start):
+    visited = <span class="fn">set</span>()
+    stack = [start]
+    <span class="kw">while</span> stack:
+        node = stack.pop()
+        <span class="kw">if</span> node <span class="kw">not</span> <span class="kw">in</span> visited:
+            visited.add(node)
+            <span class="kw">for</span> neighbor <span class="kw">in</span> graph[node]:
+                <span class="kw">if</span> neighbor <span class="kw">not</span> <span class="kw">in</span> visited:
+                    stack.append(neighbor)
+    <span class="kw">return</span> visited</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ DAY 7 ═══════════════════════════════════ -->
+<section id="day7" class="wrap ch-section">
+  <div class="ch-header">
+    <div class="ch-eyebrow">07 / day seven</div>
+    <div class="ch-title">Practice <span class="acc">& Mastery</span></div>
+    <div class="ch-desc">&gt; pattern recognition + problem bank + cheat sheet = interview victory</div>
+  </div>
+
+  <div class="card" data-corner="PATTERNS">
+    <div class="card-head"><span class="ctag tag-p">RECOGNITION</span><span class="card-title">See the Problem → Know the Weapon</span></div>
+    <div class="card-body">
+      <div class="pat-grid">
+        <div class="pat-mini"><h4>Brackets / Nesting?</h4><p>→ Stack. Push opens, match closes. If mismatch or stack not empty at end → invalid.</p></div>
+        <div class="pat-mini"><h4>Next Greater/Smaller?</h4><p>→ Monotonic decreasing/increasing stack. O(n) by popping when condition breaks.</p></div>
+        <div class="pat-mini"><h4>Undo / Redo?</h4><p>→ Two stacks. Undo pops from action stack, pushes to redo. New action clears redo.</p></div>
+        <div class="pat-mini"><h4>O(1) get-min/max?</h4><p>→ Min/Max stack: maintain a parallel auxiliary stack tracking min or max so far.</p></div>
+        <div class="pat-mini"><h4>Remove adjacent duplicates?</h4><p>→ Stack. Push char; if it matches top, pop instead. Result = stack contents joined.</p></div>
+        <div class="pat-mini"><h4>Evaluate expression?</h4><p>→ Stack. For RPN: push numbers, pop two on operator. For infix: shunting-yard algorithm.</p></div>
+        <div class="pat-mini"><h4>Decode/Expand nested string?</h4><p>→ Two stacks: one for counts, one for partial strings. Push on [, expand on ].</p></div>
+        <div class="pat-mini"><h4>Largest area / span?</h4><p>→ Monotonic stack. Histogram: increasing stack. Stock span: decreasing stack.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-corner="PROBLEMS">
+    <div class="card-head"><span class="ctag tag-p">BANK</span><span class="card-title">Must-Solve Problem List</span></div>
+    <div class="card-body">
+      <p style="font-size:10px;letter-spacing:3px;color:var(--phosphor);margin-bottom:10px;text-transform:uppercase;">&gt; EASY — EXECUTE FIRST</p>
+      <table class="ctbl">
+        <thead><tr><th>#</th><th>Problem</th><th>Technique</th><th>Time</th></tr></thead>
+        <tbody>
+          <tr><td>01</td><td>Valid Parentheses</td><td>Stack + mapping dict</td><td class="tg">O(n)</td></tr>
+          <tr><td>02</td><td>Implement Stack using Queues</td><td>Two queues or one deque</td><td class="tg">O(1) amortized</td></tr>
+          <tr><td>03</td><td>Backspace String Compare</td><td>Stack simulation</td><td class="tg">O(n)</td></tr>
+          <tr><td>04</td><td>Remove All Adjacent Duplicates</td><td>Stack char comparison</td><td class="tg">O(n)</td></tr>
+          <tr><td>05</td><td>Min Stack</td><td>Two parallel stacks</td><td class="tg">O(1) all ops</td></tr>
+          <tr><td>06</td><td>Baseball Game</td><td>Stack simulation</td><td class="tg">O(n)</td></tr>
+          <tr><td>07</td><td>Make String Great</td><td>Stack + case check</td><td class="tg">O(n)</td></tr>
+        </tbody>
+      </table>
+
+      <p style="font-size:10px;letter-spacing:3px;color:var(--amber);margin:20px 0 10px;text-transform:uppercase;">&gt; MEDIUM — CORE INTERVIEW LEVEL</p>
+      <table class="ctbl">
+        <thead><tr><th>#</th><th>Problem</th><th>Technique</th><th>Time</th></tr></thead>
+        <tbody>
+          <tr><td>08</td><td>Daily Temperatures</td><td>Monotonic decreasing stack</td><td class="tg">O(n)</td></tr>
+          <tr><td>09</td><td>Next Greater Element I</td><td>Stack + HashMap</td><td class="tg">O(n)</td></tr>
+          <tr><td>10</td><td>Next Greater Element II (circular)</td><td>Monotonic stack × 2n</td><td class="tg">O(n)</td></tr>
+          <tr><td>11</td><td>Decode String</td><td>Two stacks (count + string)</td><td class="tg">O(n)</td></tr>
+          <tr><td>12</td><td>Evaluate Reverse Polish Notation</td><td>Stack + operator map</td><td class="tg">O(n)</td></tr>
+          <tr><td>13</td><td>Asteroid Collision</td><td>Stack collision logic</td><td class="tg">O(n)</td></tr>
+          <tr><td>14</td><td>Remove K Digits</td><td>Monotonic increasing stack</td><td class="tg">O(n)</td></tr>
+          <tr><td>15</td><td>Stock Span Problem</td><td>Monotonic decreasing stack</td><td class="tg">O(n)</td></tr>
+          <tr><td>16</td><td>Score of Parentheses</td><td>Stack scoring</td><td class="tg">O(n)</td></tr>
+        </tbody>
+      </table>
+
+      <p style="font-size:10px;letter-spacing:3px;color:var(--red);margin:20px 0 10px;text-transform:uppercase;">&gt; HARD — ADVANCED MASTERY</p>
+      <table class="ctbl">
+        <thead><tr><th>#</th><th>Problem</th><th>Technique</th><th>Time</th></tr></thead>
+        <tbody>
+          <tr><td>17</td><td>Largest Rectangle in Histogram</td><td>Monotonic increasing stack</td><td class="tg">O(n)</td></tr>
+          <tr><td>18</td><td>Maximal Rectangle (matrix)</td><td>Histogram per row</td><td class="ty">O(m×n)</td></tr>
+          <tr><td>19</td><td>Trapping Rain Water (stack)</td><td>Stack-based water fill</td><td class="tg">O(n)</td></tr>
+          <tr><td>20</td><td>132 Pattern</td><td>Monotonic stack (right to left)</td><td class="tg">O(n)</td></tr>
+          <tr><td>21</td><td>Sum of Subarray Minimums</td><td>Mono stack + contribution</td><td class="tg">O(n)</td></tr>
+          <tr><td>22</td><td>Remove Duplicate Letters</td><td>Mono stack + seen/last_idx</td><td class="tg">O(n)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" data-corner="CHEATSHEET">
+    <div class="card-head"><span class="ctag tag-b">CHEAT</span><span class="card-title">Complete Cheat Sheet</span></div>
+    <div class="card-body">
+      <div class="codeblock">
+        <div class="cb-bar">
+          <div class="cb-fname">stack_cheatsheet.py</div>
+          <button class="cb-copy" onclick="copyCode(this)">COPY</button>
+        </div>
+        <pre><span class="cm"># ══════════════════════════════════════════════════════</span>
+<span class="cm">#  STACK INTERVIEW CHEAT SHEET</span>
+<span class="cm"># ══════════════════════════════════════════════════════</span>
+
+<span class="cm"># ── CORE OPERATIONS (list-based) ─────────────────────</span>
+stack = []
+stack.append(x)      <span class="cm"># PUSH   — O(1)</span>
+val = stack.pop()    <span class="cm"># POP    — O(1), raises IndexError if empty</span>
+top = stack[-1]      <span class="cm"># PEEK   — O(1), raises IndexError if empty</span>
+<span class="kw">not</span> stack            <span class="cm"># IS EMPTY — O(1)</span>
+<span class="fn">len</span>(stack)           <span class="cm"># SIZE   — O(1)</span>
+
+<span class="cm"># ── SAFE OPERATIONS ──────────────────────────────────</span>
+val = stack.pop() <span class="kw">if</span> stack <span class="kw">else</span> <span class="bi">None</span>    <span class="cm"># safe pop</span>
+top = stack[-<span class="nm">1</span>] <span class="kw">if</span> stack <span class="kw">else</span> <span class="bi">None</span>     <span class="cm"># safe peek</span>
+
+<span class="cm"># ── MONOTONIC STACK TEMPLATES ─────────────────────────</span>
+<span class="cm"># Next Greater Element (right):</span>
+result = [-<span class="nm">1</span>] * n; stack = []
+<span class="kw">for</span> i <span class="kw">in</span> range(n):
+    <span class="kw">while</span> stack <span class="kw">and</span> arr[i] > arr[stack[-<span class="nm">1</span>]]:
+        result[stack.pop()] = arr[i]
+    stack.append(i)
+
+<span class="cm"># Next Smaller Element (right):</span>
+<span class="cm"># Same but flip &gt; to &lt;</span>
+
+<span class="cm"># Previous Greater Element (left):</span>
+result = [-<span class="nm">1</span>] * n; stack = []
+<span class="kw">for</span> i <span class="kw">in</span> range(n):
+    <span class="kw">while</span> stack <span class="kw">and</span> stack[-<span class="nm">1</span>] <= arr[i]: stack.pop()
+    result[i] = stack[-<span class="nm">1</span>] <span class="kw">if</span> stack <span class="kw">else</span> -<span class="nm">1</span>
+    stack.append(arr[i])
+
+<span class="cm"># ── EDGE CASES — ALWAYS CHECK ─────────────────────────</span>
+<span class="cm"># • Empty stack before pop/peek → guard with: if stack:</span>
+<span class="cm"># • Single element stack</span>
+<span class="cm"># • All elements same value</span>
+<span class="cm"># • Circular array → iterate 2n with i % n</span>
+<span class="cm"># • Multi-digit numbers in expression problems</span>
+<span class="cm"># • Negative numbers in RPN: use int(token) not isdigit()</span>
+
+<span class="cm"># ── COMMON MISTAKES ───────────────────────────────────</span>
+<span class="cm"># ❌  stack.pop(0)  → Queue behavior (O(n)!), use collections.deque</span>
+<span class="cm"># ❌  Checking stack[-1] without ensuring stack is non-empty</span>
+<span class="cm"># ❌  Forgetting to handle the flush pass at end of monotonic problems</span>
+<span class="cm"># ❌  Using stack index (b=pop, a=pop) in wrong order for RPN</span>
+<span class="cm"># ❌  Not clearing redo stack on new action in undo/redo</span>
+
+<span class="cm"># ── TIME COMPLEXITY SUMMARY ───────────────────────────</span>
+<span class="cm"># Push/Pop/Peek:    O(1)  — all basic operations</span>
+<span class="cm"># Monotonic stack:  O(n)  — each element pushed/popped ONCE</span>
+<span class="cm"># Expression eval:  O(n)  — single pass through tokens</span>
+<span class="cm"># Min/Max stack:    O(1)  — all ops including getMin/getMax</span>
+<span class="cm"># DFS with stack:   O(V+E) — same as recursive DFS</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="big">STACK MASTERED.</span>
+    <p>&gt; LIFO IS LIFE. PUSH PROBLEMS. POP SOLUTIONS.</p>
+    <p style="margin-top:12px;">&gt; DSA MASTERY SERIES · VOL.IV · STACKS · PYTHON 3 · ALL CODE TESTED</p>
+    <p style="margin-top:8px;">&gt; SOLVE 3 PROBLEMS DAILY. TWO WEEKS. NEVER MISS A STACK QUESTION.</p>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cur = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX + 'px';
+    cur.style.top  = e.clientY + 'px';
+  });
+
+  // Copy code
+  function copyCode(btn) {
+    const pre = btn.closest('.codeblock').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'COPIED!';
+      btn.style.color = 'var(--phosphor)';
+      btn.style.borderColor = 'var(--phosphor3)';
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.color = '';
+        btn.style.borderColor = '';
+      }, 2000);
+    });
+  }
+
+  // Scroll spy
+  const sects = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.snav a');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    sects.forEach(s => { if (window.scrollY >= s.offsetTop - 140) cur = s.id; });
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur));
+  });
+
+  // Scroll reveal
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.06 });
+
+  document.querySelectorAll('.card, .day-tile').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(16px)';
+    el.style.transition = 'opacity 0.4s ease, transform 0.4s ease, border-color 0.2s, box-shadow 0.2s, background 0.15s';
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>

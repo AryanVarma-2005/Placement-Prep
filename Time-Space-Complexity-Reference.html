@@ -1,0 +1,1959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Time &amp; Space Complexity — The Complete Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================= DESIGN TOKENS ============================= */
+:root{
+  --bg:#0B0E14;
+  --bg-elevated:#0F1420;
+  --panel:#131826;
+  --panel-2:#161D2E;
+  --border:#212A3D;
+  --border-soft:#1A2232;
+  --text:#E6EDF3;
+  --text-dim:#8B96A5;
+  --text-faint:#5B6577;
+
+  /* complexity spectrum — efficient → catastrophic */
+  --c1:#34D399;   /* O(1), O(log n)   — emerald   */
+  --c2:#60A5FA;   /* O(n)             — blue      */
+  --c3:#A78BFA;   /* O(n log n)       — violet    */
+  --c4:#FBBF24;   /* O(n^2)/O(n^k)    — amber     */
+  --c5:#F87171;   /* O(2^n), O(n!)    — red       */
+
+  --code-kw:#C792EA;
+  --code-str:#A8E6A1;
+  --code-num:#F7B96B;
+  --code-com:#5B6577;
+  --code-fn:#82C7FF;
+  --code-text:#D6DEE8;
+
+  --radius:10px;
+  --font-display:'Space Grotesk', sans-serif;
+  --font-body:'Inter', sans-serif;
+  --font-mono:'JetBrains Mono', monospace;
+  --topbar-h:64px;
+  --sidebar-w:300px;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:rgba(96,165,250,0.25); color:#fff;}
+
+::-webkit-scrollbar{width:10px; height:10px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#26304a; border-radius:8px;}
+::-webkit-scrollbar-thumb:hover{background:#324063;}
+
+a{color:inherit; text-decoration:none;}
+
+/* ============================= TOPBAR ============================= */
+.topbar{
+  position:fixed; top:0; left:0; right:0; height:var(--topbar-h);
+  display:flex; align-items:center; gap:14px;
+  padding:0 18px;
+  background:rgba(11,14,20,0.85);
+  backdrop-filter:blur(14px) saturate(140%);
+  border-bottom:1px solid var(--border-soft);
+  z-index:200;
+}
+.topbar .menu-btn{
+  display:none;
+  width:38px; height:38px;
+  align-items:center; justify-content:center;
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:8px; cursor:pointer; color:var(--text);
+  flex-shrink:0;
+}
+.brand{
+  display:flex; align-items:center; gap:10px;
+  font-family:var(--font-display); font-weight:700; font-size:17px;
+  letter-spacing:0.2px; white-space:nowrap;
+}
+.brand-mark{
+  width:30px; height:30px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-mono); font-weight:700; font-size:13px;
+  background:linear-gradient(135deg, var(--c1), var(--c3) 50%, var(--c5));
+  color:#0B0E14; flex-shrink:0;
+}
+.brand .sub{
+  font-family:var(--font-mono); font-weight:400; font-size:11px;
+  color:var(--text-faint); letter-spacing:0.5px; text-transform:uppercase;
+  margin-top:1px;
+}
+.topbar-spacer{flex:1;}
+.topbar-search{
+  position:relative; width:280px; max-width:38vw;
+}
+.topbar-search input{
+  width:100%; height:38px; padding:0 14px 0 36px;
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:8px; color:var(--text); font-family:var(--font-body); font-size:13.5px;
+  outline:none; transition:border-color .15s;
+}
+.topbar-search input:focus{border-color:#3B4868;}
+.topbar-search svg{
+  position:absolute; left:11px; top:50%; transform:translateY(-50%);
+  width:15px; height:15px; color:var(--text-faint); pointer-events:none;
+}
+.topbar-progress{
+  font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);
+  white-space:nowrap; display:none;
+}
+@media(min-width:860px){ .topbar-progress{display:block;} }
+
+/* ============================= LAYOUT ============================= */
+.shell{
+  display:flex;
+  margin-top:var(--topbar-h);
+  min-height:calc(100vh - var(--topbar-h));
+}
+
+/* ============================= SIDEBAR ============================= */
+.sidebar{
+  width:var(--sidebar-w); flex-shrink:0;
+  position:fixed; top:var(--topbar-h); bottom:0; left:0;
+  overflow-y:auto;
+  background:var(--bg-elevated);
+  border-right:1px solid var(--border-soft);
+  padding:22px 14px 60px;
+  transition:transform .25s ease;
+  z-index:150;
+}
+.sidebar-section{margin-bottom:22px;}
+.sidebar-label{
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:1.2px;
+  text-transform:uppercase; color:var(--text-faint);
+  padding:0 10px 8px;
+}
+.nav-item{
+  display:flex; align-items:flex-start; gap:10px;
+  padding:8px 10px; border-radius:8px; cursor:pointer;
+  font-size:13.5px; color:var(--text-dim);
+  transition:background .12s, color .12s;
+  line-height:1.4;
+}
+.nav-item:hover{background:var(--panel); color:var(--text);}
+.nav-item.active{background:var(--panel-2); color:var(--text);}
+.nav-item.active .nav-num{color:var(--c2);}
+.nav-num{
+  font-family:var(--font-mono); font-size:11px; color:var(--text-faint);
+  flex-shrink:0; width:20px; padding-top:1px;
+}
+.nav-item.active{box-shadow:inset 2px 0 0 var(--c2);}
+
+.sidebar-footer{
+  margin-top:10px; padding:14px 10px; border-top:1px solid var(--border-soft);
+  font-family:var(--font-mono); font-size:11px; color:var(--text-faint); line-height:1.6;
+}
+
+.sidebar-backdrop{
+  display:none; position:fixed; inset:0; top:var(--topbar-h);
+  background:rgba(0,0,0,0.5); z-index:140;
+}
+
+/* ============================= MAIN ============================= */
+.main{
+  margin-left:var(--sidebar-w);
+  flex:1; min-width:0;
+  padding:0 0 120px;
+}
+.content{
+  max-width:880px; margin:0 auto; padding:48px 40px 0;
+}
+
+.hero{
+  padding:8px 0 40px; border-bottom:1px solid var(--border-soft); margin-bottom:46px;
+}
+.hero .eyebrow{
+  font-family:var(--font-mono); font-size:12px; color:var(--c2);
+  letter-spacing:1.5px; text-transform:uppercase; margin-bottom:14px;
+  display:flex; align-items:center; gap:8px;
+}
+.hero .eyebrow::before{content:''; width:18px; height:1px; background:var(--c2);}
+.hero h1{
+  font-family:var(--font-display); font-size:clamp(32px,5vw,46px); font-weight:700;
+  line-height:1.15; margin-bottom:18px; letter-spacing:-0.5px;
+}
+.hero h1 .grad{
+  background:linear-gradient(90deg, var(--c1), var(--c2) 35%, var(--c3) 60%, var(--c5));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.hero p.lead{
+  font-size:16.5px; color:var(--text-dim); max-width:640px; margin-bottom:26px;
+}
+.hero-tags{display:flex; flex-wrap:wrap; gap:8px;}
+.tag{
+  font-family:var(--font-mono); font-size:11.5px; padding:5px 11px;
+  border:1px solid var(--border); border-radius:20px; color:var(--text-dim);
+}
+
+/* ============================= CHAPTERS ============================= */
+.chapter{
+  padding-top:26px; margin-top:8px; scroll-margin-top:84px;
+}
+.chapter:not(:first-of-type){border-top:1px solid var(--border-soft); margin-top:54px;}
+.chapter-head{
+  display:flex; align-items:baseline; gap:14px; margin-bottom:8px;
+}
+.chapter-num{
+  font-family:var(--font-mono); font-size:14px; color:var(--text-faint); font-weight:600;
+}
+.chapter h2{
+  font-family:var(--font-display); font-size:28px; font-weight:600; letter-spacing:-0.3px;
+}
+.chapter .chapter-dek{
+  color:var(--text-dim); font-size:15px; margin-bottom:26px; max-width:640px;
+}
+
+.chapter h3{
+  font-family:var(--font-display); font-size:19px; font-weight:600;
+  margin:34px 0 12px; color:var(--text);
+}
+.chapter h4{
+  font-family:var(--font-display); font-size:15.5px; font-weight:600;
+  margin:24px 0 10px; color:var(--text);
+}
+.chapter p{margin-bottom:14px; color:#C7D0DC; font-size:15.2px;}
+.chapter ul, .chapter ol{margin:0 0 16px 22px; color:#C7D0DC; font-size:15.2px;}
+.chapter li{margin-bottom:7px;}
+.chapter strong{color:var(--text); font-weight:600;}
+.chapter em.note{color:var(--text-dim); font-style:italic;}
+
+/* inline complexity badge */
+.bigo{
+  font-family:var(--font-mono); font-weight:600; font-size:0.92em;
+  padding:1.5px 7px; border-radius:5px; white-space:nowrap;
+  border:1px solid transparent;
+}
+.bigo.c1{color:var(--c1); background:rgba(52,211,153,0.1); border-color:rgba(52,211,153,0.25);}
+.bigo.c2{color:var(--c2); background:rgba(96,165,250,0.1); border-color:rgba(96,165,250,0.25);}
+.bigo.c3{color:var(--c3); background:rgba(167,139,250,0.1); border-color:rgba(167,139,250,0.25);}
+.bigo.c4{color:var(--c4); background:rgba(251,191,36,0.1); border-color:rgba(251,191,36,0.25);}
+.bigo.c5{color:var(--c5); background:rgba(248,113,113,0.1); border-color:rgba(248,113,113,0.25);}
+
+/* callouts */
+.callout{
+  display:flex; gap:13px; padding:16px 18px; border-radius:var(--radius);
+  background:var(--panel); border:1px solid var(--border); margin:20px 0;
+  font-size:14.5px; color:#C7D0DC;
+}
+.callout .ic{flex-shrink:0; font-size:17px; line-height:1.5;}
+.callout.tip{border-left:3px solid var(--c1);}
+.callout.warn{border-left:3px solid var(--c4);}
+.callout.danger{border-left:3px solid var(--c5);}
+.callout.info{border-left:3px solid var(--c2);}
+.callout strong{display:block; color:var(--text); margin-bottom:3px; font-size:13px; letter-spacing:0.3px; text-transform:uppercase; font-family:var(--font-mono);}
+
+/* code blocks */
+.code-block{
+  position:relative; margin:18px 0 22px; border-radius:var(--radius);
+  border:1px solid var(--border); background:#0D1119; overflow:hidden;
+}
+.code-block .code-bar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:9px 14px; background:#10141F; border-bottom:1px solid var(--border-soft);
+  font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);
+}
+.code-block .code-bar .lang{letter-spacing:0.5px; text-transform:uppercase;}
+.copy-btn{
+  display:flex; align-items:center; gap:6px;
+  background:transparent; border:1px solid var(--border); color:var(--text-dim);
+  font-family:var(--font-mono); font-size:11px; padding:4px 9px; border-radius:6px;
+  cursor:pointer; transition:all .15s;
+}
+.copy-btn:hover{border-color:#3B4868; color:var(--text);}
+.copy-btn.copied{color:var(--c1); border-color:rgba(52,211,153,0.4);}
+.code-block pre{
+  margin:0; padding:16px 18px; overflow-x:auto;
+  font-family:var(--font-mono); font-size:13px; line-height:1.65;
+}
+.code-block code{font-family:var(--font-mono); white-space:pre;}
+
+.tok-kw{color:var(--code-kw);}
+.tok-str{color:var(--code-str);}
+.tok-num{color:var(--code-num);}
+.tok-com{color:var(--code-com); font-style:italic;}
+.tok-fn{color:var(--code-fn);}
+.tok-txt{color:var(--code-text);}
+
+/* tables */
+.table-wrap{overflow-x:auto; margin:18px 0 24px; border-radius:var(--radius); border:1px solid var(--border);}
+table{width:100%; border-collapse:collapse; font-size:14px; min-width:520px;}
+thead th{
+  text-align:left; font-family:var(--font-mono); font-size:11px; letter-spacing:0.6px;
+  text-transform:uppercase; color:var(--text-faint); padding:11px 16px;
+  background:var(--panel-2); border-bottom:1px solid var(--border);
+}
+tbody td{padding:12px 16px; border-bottom:1px solid var(--border-soft); color:#C7D0DC;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:rgba(255,255,255,0.015);}
+
+/* growth chart (signature element) */
+.chart-card{
+  border:1px solid var(--border); background:var(--panel); border-radius:var(--radius);
+  padding:22px 22px 16px; margin:24px 0;
+}
+.chart-card .chart-title{
+  font-family:var(--font-display); font-size:15px; font-weight:600; margin-bottom:4px;
+}
+.chart-card .chart-sub{font-size:12.5px; color:var(--text-faint); margin-bottom:16px;}
+.chart-legend{display:flex; flex-wrap:wrap; gap:8px 14px; margin-top:14px;}
+.legend-item{
+  display:flex; align-items:center; gap:7px; cursor:pointer; user-select:none;
+  font-family:var(--font-mono); font-size:12px; color:var(--text-dim);
+  padding:4px 9px; border-radius:6px; border:1px solid transparent;
+}
+.legend-item:hover{background:var(--panel-2);}
+.legend-item .dot{width:9px; height:9px; border-radius:50%; flex-shrink:0;}
+.legend-item.off{opacity:0.35;}
+.chart-card svg{width:100%; height:auto; display:block;}
+
+/* comparison grid for complexity classes */
+.class-grid{display:grid; grid-template-columns:1fr; gap:14px; margin:20px 0;}
+.class-card{
+  border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px;
+  background:var(--panel); border-left:3px solid var(--c2);
+}
+.class-card .ch{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;}
+.class-card .ch .name{font-family:var(--font-display); font-weight:600; font-size:16px;}
+.class-card p{margin-bottom:8px; font-size:14px;}
+.class-card .ex{font-size:13px; color:var(--text-faint); font-family:var(--font-mono);}
+
+/* steps / numbered process (legitimate: identification is a real ordered procedure) */
+.steps{counter-reset:step; margin:22px 0;}
+.step{
+  position:relative; padding:4px 0 22px 38px; border-left:1px solid var(--border-soft);
+  margin-left:14px;
+}
+.step:last-child{border-left:1px solid transparent; padding-bottom:0;}
+.step::before{
+  counter-increment:step; content:counter(step);
+  position:absolute; left:-14px; top:0; width:28px; height:28px;
+  background:var(--panel-2); border:1px solid var(--border); border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-mono); font-size:12px; font-weight:600; color:var(--c2);
+}
+.step h4{margin:0 0 6px;}
+.step p{margin-bottom:0;}
+
+/* details / expandable practice problems */
+details.problem{
+  border:1px solid var(--border); border-radius:var(--radius); margin:14px 0; overflow:hidden; background:var(--panel);
+}
+details.problem summary{
+  list-style:none; cursor:pointer; padding:14px 18px; display:flex; align-items:center; gap:12px;
+  font-family:var(--font-display); font-weight:600; font-size:14.5px;
+}
+details.problem summary::-webkit-details-marker{display:none;}
+details.problem summary::before{
+  content:'+'; font-family:var(--font-mono); color:var(--c2); font-size:18px; width:18px; flex-shrink:0;
+}
+details.problem[open] summary::before{content:'–';}
+details.problem .problem-body{padding:0 18px 18px;}
+
+/* footer nav between chapters */
+.chapter-foot{
+  display:flex; justify-content:space-between; gap:16px; margin-top:50px; padding-top:24px;
+  border-top:1px solid var(--border-soft);
+}
+.foot-link{
+  flex:1; padding:14px 16px; border:1px solid var(--border); border-radius:var(--radius);
+  font-size:13px; color:var(--text-dim); transition:border-color .15s, background .15s;
+}
+.foot-link:hover{border-color:#3B4868; background:var(--panel);}
+.foot-link .dir{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:4px;}
+.foot-link.next{text-align:right;}
+
+mark.hl{background:rgba(96,165,250,0.28); color:#fff; border-radius:3px; padding:0 2px;}
+
+/* responsive */
+@media(max-width:980px){
+  :root{--sidebar-w:280px;}
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0); box-shadow:8px 0 30px rgba(0,0,0,0.4);}
+  .main{margin-left:0;}
+  .topbar .menu-btn{display:flex;}
+  .sidebar-backdrop.show{display:block;}
+}
+@media(max-width:600px){
+  .content{padding:36px 18px 0;}
+  .topbar-search{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="menu-btn" id="menuBtn" aria-label="Toggle navigation">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <div class="brand">
+    <div class="brand-mark">O</div>
+    <div>
+      <div>Complexity Reference</div>
+      <div class="sub">Time &amp; Space · Big-O</div>
+    </div>
+  </div>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-progress" id="progressLabel">Chapter 1 of 15</div>
+  <div class="topbar-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="Search this guide…">
+  </div>
+</div>
+
+<div class="sidebar-backdrop" id="backdrop"></div>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Foundations</div>
+      <div class="nav-item" data-target="ch1"><span class="nav-num">01</span><span>Why Complexity Analysis Matters</span></div>
+      <div class="nav-item" data-target="ch2"><span class="nav-num">02</span><span>Asymptotic Notation</span></div>
+      <div class="nav-item" data-target="ch3"><span class="nav-num">03</span><span>Counting Operations</span></div>
+      <div class="nav-item" data-target="ch4"><span class="nav-num">04</span><span>Rules for Calculating Complexity</span></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">The Complexity Classes</div>
+      <div class="nav-item" data-target="ch5"><span class="nav-num">05</span><span>The Big-O Catalog &amp; Growth Chart</span></div>
+      <div class="nav-item" data-target="ch6"><span class="nav-num">06</span><span>Analyzing Loops in Detail</span></div>
+      <div class="nav-item" data-target="ch7"><span class="nav-num">07</span><span>Recursion &amp; Recurrence Relations</span></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Space &amp; Case Analysis</div>
+      <div class="nav-item" data-target="ch8"><span class="nav-num">08</span><span>Space Complexity in Detail</span></div>
+      <div class="nav-item" data-target="ch9"><span class="nav-num">09</span><span>Best, Worst &amp; Average Case</span></div>
+      <div class="nav-item" data-target="ch10"><span class="nav-num">10</span><span>Amortized Analysis</span></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Applied Reference</div>
+      <div class="nav-item" data-target="ch11"><span class="nav-num">11</span><span>Data Structures Cheat Sheet</span></div>
+      <div class="nav-item" data-target="ch12"><span class="nav-num">12</span><span>Algorithms Cheat Sheet</span></div>
+      <div class="nav-item" data-target="ch13"><span class="nav-num">13</span><span>How to Identify Complexity Fast</span></div>
+      <div class="nav-item" data-target="ch14"><span class="nav-num">14</span><span>Common Mistakes &amp; Tricky Cases</span></div>
+      <div class="nav-item" data-target="ch15"><span class="nav-num">15</span><span>Practice Problems</span></div>
+    </div>
+    <div class="sidebar-footer">
+      Self-contained reference · no external dependencies except fonts<br>
+      Built for deep, self-paced study
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="content">
+
+      <div class="hero">
+        <div class="eyebrow">Algorithm Analysis</div>
+        <h1>Time &amp; Space <span class="grad">Complexity</span>, end to end</h1>
+        <p class="lead">A complete, practical reference for understanding how to measure, calculate, and identify the time and space complexity of any algorithm — from counting operations by hand to recognizing patterns instantly.</p>
+        <div class="hero-tags">
+          <span class="tag">Big-O / Big-Ω / Big-Θ</span>
+          <span class="tag">Loops &amp; Recursion</span>
+          <span class="tag">Master Theorem</span>
+          <span class="tag">Amortized Analysis</span>
+          <span class="tag">Cheat Sheets</span>
+          <span class="tag">Worked Problems</span>
+        </div>
+      </div>
+
+      <section class="chapter" id="ch1">
+        <div class="chapter-head"><span class="chapter-num">01</span><h2>Why Complexity Analysis Matters</h2></div>
+        <p class="chapter-dek">Before learning how to calculate complexity, it helps to understand exactly what question it answers — and why "just run it and see" isn't good enough.</p>
+
+        <p>Every algorithm makes a promise: give me an input, and I'll produce an output. <strong>Complexity analysis answers a different question</strong> — not "what does it output," but "what does it <em>cost</em> to get there, and how does that cost change as the input grows?"</p>
+
+        <p>There are two costs we almost always care about:</p>
+        <ul>
+          <li><strong>Time complexity</strong> — how the number of basic operations grows as input size <code class="tok-fn" style="background:none;">n</code> grows.</li>
+          <li><strong>Space complexity</strong> — how the amount of extra memory used grows as <code>n</code> grows.</li>
+        </ul>
+
+        <h3>Why not just measure runtime in seconds?</h3>
+        <p>You could run an algorithm and time it with a stopwatch — but that number is almost useless for comparing algorithms, because it depends on:</p>
+        <ul>
+          <li>The speed of the specific CPU it ran on</li>
+          <li>The programming language and its runtime overhead</li>
+          <li>What else was running on the machine at the time</li>
+          <li>Compiler/interpreter optimizations</li>
+          <li>The exact input used, not the general behavior across all inputs</li>
+        </ul>
+        <p>None of these tell you anything fundamental about the <em>algorithm itself</em>. Complexity analysis strips all of that away and asks a hardware-independent question: <strong>as the input gets larger and larger, how does the workload scale?</strong></p>
+
+        <div class="callout info">
+          <div class="ic">💡</div>
+          <div><strong>The core idea</strong> Two algorithms solving the same problem can both be "correct," but one might take milliseconds and the other might take longer than the universe has existed once <code>n</code> gets large enough. Complexity analysis is how you predict which is which <em>before</em> you run anything.</div>
+        </div>
+
+        <h3>A concrete example</h3>
+        <p>Suppose you need to check whether a list contains duplicate values. Two approaches:</p>
+
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python"># Approach A — compare every pair
+def has_duplicate_A(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in range(i + 1, n):
+            if arr[i] == arr[j]:
+                return True
+    return False
+
+# Approach B — use a set to remember what we've seen
+def has_duplicate_B(arr):
+    seen = set()
+    for x in arr:
+        if x in seen:
+            return True
+        seen.add(x)
+    return False</code></pre>
+        </div>
+
+        <p>Approach A is <span class="bigo c4">O(n²)</span> — for every element, it scans nearly the whole rest of the list. Approach B is <span class="bigo c2">O(n)</span> — it looks at each element exactly once. For a list of 1,000 items, that's roughly <strong>1,000,000 comparisons</strong> versus <strong>1,000 lookups</strong>. At 1,000,000 items, it's <strong>10¹²</strong> operations versus <strong>10⁶</strong> — the difference between a program that finishes instantly and one that doesn't finish in a reasonable lifetime.</p>
+
+        <p>This is the entire reason complexity analysis exists: <strong>it lets you see this gap before you write or run a single line of production code, just by reasoning about the algorithm's structure.</strong></p>
+
+        <h3>What this guide covers</h3>
+        <p>We'll build up from first principles — counting operations by hand — to formal notation, then to a repeatable set of rules for analyzing loops, recursion, and data structure operations, and finally to a fast pattern-recognition checklist you can apply to almost any code you see.</p>
+
+        <div class="chapter-foot">
+          <div class="foot-link next" data-target="ch2"><div class="dir">Next →</div>Asymptotic Notation: Big-O, Big-Ω, Big-Θ</div>
+        </div>
+      </section>
+
+      <section class="chapter" id="ch2">
+        <div class="chapter-head"><span class="chapter-num">02</span><h2>Asymptotic Notation</h2></div>
+        <p class="chapter-dek">Big-O, Big-Omega, and Big-Theta are the formal language for describing growth. Here's precisely what each one means — and why Big-O gets used so much more often than the others.</p>
+
+        <p>"Asymptotic" means <strong>as the input size approaches infinity</strong>. We're not interested in exact operation counts (those depend on hardware and constants) — we're interested in the <em>shape</em> of the growth curve as <code>n</code> gets arbitrarily large.</p>
+
+        <h3>Big-O notation — O(f(n)): the upper bound</h3>
+        <p>Big-O describes the <strong>worst-case growth rate</strong> — an upper bound on how fast the runtime (or space) can grow. Formally:</p>
+        <div class="callout info">
+          <div class="ic">∑</div>
+          <div><strong>Definition</strong> T(n) = O(f(n)) if there exist positive constants <code>c</code> and <code>n₀</code> such that T(n) ≤ c·f(n) for all n ≥ n₀.</div>
+        </div>
+        <p>In plain language: <em>"once n is big enough, T(n) never grows faster than some constant multiple of f(n)."</em> Big-O gives you a guarantee — your algorithm will <strong>never be worse</strong> than this bound, no matter how the input is arranged.</p>
+        <p>This is why Big-O dominates everyday usage: engineers care most about the worst case, because that's the scenario you must be prepared for.</p>
+
+        <h3>Big-Omega notation — Ω(f(n)): the lower bound</h3>
+        <div class="callout info">
+          <div class="ic">∑</div>
+          <div><strong>Definition</strong> T(n) = Ω(f(n)) if there exist positive constants <code>c</code> and <code>n₀</code> such that T(n) ≥ c·f(n) for all n ≥ n₀.</div>
+        </div>
+        <p>Big-Omega is the mirror image of Big-O — it describes a <strong>best-case</strong> floor. For example, any comparison-based sort must examine each element at least once, so comparison sorts are <span class="bigo c2">Ω(n)</span> at minimum.</p>
+
+        <h3>Big-Theta notation — Θ(f(n)): the tight bound</h3>
+        <div class="callout info">
+          <div class="ic">∑</div>
+          <div><strong>Definition</strong> T(n) = Θ(f(n)) if T(n) = O(f(n)) <em>and</em> T(n) = Ω(f(n)) — the upper and lower bounds match.</div>
+        </div>
+        <p>Theta means the algorithm's growth is <strong>exactly</strong> f(n) (up to constant factors) in all cases — not just bounded above, but pinned down precisely. When people say "this algorithm runs in O(n log n)" they often technically mean Θ(n log n) — the bound is tight, not just an upper limit.</p>
+
+        <h3>Little-o and little-omega (a quick mention)</h3>
+        <p>These describe <strong>strict</strong> (non-tight) bounds — <code>o(f(n))</code> means strictly slower-growing than f(n), with no constant making them equal. You'll see these far less often in practice; Big-O, Big-Ω, and Big-Θ cover the vast majority of real analysis.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Notation</th><th>Bound type</th><th>Plain meaning</th><th>Typical use</th></tr></thead>
+            <tbody>
+              <tr><td><span class="bigo c2">O(f(n))</span></td><td>Upper bound</td><td>"Never slower than this"</td><td>Worst-case guarantees (most common)</td></tr>
+              <tr><td><span class="bigo c1">Ω(f(n))</span></td><td>Lower bound</td><td>"Never faster than this"</td><td>Best-case / proving a problem's floor</td></tr>
+              <tr><td><span class="bigo c3">Θ(f(n))</span></td><td>Tight bound</td><td>"Grows exactly like this"</td><td>Precise characterization</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Why we drop constants and lower-order terms</h3>
+        <p>Say an algorithm does exactly <code>3n² + 5n + 12</code> operations. As <code>n → ∞</code>, the <code>n²</code> term completely dominates — at n = 1,000,000 it contributes 3,000,000,000,000 while the <code>5n</code> term contributes a comparatively tiny 5,000,000. So we simplify:</p>
+        <ul>
+          <li><strong>Drop constants:</strong> <code>3n²</code> becomes <code>n²</code> — the constant factor doesn't change the growth <em>shape</em>, only the steepness.</li>
+          <li><strong>Drop lower-order terms:</strong> <code>n² + n</code> becomes <code>n²</code> — for large n, the smaller term becomes negligible.</li>
+          <li><strong>Keep the dominant term:</strong> whichever term grows fastest is what survives in the final Big-O.</li>
+        </ul>
+
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Simplification examples</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="text">5n³ + 100n² + 3n + 7        →   O(n³)
+2^n + n^100                  →   O(2^n)      (exponential beats any polynomial)
+n log n + n                  →   O(n log n)
+0.0001 * n²                  →   O(n²)       (the tiny constant still loses to n eventually)
+100000                       →   O(1)        (constant — doesn't depend on n at all)</code></pre>
+        </div>
+
+        <div class="callout warn">
+          <div class="ic">⚠</div>
+          <div><strong>Common misconception</strong> Big-O does <em>not</em> mean "worst case" by definition — it means "upper bound." But because engineers almost always state the upper bound <em>of the worst case scenario</em>, "Big-O" and "worst case" have become casually synonymous in everyday conversation. Technically you can have a Big-O for best case or average case too — it just describes which scenario you're bounding.</div>
+        </div>
+
+        <div class="chapter-foot">
+          <div class="foot-link" data-target="ch1"><div class="dir">← Previous</div>Why Complexity Analysis Matters</div>
+          <div class="foot-link next" data-target="ch3"><div class="dir">Next →</div>Counting Operations</div>
+        </div>
+      </section>
+
+      <section class="chapter" id="ch3">
+        <div class="chapter-head"><span class="chapter-num">03</span><h2>Counting Operations — The Foundation</h2></div>
+        <p class="chapter-dek">Before you can spot patterns instantly, you need to be able to do it the slow way: line by line, counting exactly what happens.</p>
+
+        <p>At its core, finding time complexity means answering: <strong>"as a function of input size n, how many basic operations does this code perform?"</strong> A basic operation is anything that takes constant time regardless of input size — an addition, a comparison, an assignment, an array index lookup.</p>
+
+        <h3>Step-by-step: counting by hand</h3>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">def example(arr):
+    total = 0                  # 1 operation
+    n = len(arr)                # 1 operation
+
+    for i in range(n):          # loop runs n times
+        total += arr[i]         # 1 operation, runs n times → n operations
+
+    if total &gt; 0:                # 1 operation
+        return total
+    return 0</code></pre>
+        </div>
+        <p>Adding it up: <code>1 + 1 + n + 1</code> = <code>n + 3</code>. As a Big-O bound, we drop the constant <code>3</code> (it doesn't scale with <code>n</code>), leaving <span class="bigo c2">O(n)</span>.</p>
+
+        <h3>The key insight: only growth matters</h3>
+        <p>Whether the function does <code>n + 3</code> operations or <code>n + 3000</code> operations, both are <span class="bigo c2">O(n)</span> — because as <code>n</code> approaches infinity, that constant becomes irrelevant to the <em>shape</em> of the curve. This is precisely why Big-O is useful: it lets you ignore implementation noise and focus on structural growth.</p>
+
+        <h3>What counts as "n"?</h3>
+        <p>This sounds obvious but trips people up constantly. <code>n</code> is whatever variable represents the size of the input that's actually driving the work. Be careful when there are multiple inputs:</p>
+
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">def combine(list_a, list_b):
+    for x in list_a:        # runs len(list_a) times
+        print(x)
+    for y in list_b:        # runs len(list_b) times
+        print(y)</code></pre>
+        </div>
+        <p>This is <strong>not</strong> O(n) for a single n — it's <span class="bigo c2">O(a + b)</span> where <code>a = len(list_a)</code> and <code>b = len(list_b)</code>. Collapsing two independent input sizes into one variable is a common analysis mistake (more on this in Chapter 14).</p>
+
+        <h3>A practical shortcut: count the loop iterations</h3>
+        <p>You rarely need to count every single statement. In practice, find the operations that are <strong>inside the deepest, most-repeated part of the code</strong>, count how many times that part executes as a function of <code>n</code>, and that's your dominant term.</p>
+
+        <div class="steps">
+          <div class="step">
+            <h4>Identify what's inside loops vs. outside loops</h4>
+            <p>Code outside any loop runs once — it contributes a constant, which gets dropped. Code's true cost lives inside its loops and recursive calls.</p>
+          </div>
+          <div class="step">
+            <h4>Count how many times each loop body executes</h4>
+            <p>A single loop from 0 to n runs n times. A nested loop multiplies the iteration counts of each level.</p>
+          </div>
+          <div class="step">
+            <h4>Multiply nested costs, add sequential costs</h4>
+            <p>Two loops nested inside each other → multiply their bounds. Two loops one after another → add their bounds (then keep only the larger, since Big-O keeps the dominant term).</p>
+          </div>
+          <div class="step">
+            <h4>Express the total as a function of n, then simplify</h4>
+            <p>Drop constants and lower-order terms to get the final Big-O class.</p>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <div class="ic">✓</div>
+          <div><strong>Practical habit</strong> When reading unfamiliar code, scan for loops and recursive calls first — that's almost always where the complexity "lives." Straight-line code (no loops, no recursion) is always O(1) relative to input size, no matter how many lines it has.</div>
+        </div>
+
+        <div class="chapter-foot">
+          <div class="foot-link" data-target="ch2"><div class="dir">← Previous</div>Asymptotic Notation</div>
+          <div class="foot-link next" data-target="ch4"><div class="dir">Next →</div>Rules for Calculating Complexity</div>
+        </div>
+      </section>
+
+      <section class="chapter" id="ch4">
+        <div class="chapter-head"><span class="chapter-num">04</span><h2>Rules for Calculating Time Complexity</h2></div>
+        <p class="chapter-dek">A small set of combination rules covers almost every piece of code you'll ever analyze. Learn these once, apply them everywhere.</p>
+
+        <h3>Rule 1 — Sequential statements: add them</h3>
+        <p>When operations happen one after another (not nested), their costs <strong>add</strong>. Big-O then keeps only the largest term.</p>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">def f(arr):
+    for x in arr: print(x)        # O(n)
+    for x in arr:
+        for y in arr: print(x, y) # O(n^2)
+    print("done")                  # O(1)
+
+# total: O(n) + O(n^2) + O(1)  →  O(n^2)  (the n^2 term dominates)</code></pre>
+        </div>
+
+        <h3>Rule 2 — Nested loops: multiply them</h3>
+        <p>When one loop runs inside another, multiply their iteration counts. This is the single most important rule for spotting <span class="bigo c4">O(n²)</span> and worse.</p>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">def f(arr):
+    n = len(arr)
+    for i in range(n):        # runs n times
+        for j in range(n):    # runs n times, for EACH i
+            print(arr[i], arr[j])
+# total iterations: n * n = n^2  →  O(n^2)</code></pre>
+        </div>
+        <p>Three nested loops over the same n → <span class="bigo c4">O(n³)</span>, and so on. Each additional independent nesting level multiplies in another factor of n.</p>
+
+        <h3>Rule 3 — Conditionals: take the worst branch</h3>
+        <p>For an <code>if/else</code>, Big-O (the upper bound) takes whichever branch costs more, since that branch could execute.</p>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">def f(arr, target):
+    if target in arr:        # O(n) membership check
+        return "found"        # O(1)
+    else:
+        for x in arr:          # O(n)
+            process(x)
+# worst case across branches → O(n)</code></pre>
+        </div>
+
+        <h3>Rule 4 — Drop constants</h3>
+        <p>Whether a loop runs <code>n</code> times or you run the same <code>O(n)</code> loop five separate times in a row (<code>5n</code> total), it's still <span class="bigo c2">O(n)</span>. The constant factor matters for real-world performance tuning, but not for the asymptotic class.</p>
+
+        <h3>Rule 5 — Drop non-dominant terms</h3>
+        <p><code>O(n² + n)</code> simplifies to <span class="bigo c4">O(n²)</span> because for large n, the n² term overwhelms the n term. Always keep only the fastest-growing term.</p>
+
+        <h3>Rule 6 — Different input variables stay separate</h3>
+        <p>As shown in Chapter 3, don't collapse two unrelated inputs into a single n. <code>O(n·m)</code> for nested loops over two different-sized collections is not the same as <code>O(n²)</code> unless you know <code>n = m</code>.</p>
+
+        <h3>Rule 7 — Function calls: substitute their own complexity</h3>
+        <p>If a loop body calls a function, you must account for <em>that function's own complexity</em>, not just treat the call as O(1).</p>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">def contains(arr, val):        # O(n) — linear scan
+    return val in arr
+
+def f(arr):
+    for x in arr:                # runs n times
+        contains(arr, x)          # each call is O(n)
+# total: n calls * O(n) per call = O(n^2), NOT O(n)</code></pre>
+        </div>
+        <p>This is one of the most common real-world mistakes — calling a built-in like <code>in</code>, <code>.sort()</code>, <code>.index()</code>, or <code>list.copy()</code> inside a loop silently turns an O(n) loop into something far worse, because each call itself costs more than O(1).</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Code pattern</th><th>Combination rule</th><th>Resulting growth</th></tr></thead>
+            <tbody>
+              <tr><td>Statement A; then statement B</td><td>Add: O(A) + O(B)</td><td>Keep the larger</td></tr>
+              <tr><td>Loop A containing loop B</td><td>Multiply: O(A) × O(B)</td><td>Compounds</td></tr>
+              <tr><td>if (cost X) else (cost Y)</td><td>Worst case: max(X, Y)</td><td>Take the larger branch</td></tr>
+              <tr><td>Loop calling an O(f(n)) function n times</td><td>Multiply: n × O(f(n))</td><td>Don't assume calls are O(1)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout tip">
+          <div class="ic">✓</div>
+          <div><strong>The 90% rule</strong> Almost every analysis you'll do boils down to: find the loops, find their depth of nesting, find what each loop body actually costs (including any function calls), then add/multiply according to the rules above. The remaining chapters mostly add nuance to this core process.</div>
+        </div>
+
+        <div class="chapter-foot">
+          <div class="foot-link" data-target="ch3"><div class="dir">← Previous</div>Counting Operations</div>
+          <div class="foot-link next" data-target="ch5"><div class="dir">Next →</div>The Big-O Catalog &amp; Growth Chart</div>
+        </div>
+      </section>
+
+      <section class="chapter" id="ch5">
+        <div class="chapter-head"><span class="chapter-num">05</span><h2>The Big-O Catalog &amp; Growth Chart</h2></div>
+        <p class="chapter-dek">Every algorithm you'll encounter falls into one of a small number of growth families. Knowing their shapes — and how dramatically they diverge — is what makes complexity intuitive instead of abstract.</p>
+
+        <div class="chart-card">
+          <div class="chart-title">How the complexity classes diverge as n grows</div>
+          <div class="chart-sub">Y-axis is logarithmic (each gridline is 1000× the one below) — on a normal scale, O(2ⁿ) and O(n!) would shoot off the page within a few steps. Click a legend item to toggle a curve.</div>
+          <svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg">
+            <!-- gridlines -->
+            <g stroke="#1A2232" stroke-width="1">
+              <line x1="50" y1="270" x2="730" y2="270"/>
+              <line x1="50" y1="207.5" x2="730" y2="207.5"/>
+              <line x1="50" y1="145.1" x2="730" y2="145.1"/>
+              <line x1="50" y1="82.7" x2="730" y2="82.7"/>
+              <line x1="50" y1="20.2" x2="730" y2="20.2"/>
+            </g>
+            <g font-family="JetBrains Mono" font-size="10" fill="#5B6577">
+              <text x="44" y="273" text-anchor="end">10⁰</text>
+              <text x="44" y="210.5" text-anchor="end">10³</text>
+              <text x="44" y="148.1" text-anchor="end">10⁶</text>
+              <text x="44" y="85.7" text-anchor="end">10⁹</text>
+              <text x="44" y="23.2" text-anchor="end">10¹²</text>
+              <text x="50" y="290" text-anchor="middle">n=1</text>
+              <text x="244" y="290" text-anchor="middle">n=5</text>
+              <text x="487" y="290" text-anchor="middle">n=10</text>
+              <text x="730" y="290" text-anchor="middle">n=15</text>
+            </g>
+            <line x1="50" y1="18" x2="50" y2="270" stroke="#1A2232" stroke-width="1"/>
+
+            <!-- curves -->
+            <polyline data-curve="c1a" points="50.0,263.7 98.6,263.7 147.1,263.7 195.7,263.7 244.3,263.7 292.9,263.7 341.4,263.7 390.0,263.7 438.6,263.7 487.1,263.7 535.7,263.7 584.3,263.7 632.9,263.7 681.4,263.7 730.0,263.7" fill="none" stroke="#34D399" stroke-width="2.5"/>
+            <polyline data-curve="c1b" points="50.0,270.0 98.6,263.7 147.1,261.4 195.7,260.1 244.3,259.2 292.9,258.5 341.4,257.9 390.0,257.5 438.6,257.1 487.1,256.8 535.7,256.5 584.3,256.2 632.9,256.0 681.4,255.8 730.0,255.6" fill="none" stroke="#34D399" stroke-width="2.5" stroke-dasharray="5,4"/>
+            <polyline data-curve="c2" points="50.0,263.7 98.6,260.1 147.1,257.5 195.7,255.5 244.3,253.8 292.9,252.4 341.4,251.2 390.0,250.2 438.6,249.2 487.1,248.3 535.7,247.6 584.3,246.8 632.9,246.2 681.4,245.5 730.0,245.0" fill="none" stroke="#60A5FA" stroke-width="2.5"/>
+            <polyline data-curve="c3" points="50.0,263.7 98.6,260.1 147.1,254.2 195.7,250.2 244.3,247.1 292.9,244.7 341.4,242.7 390.0,240.9 438.6,239.4 487.1,238.1 535.7,236.9 584.3,235.8 632.9,234.8 681.4,233.9 730.0,233.1" fill="none" stroke="#A78BFA" stroke-width="2.5"/>
+            <polyline data-curve="c4" points="50.0,263.7 98.6,255.5 147.1,249.2 195.7,244.4 244.3,240.6 292.9,237.4 341.4,234.7 390.0,232.3 438.6,230.2 487.1,228.3 535.7,226.6 584.3,225.0 632.9,223.6 681.4,222.3 730.0,221.0" fill="none" stroke="#FBBF24" stroke-width="2.5"/>
+            <polyline data-curve="c5a" points="50.0,260.1 98.6,255.5 147.1,250.2 195.7,244.4 244.3,238.4 292.9,232.3 341.4,226.1 390.0,219.9 438.6,213.6 487.1,207.4 535.7,201.1 584.3,194.9 632.9,188.6 681.4,182.3 730.0,176.1" fill="none" stroke="#F87171" stroke-width="2.5" stroke-dasharray="5,4"/>
+            <polyline data-curve="c5b" points="50.0,263.7 98.6,260.1 147.1,252.4 195.7,240.9 244.3,226.7 292.9,210.6 341.4,193.0 390.0,174.2 438.6,154.4 487.1,133.6 535.7,111.9 584.3,89.5 632.9,66.3 681.4,42.5 730.0,18.0" fill="none" stroke="#F87171" stroke-width="2.5"/>
+          </svg>
+          <div class="chart-legend">
+            <div class="legend-item" data-curve="c1a"><span class="dot" style="background:var(--c1)"></span>O(1)</div>
+            <div class="legend-item" data-curve="c1b"><span class="dot" style="background:var(--c1)"></span>O(log n)</div>
+            <div class="legend-item" data-curve="c2"><span class="dot" style="background:var(--c2)"></span>O(n)</div>
+            <div class="legend-item" data-curve="c3"><span class="dot" style="background:var(--c3)"></span>O(n log n)</div>
+            <div class="legend-item" data-curve="c4"><span class="dot" style="background:var(--c4)"></span>O(n²)</div>
+            <div class="legend-item" data-curve="c5a"><span class="dot" style="background:var(--c5)"></span>O(2ⁿ)</div>
+            <div class="legend-item" data-curve="c5b"><span class="dot" style="background:var(--c5)"></span>O(n!)</div>
+          </div>
+        </div>
+
+        <p>Notice how O(1) and O(log n) stay flat near the bottom no matter how large n gets, while O(n!) rockets past every other curve before n even reaches 15. <strong>This is the entire reason engineers obsess over complexity class</strong> — at small n, the difference is academic; at real-world scale, it's the difference between "instant" and "impossible."</p>
+
+        <h3>The catalog, from best to worst</h3>
+        <div class="class-grid">
+
+          <div class="class-card" style="border-left-color:var(--c1)">
+            <div class="ch"><span class="name">O(1) — Constant</span><span class="bigo c1">excellent</span></div>
+            <p>Runtime doesn't depend on input size at all — one operation, or a fixed number of operations, regardless of how large <code>n</code> gets.</p>
+            <p class="ex">Examples: array index access <code>arr[5]</code>, hash table insert/lookup (average case), push/pop on a stack, checking if a number is even.</p>
+          </div>
+
+          <div class="class-card" style="border-left-color:var(--c1)">
+            <div class="ch"><span class="name">O(log n) — Logarithmic</span><span class="bigo c1">excellent</span></div>
+            <p>Runtime grows very slowly — each step eliminates a large fraction (usually half) of the remaining problem. Doubling <code>n</code> only adds <em>one</em> more step.</p>
+            <p class="ex">Examples: binary search, balanced binary search tree operations, finding an element's depth in a balanced tree.</p>
+          </div>
+
+          <div class="class-card" style="border-left-color:var(--c2)">
+            <div class="ch"><span class="name">O(n) — Linear</span><span class="bigo c2">good</span></div>
+            <p>Runtime grows proportionally with input size — double the input, double the work. Every element gets touched roughly once.</p>
+            <p class="ex">Examples: linear search, traversing an array or linked list once, finding the max/min of an unsorted list.</p>
+          </div>
+
+          <div class="class-card" style="border-left-color:var(--c3)">
+            <div class="ch"><span class="name">O(n log n) — Linearithmic</span><span class="bigo c3">decent</span></div>
+            <p>The signature of "divide, solve, then combine" algorithms — break the problem in half repeatedly (the <code>log n</code> part), but still touch every element at each level (the <code>n</code> part).</p>
+            <p class="ex">Examples: merge sort, heap sort, quicksort (average case), any algorithm with a sort as its bottleneck step.</p>
+          </div>
+
+          <div class="class-card" style="border-left-color:var(--c4)">
+            <div class="ch"><span class="name">O(n²) — Quadratic</span><span class="bigo c4">caution</span></div>
+            <p>Every element is compared or combined with every other element. Doubling the input <strong>quadruples</strong> the work. Becomes painful past roughly 10,000–100,000 elements.</p>
+            <p class="ex">Examples: bubble sort, insertion sort, selection sort, naive duplicate detection, comparing all pairs in a list.</p>
+          </div>
+
+          <div class="class-card" style="border-left-color:var(--c4)">
+            <div class="ch"><span class="name">O(n^k) — Polynomial</span><span class="bigo c4">caution</span></div>
+            <p>The general family that O(n²) and O(n³) belong to — k nested loops over n produce O(nᵏ). Usually only tractable for small k and moderate n.</p>
+            <p class="ex">Examples: O(n³) naive matrix multiplication, triple-nested-loop brute-force algorithms.</p>
+          </div>
+
+          <div class="class-card" style="border-left-color:var(--c5)">
+            <div class="ch"><span class="name">O(2ⁿ) — Exponential</span><span class="bigo c5">bad</span></div>
+            <p>Each additional input element <strong>doubles</strong> the total work. Becomes impractical past roughly n = 30–40, even on fast hardware.</p>
+            <p class="ex">Examples: naive recursive Fibonacci, generating every subset of a set, brute-force solving the traveling salesman problem.</p>
+          </div>
+
+          <div class="class-card" style="border-left-color:var(--c5)">
+            <div class="ch"><span class="name">O(n!) — Factorial</span><span class="bigo c5">catastrophic</span></div>
+            <p>Considering every possible ordering or permutation of the input. Becomes unusable past roughly n = 12–15.</p>
+            <p class="ex">Examples: generating every permutation of a list, brute-force traveling salesman by trying every route.</p>
+          </div>
+
+        </div>
+
+        <div class="callout warn">
+          <div class="ic">⚠</div>
+          <div><strong>Sense of scale</strong> For n = 20: O(n) ≈ 20 operations, O(n²) ≈ 400, O(n log n) ≈ 86, O(2ⁿ) ≈ 1,048,576, and O(n!) ≈ 2,432,902,008,176,640,000. The jump from polynomial to exponential/factorial isn't a gentle increase — it's a different universe of cost.</div>
+        </div>
+
+        <div class="chapter-foot">
+          <div class="foot-link" data-target="ch4"><div class="dir">← Previous</div>Rules for Calculating Complexity</div>
+          <div class="foot-link next" data-target="ch6"><div class="dir">Next →</div>Analyzing Loops in Detail</div>
+        </div>
+      </section>
+
+      <section class="chapter" id="ch6">
+        <div class="chapter-head"><span class="chapter-num">06</span><h2>Analyzing Loops in Detail</h2></div>
+        <p class="chapter-dek">Loops are where most real-world complexity lives. Here's how to handle every shape of loop you'll run into — including the tricky ones that don't look like simple O(n) or O(n²) at first glance.</p>
+
+        <h3>Single loops</h3>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">for i in range(n):
+    do_something(i)   # O(1) per call
+# n iterations, O(1) each → O(n)</code></pre>
+        </div>
+        <p>Straightforward: a loop that runs <code>n</code> times with constant work per iteration is <span class="bigo c2">O(n)</span>.</p>
+
+        <h3>Loops with non-unit steps</h3>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">for i in range(0, n, 2):     # step of 2 → n/2 iterations
+    do_something(i)
+# still O(n) — the constant factor (1/2) gets dropped</code></pre>
+        </div>
+        <p>Stepping by a fixed amount (2, 3, 10...) only changes the constant factor, not the growth class. Still <span class="bigo c2">O(n)</span>.</p>
+
+        <h3>Loops that multiply or divide the counter — logarithmic</h3>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">i = 1
+while i &lt; n:
+    do_something(i)
+    i *= 2          # doubling each time
+# how many times can you double 1 before passing n? log2(n) times
+# → O(log n)</code></pre>
+        </div>
+        <p>This is the telltale signature of <span class="bigo c1">O(log n)</span>: the loop variable grows (or shrinks) <strong>multiplicatively</strong> rather than additively. Binary search uses the inverse pattern — halving a search range each step.</p>
+
+        <h3>Nested loops with the same bound — quadratic</h3>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">for i in range(n):
+    for j in range(n):
+        do_something(i, j)
+# n * n → O(n^2)</code></pre>
+        </div>
+
+        <h3>Nested loops with a dependent (triangular) bound</h3>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">for i in range(n):
+    for j in range(i, n):      # inner bound depends on i
+        do_something(i, j)</code></pre>
+        </div>
+        <p>This one trips people up: the inner loop doesn't run <code>n</code> times every time — when <code>i=0</code> it runs <code>n</code> times, when <code>i=1</code> it runs <code>n-1</code> times, and so on down to 1. Total iterations:</p>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Math</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="text">n + (n-1) + (n-2) + ... + 1  =  n(n+1)/2  =  O(n^2)</code></pre>
+        </div>
+        <p>Even though each inner loop is "shorter" than n, the <strong>sum of a triangular series is still quadratic</strong> — the constant factor (½) gets dropped, but the n² growth class survives. This pattern shows up constantly: comparing every pair without duplicates, bubble sort's optimized version, etc.</p>
+
+        <h3>Nested loops over independent collections</h3>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">for x in list_a:        # length n
+    for y in list_b:     # length m
+        compare(x, y)
+# O(n * m) — keep them separate unless you know n == m</code></pre>
+        </div>
+
+        <h3>Sequential (back-to-back) loops</h3>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">for i in range(n):
+    step_one(i)        # O(n)
+for i in range(n):
+    for j in range(n):
+        step_two(i, j)  # O(n^2)
+# O(n) + O(n^2) → O(n^2), the larger term dominates</code></pre>
+        </div>
+
+        <h3>A loop combined with a logarithmic inner loop — linearithmic</h3>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">for i in range(n):       # n iterations
+    j = 1
+    while j &lt; n:           # log n iterations
+        j *= 2
+        process(i, j)
+# n * log(n) → O(n log n)</code></pre>
+        </div>
+        <p>This is exactly how merge sort behaves conceptually: an outer pass over all <code>n</code> elements at <code>log n</code> levels of division.</p>
+
+        <h3>A loop that breaks early</h3>
+        <div class="callout info">
+          <div class="ic">💡</div>
+          <div><strong>Early exits affect best/average case, not worst case</strong> A loop with a <code>break</code> or early <code>return</code> can finish faster on some inputs — but for Big-O (the worst-case upper bound), you still assume the loop might run all the way to completion, unless you have a specific guarantee otherwise. See Chapter 9 for how to separate best/worst/average case properly.</div>
+        </div>
+
+        <div class="chapter-foot">
+          <div class="foot-link" data-target="ch5"><div class="dir">← Previous</div>The Big-O Catalog &amp; Growth Chart</div>
+          <div class="foot-link next" data-target="ch7"><div class="dir">Next →</div>Recursion &amp; Recurrence Relations</div>
+        </div>
+      </section>
+
+      <section class="chapter" id="ch7">
+        <div class="chapter-head"><span class="chapter-num">07</span><h2>Recursion &amp; Recurrence Relations</h2></div>
+        <p class="chapter-dek">Recursive functions can't be analyzed by simply counting loop iterations — you need to express their cost as a recurrence relation, then solve it. Here are the three standard methods.</p>
+
+        <h3>Step 1 — write the recurrence relation</h3>
+        <p>A recurrence relation expresses the cost of solving a problem of size <code>n</code> in terms of the cost of solving smaller subproblems. The general form is:</p>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Form</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="text">T(n) = a * T(n / b) + f(n)
+
+a    = how many recursive calls are made per level
+n/b  = the size of each subproblem (input shrinks by factor b)
+f(n) = the cost of the work done outside the recursive calls
+       (combining results, splitting the input, etc.)</code></pre>
+        </div>
+
+        <p>Let's derive this for a few familiar algorithms:</p>
+
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python — Binary Search</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">def binary_search(arr, lo, hi, target):
+    if lo &gt; hi:
+        return -1
+    mid = (lo + hi) // 2
+    if arr[mid] == target:
+        return mid
+    elif arr[mid] &lt; target:
+        return binary_search(arr, mid + 1, hi, target)   # 1 recursive call
+    else:
+        return binary_search(arr, lo, mid - 1, target)    # on half the input
+# T(n) = 1*T(n/2) + O(1)   → a=1, b=2, f(n)=O(1)</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python — Merge Sort</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">def merge_sort(arr):
+    if len(arr) &lt;= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])     # T(n/2)
+    right = merge_sort(arr[mid:])     # T(n/2)
+    return merge(left, right)          # O(n) to merge
+# T(n) = 2*T(n/2) + O(n)   → a=2, b=2, f(n)=O(n)</code></pre>
+        </div>
+
+        <h3>Step 2 — solve it: three methods</h3>
+
+        <h4>Method 1 — The Recursion Tree</h4>
+        <p>Draw the recursion as a tree: each node is a call, its children are the recursive calls it makes. Sum the work done at each <strong>level</strong>, then sum across all levels.</p>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Merge sort recursion tree</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="text">Level 0:        T(n)                              work = n
+Level 1:     T(n/2)  T(n/2)                        work = n/2 + n/2 = n
+Level 2:   T(n/4) T(n/4) T(n/4) T(n/4)               work = 4*(n/4) = n
+   ...
+Level log2(n):  T(1) T(1) ... (n leaves)            work = n*1 = n
+
+Number of levels = log2(n)
+Work per level    = n  (constant across all levels)
+Total work        = n * log2(n)  →  O(n log n)</code></pre>
+        </div>
+        <p>The recursion tree method is the most intuitive — it directly visualizes "how much work happens at each depth," which is exactly what determines the final complexity.</p>
+
+        <h4>Method 2 — The Master Theorem</h4>
+        <p>For recurrences of the form <code>T(n) = a·T(n/b) + f(n)</code>, the Master Theorem gives a direct formula without needing to draw anything. Compare <code>f(n)</code> against <code>n^(log_b a)</code> — the "critical exponent":</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Case</th><th>Condition</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td>Case 1</td><td>f(n) = O(n^(log_b a − ε)) for some ε &gt; 0 — the recursive calls dominate</td><td>T(n) = Θ(n^(log_b a))</td></tr>
+              <tr><td>Case 2</td><td>f(n) = Θ(n^(log_b a)) — work is balanced at every level</td><td>T(n) = Θ(n^(log_b a) · log n)</td></tr>
+              <tr><td>Case 3</td><td>f(n) = Ω(n^(log_b a + ε)) — the combine step dominates</td><td>T(n) = Θ(f(n))</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Worked example — Merge Sort</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="text">T(n) = 2*T(n/2) + O(n)
+a = 2, b = 2, f(n) = n
+
+n^(log_b a) = n^(log2 2) = n^1 = n
+f(n) = n, which equals n^(log_b a)  →  this is Case 2
+
+Result: T(n) = Θ(n^1 * log n) = Θ(n log n)   ✓ matches the tree method</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Worked example — Binary Search</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="text">T(n) = 1*T(n/2) + O(1)
+a = 1, b = 2, f(n) = 1 (constant)
+
+n^(log_b a) = n^(log2 1) = n^0 = 1
+f(n) = O(1), which equals n^(log_b a)  →  Case 2
+
+Result: T(n) = Θ(1 * log n) = Θ(log n)   ✓</code></pre>
+        </div>
+
+        <div class="callout warn">
+          <div class="ic">⚠</div>
+          <div><strong>Master Theorem limitations</strong> It only applies cleanly to the form <code>a·T(n/b) + f(n)</code> with constant a and b. Recurrences like <code>T(n) = T(n-1) + T(n-2)</code> (Fibonacci) or with non-polynomial <code>f(n)</code> need the recursion tree or substitution method instead.</div>
+        </div>
+
+        <h4>Method 3 — Substitution (guess and verify)</h4>
+        <p>Guess the closed-form answer, then prove it by induction. Useful when the Master Theorem doesn't apply.</p>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Example</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="text">T(n) = T(n - 1) + O(1)     (e.g. a simple linear recursive scan)
+
+Guess: T(n) = O(n)
+Verify: T(n) = T(n-1) + c = [c(n-1)] + c = cn   ✓ confirms O(n)
+
+T(n) = T(n - 1) + O(n)     (e.g. recursive selection sort pass)
+
+Guess: T(n) = O(n^2)
+Verify: T(n) = T(n-1) + n. Expanding: n + (n-1) + (n-2) + ... + 1
+       = n(n+1)/2 = O(n^2)   ✓</code></pre>
+        </div>
+
+        <h3>Multi-branch recursion — exponential blowup</h3>
+        <p>When a function makes <strong>more than one recursive call without shrinking the problem enough</strong> — and especially when subproblems overlap — complexity explodes:</p>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python — naive Fibonacci</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">def fib(n):
+    if n &lt;= 1:
+        return n
+    return fib(n - 1) + fib(n - 2)
+# T(n) = T(n-1) + T(n-2) + O(1)
+# Two branches, each shrinking by only 1 → O(2^n)
+# (technically closer to O(1.618^n), the golden ratio, but bounded by O(2^n))</code></pre>
+        </div>
+        <p>This is also the textbook case for <strong>memoization</strong> — caching results of subproblems turns this from <span class="bigo c5">O(2ⁿ)</span> into <span class="bigo c2">O(n)</span>, because each of the n unique subproblems then gets computed only once.</p>
+
+        <h3>A repeatable process for recursive analysis</h3>
+        <div class="steps">
+          <div class="step">
+            <h4>Write T(n) in terms of smaller subproblems</h4>
+            <p>Identify how many recursive calls are made, how much smaller each subproblem is, and how much non-recursive work happens per call.</p>
+          </div>
+          <div class="step">
+            <h4>Choose a solving method</h4>
+            <p>Recursion tree for intuition, Master Theorem for speed (when the form fits), substitution for anything unusual.</p>
+          </div>
+          <div class="step">
+            <h4>Check for overlapping subproblems</h4>
+            <p>If the same subproblem gets recomputed many times (like naive Fibonacci), the real-world fix is memoization or dynamic programming — not just accepting the exponential bound.</p>
+          </div>
+        </div>
+
+        <div class="chapter-foot">
+          <div class="foot-link" data-target="ch6"><div class="dir">← Previous</div>Analyzing Loops in Detail</div>
+          <div class="foot-link next" data-target="ch8"><div class="dir">Next →</div>Space Complexity in Detail</div>
+        </div>
+      </section>
+
+      <section class="chapter" id="ch8">
+        <div class="chapter-head"><span class="chapter-num">08</span><h2>Space Complexity in Detail</h2></div>
+        <p class="chapter-dek">Space complexity gets less attention than time, but the same systematic approach applies — and recursion makes it especially easy to get wrong.</p>
+
+        <h3>What counts toward space complexity?</h3>
+        <p>Space complexity measures the <strong>total memory an algorithm needs, as a function of input size n</strong>. It's useful to split this into two parts:</p>
+        <ul>
+          <li><strong>Input space</strong> — the memory used to store the input itself. This is usually <em>excluded</em> from the analysis, since you didn't choose to create that data — it was given to you.</li>
+          <li><strong>Auxiliary space</strong> — the <em>extra</em> memory the algorithm allocates while running: temporary variables, helper arrays, hash maps, recursion call stack frames, etc.</li>
+        </ul>
+        <div class="callout info">
+          <div class="ic">💡</div>
+          <div><strong>The convention</strong> When people say an algorithm "runs in O(1) space" or "is in-place," they almost always mean <strong>auxiliary space</strong> — not counting the input itself. Always check which convention a source is using before comparing numbers.</div>
+        </div>
+
+        <h3>Counting auxiliary space — the same rules as time, applied to memory</h3>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">def sum_array(arr):
+    total = 0              # one int variable → O(1) extra space
+    for x in arr:
+        total += x
+    return total
+# auxiliary space: O(1) — a fixed number of variables, regardless of len(arr)
+
+def duplicate_array(arr):
+    new_arr = []
+    for x in arr:
+        new_arr.append(x)   # grows with n
+    return new_arr
+# auxiliary space: O(n) — the new array scales with input size</code></pre>
+        </div>
+
+        <h3>The hidden cost: the recursion call stack</h3>
+        <p>This is the single most common space-complexity mistake. Every recursive call adds a new <strong>stack frame</strong> — memory holding that call's local variables and return address — and that frame stays on the stack until the call returns.</p>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">def sum_recursive(arr, i=0):
+    if i == len(arr):
+        return 0
+    return arr[i] + sum_recursive(arr, i + 1)
+# time:  O(n)  — n calls total
+# space: O(n)  — n stack frames exist simultaneously at maximum recursion depth,
+#                even though each individual frame only holds O(1) of its own data</code></pre>
+        </div>
+        <div class="callout warn">
+          <div class="ic">⚠</div>
+          <div><strong>Rule of thumb</strong> Recursive space complexity is generally <strong>O(maximum recursion depth)</strong>, not O(number of total calls). A function with O(n) total calls but only O(log n) <em>depth</em> at any one time (like a balanced binary recursion) uses O(log n) stack space — not O(n).</div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python — comparing depth vs. call count</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">def merge_sort(arr):
+    if len(arr) &lt;= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    return merge(left, right)
+# Total calls: O(n) across the whole run
+# Max simultaneous depth: O(log n)  (the tree halves each level)
+# Stack space: O(log n)
+# BUT: merge_sort also allocates new sub-arrays at every level (arr[:mid], arr[mid:])
+#      which adds O(n) auxiliary space for the temporary arrays themselves
+# → overall space complexity: O(n)  (the array copies dominate, not the stack)</code></pre>
+        </div>
+
+        <h3>Time–space tradeoffs</h3>
+        <p>Many optimizations trade one resource for the other. Recognizing this tradeoff is part of complexity literacy:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Technique</th><th>Time effect</th><th>Space effect</th></tr></thead>
+            <tbody>
+              <tr><td>Memoization / caching</td><td>O(2ⁿ) → O(n) (often)</td><td>O(1) → O(n) (cache storage)</td></tr>
+              <tr><td>Hash map for lookups</td><td>O(n) → O(1) average per lookup</td><td>+O(n) for the hash map</td></tr>
+              <tr><td>In-place sorting (e.g. quicksort)</td><td>Comparable to merge sort</td><td>O(log n) vs. merge sort's O(n)</td></tr>
+              <tr><td>Precomputed lookup tables</td><td>Large speedup for repeated queries</td><td>Upfront space cost to store the table</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout tip">
+          <div class="ic">✓</div>
+          <div><strong>How to analyze space, step by step</strong> 1) List every variable, array, or structure the algorithm allocates beyond the input. 2) For each, determine how its size scales with n. 3) If the algorithm is recursive, separately account for maximum call-stack depth. 4) Sum it all, then simplify using the same dominant-term rules as time complexity.</div>
+        </div>
+
+        <div class="chapter-foot">
+          <div class="foot-link" data-target="ch7"><div class="dir">← Previous</div>Recursion &amp; Recurrence Relations</div>
+          <div class="foot-link next" data-target="ch9"><div class="dir">Next →</div>Best, Worst &amp; Average Case</div>
+        </div>
+      </section>
+
+      <section class="chapter" id="ch9">
+        <div class="chapter-head"><span class="chapter-num">09</span><h2>Best, Worst &amp; Average Case</h2></div>
+        <p class="chapter-dek">The same algorithm can have wildly different costs depending on the input it receives. Here's how to reason about each scenario — and why "worst case" became the default.</p>
+
+        <h3>The three scenarios</h3>
+        <ul>
+          <li><strong>Best case</strong> — the minimum possible cost, achieved by the most favorable input. Usually written with Big-Omega (Ω), though often casually expressed with Big-O too.</li>
+          <li><strong>Worst case</strong> — the maximum possible cost, achieved by the most unfavorable input. This is what Big-O conventionally describes.</li>
+          <li><strong>Average case</strong> — the expected cost over a (typically uniform) distribution of all possible inputs. Usually expressed with Big-Theta (Θ) when it's a tight, well-defined average.</li>
+        </ul>
+
+        <h3>Worked example — linear search</h3>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">def linear_search(arr, target):
+    for i, x in enumerate(arr):
+        if x == target:
+            return i
+    return -1</code></pre>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Scenario</th><th>What input causes it</th><th>Complexity</th></tr></thead>
+            <tbody>
+              <tr><td>Best case</td><td>Target is the first element</td><td><span class="bigo c1">O(1)</span></td></tr>
+              <tr><td>Average case</td><td>Target is randomly positioned</td><td><span class="bigo c2">O(n/2) → O(n)</span></td></tr>
+              <tr><td>Worst case</td><td>Target is last, or not present at all</td><td><span class="bigo c2">O(n)</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Worked example — quicksort (where the gap is dramatic)</h3>
+        <p>Quicksort picks a pivot and partitions the array around it. Its performance depends entirely on how balanced that partition turns out to be.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Scenario</th><th>What input causes it</th><th>Complexity</th></tr></thead>
+            <tbody>
+              <tr><td>Best / average case</td><td>Pivot roughly splits the array in half each time</td><td><span class="bigo c3">O(n log n)</span></td></tr>
+              <tr><td>Worst case</td><td>Pivot is always the smallest/largest element (e.g. already-sorted input with a naive pivot choice)</td><td><span class="bigo c4">O(n²)</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>This is exactly why production implementations use techniques like <strong>randomized pivot selection</strong> or <strong>median-of-three</strong> — they make the catastrophic worst case astronomically unlikely in practice, even though it remains technically possible.</p>
+
+        <h3>Why worst case is usually what's quoted</h3>
+        <div class="callout info">
+          <div class="ic">💡</div>
+          <div><strong>Reliability over optimism</strong> When you're building a system, you need to plan for the worst input it might realistically receive — not hope for the best one. A server that's fast on average but occasionally grinds to a halt on adversarial input is a real liability (and a real security concern — see "algorithmic complexity attacks"). That's why, absent other context, "the complexity of an algorithm" defaults to meaning its worst case.</div>
+        </div>
+
+        <h3>When average case is what actually matters</h3>
+        <p>For algorithms used repeatedly across huge numbers of random, everyday inputs — like quicksort in practice, or hash table operations — the average case is often the more <em>useful</em> number, because the true worst case may be vanishingly rare or actively defended against. Both numbers are worth knowing; report whichever is relevant to your context, and label it clearly.</p>
+
+        <div class="chapter-foot">
+          <div class="foot-link" data-target="ch8"><div class="dir">← Previous</div>Space Complexity in Detail</div>
+          <div class="foot-link next" data-target="ch10"><div class="dir">Next →</div>Amortized Analysis</div>
+        </div>
+      </section>
+
+      <section class="chapter" id="ch10">
+        <div class="chapter-head"><span class="chapter-num">10</span><h2>Amortized Analysis</h2></div>
+        <p class="chapter-dek">Some operations are usually cheap but occasionally expensive. Amortized analysis answers: what's the true average cost per operation, over a long sequence of operations — guaranteed, not just typically?</p>
+
+        <h3>The classic example: dynamic array (Python list) append</h3>
+        <p>A dynamic array starts with some fixed capacity. Appending is O(1) — until it's full, at which point it must allocate a new, larger array and copy every existing element over, which is O(n).</p>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Conceptual behavior</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="text">capacity = 4
+append() append() append() append()   ← all O(1), array fills up
+append()                                ← capacity exceeded!
+   → allocate new array of size 8
+   → copy all 4 existing elements      ← this single call costs O(n)
+   → then add the new element
+append() append() append()             ← O(1) again, until capacity 8 fills</code></pre>
+        </div>
+        <p>If you only looked at that one expensive resize call, you might (wrongly) conclude appending is O(n). But that resize doesn't happen every call — it happens less and less often as the array grows, <em>if the array grows by doubling</em>.</p>
+
+        <h3>Why doubling capacity is the key trick</h3>
+        <p>The standard strategy: when the array is full, double its capacity (not just add a fixed amount). This makes resizes increasingly rare relative to the number of cheap appends that happen between them.</p>
+
+        <div class="callout tip">
+          <div class="ic">✓</div>
+          <div><strong>The aggregate method, in plain terms</strong> To append n elements total, starting from capacity 1 and doubling each time you run out: resizes happen at sizes 1, 2, 4, 8, ... up to n — that's about log₂(n) resizes. The total cost of all those resizes combined is 1 + 2 + 4 + ... + n ≈ 2n (a geometric series). Add the n cheap O(1) appends themselves, and the <strong>total work for n appends is O(n)</strong> — which means the <strong>average (amortized) cost per append is O(n)/n = O(1)</strong>.</div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Why fixed-increment growth fails</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="text">BAD strategy: grow capacity by a fixed +1 each time it's full
+→ resizes happen on every single append once you exceed initial capacity
+→ each resize copies an ever-larger array
+→ total cost for n appends: 1 + 2 + 3 + ... + n = O(n^2)
+→ amortized cost per append: O(n) — no better than not amortizing at all!
+
+GOOD strategy: double capacity each time it's full
+→ total cost for n appends: O(n)
+→ amortized cost per append: O(1)</code></pre>
+        </div>
+
+        <h3>Three formal methods for amortized analysis</h3>
+        <ul>
+          <li><strong>Aggregate method</strong> — sum the total cost of a sequence of n operations, then divide by n. (Used above.)</li>
+          <li><strong>Accounting (banker's) method</strong> — assign each operation an artificial "charge." Cheap operations are overcharged, building up "credit" that pays for the occasional expensive operation.</li>
+          <li><strong>Potential method</strong> — define a potential function over the data structure's state, and show that the actual cost plus the change in potential is bounded — a more mathematical generalization of the accounting method.</li>
+        </ul>
+        <p>For almost all practical purposes, the <strong>aggregate method</strong> (sum total cost, divide by number of operations) is enough to reason about amortized cost intuitively.</p>
+
+        <h3>Where else amortized analysis shows up</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Structure / operation</th><th>Occasional expensive op</th><th>Amortized cost</th></tr></thead>
+            <tbody>
+              <tr><td>Dynamic array append (Python list, Java ArrayList)</td><td>Resize + copy: O(n)</td><td><span class="bigo c1">O(1)</span></td></tr>
+              <tr><td>Hash table insert</td><td>Rehashing on load factor threshold: O(n)</td><td><span class="bigo c1">O(1)</span> average</td></tr>
+              <tr><td>Incrementing a binary counter</td><td>A long carry chain: O(log n)</td><td><span class="bigo c1">O(1)</span></td></tr>
+              <tr><td>Union-Find with path compression</td><td>A long find-root chain</td><td><span class="bigo c1">O(α(n))</span> ≈ constant</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout warn">
+          <div class="ic">⚠</div>
+          <div><strong>Amortized ≠ average case</strong> These are easy to confuse but mean different things. <strong>Average case</strong> depends on a probability distribution over random inputs — it can still be bad for a specific unlucky sequence. <strong>Amortized</strong> is a guarantee over <em>any</em> sequence of operations on the worst-case inputs — there's no luck involved; the bound always holds when spread over enough operations.</div>
+        </div>
+
+        <div class="chapter-foot">
+          <div class="foot-link" data-target="ch9"><div class="dir">← Previous</div>Best, Worst &amp; Average Case</div>
+          <div class="foot-link next" data-target="ch11"><div class="dir">Next →</div>Data Structures Cheat Sheet</div>
+        </div>
+      </section>
+
+      <section class="chapter" id="ch11">
+        <div class="chapter-head"><span class="chapter-num">11</span><h2>Data Structures Cheat Sheet</h2></div>
+        <p class="chapter-dek">A reference table for the operations you'll look up most often. Worth memorizing over time, but fine to bookmark until then.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Structure</th><th>Access</th><th>Search</th><th>Insert</th><th>Delete</th><th>Space</th></tr></thead>
+            <tbody>
+              <tr><td>Array (static)</td><td><span class="bigo c1">O(1)</span></td><td><span class="bigo c2">O(n)</span></td><td><span class="bigo c2">O(n)</span></td><td><span class="bigo c2">O(n)</span></td><td><span class="bigo c2">O(n)</span></td></tr>
+              <tr><td>Dynamic array (list)</td><td><span class="bigo c1">O(1)</span></td><td><span class="bigo c2">O(n)</span></td><td><span class="bigo c1">O(1)</span>* end / <span class="bigo c2">O(n)</span> middle</td><td><span class="bigo c2">O(n)</span></td><td><span class="bigo c2">O(n)</span></td></tr>
+              <tr><td>Singly linked list</td><td><span class="bigo c2">O(n)</span></td><td><span class="bigo c2">O(n)</span></td><td><span class="bigo c1">O(1)</span>* at known node</td><td><span class="bigo c1">O(1)</span>* at known node</td><td><span class="bigo c2">O(n)</span></td></tr>
+              <tr><td>Stack (array/list-backed)</td><td><span class="bigo c2">O(n)</span></td><td><span class="bigo c2">O(n)</span></td><td><span class="bigo c1">O(1)</span> push</td><td><span class="bigo c1">O(1)</span> pop</td><td><span class="bigo c2">O(n)</span></td></tr>
+              <tr><td>Queue (array/list-backed)</td><td><span class="bigo c2">O(n)</span></td><td><span class="bigo c2">O(n)</span></td><td><span class="bigo c1">O(1)</span> enqueue</td><td><span class="bigo c1">O(1)</span> dequeue</td><td><span class="bigo c2">O(n)</span></td></tr>
+              <tr><td>Hash table / hash map</td><td>—</td><td><span class="bigo c1">O(1)</span> avg, <span class="bigo c2">O(n)</span> worst</td><td><span class="bigo c1">O(1)</span> avg, <span class="bigo c2">O(n)</span> worst</td><td><span class="bigo c1">O(1)</span> avg, <span class="bigo c2">O(n)</span> worst</td><td><span class="bigo c2">O(n)</span></td></tr>
+              <tr><td>Binary search tree (unbalanced)</td><td><span class="bigo c2">O(n)</span> worst</td><td><span class="bigo c2">O(n)</span> worst</td><td><span class="bigo c2">O(n)</span> worst</td><td><span class="bigo c2">O(n)</span> worst</td><td><span class="bigo c2">O(n)</span></td></tr>
+              <tr><td>Balanced BST (AVL / Red-Black)</td><td><span class="bigo c1">O(log n)</span></td><td><span class="bigo c1">O(log n)</span></td><td><span class="bigo c1">O(log n)</span></td><td><span class="bigo c1">O(log n)</span></td><td><span class="bigo c2">O(n)</span></td></tr>
+              <tr><td>Binary heap (min/max)</td><td><span class="bigo c1">O(1)</span> peek top</td><td><span class="bigo c2">O(n)</span></td><td><span class="bigo c1">O(log n)</span></td><td><span class="bigo c1">O(log n)</span></td><td><span class="bigo c2">O(n)</span></td></tr>
+              <tr><td>Trie (prefix tree)</td><td>—</td><td><span class="bigo c2">O(k)</span> (k = key length)</td><td><span class="bigo c2">O(k)</span></td><td><span class="bigo c2">O(k)</span></td><td><span class="bigo c2">O(n·k)</span></td></tr>
+              <tr><td>Graph — adjacency list</td><td>—</td><td><span class="bigo c2">O(V + E)</span></td><td><span class="bigo c1">O(1)</span> edge</td><td><span class="bigo c2">O(E)</span> edge</td><td><span class="bigo c2">O(V + E)</span></td></tr>
+              <tr><td>Graph — adjacency matrix</td><td>—</td><td><span class="bigo c1">O(1)</span> edge check</td><td><span class="bigo c1">O(1)</span> edge</td><td><span class="bigo c1">O(1)</span> edge</td><td><span class="bigo c4">O(V²)</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:13px; color:var(--text-faint);">* "Amortized" or "given a reference/pointer to the relevant location" — see annotations; inserting/deleting at an arbitrary unknown position still requires an O(n) search first.</p>
+
+        <div class="callout info">
+          <div class="ic">💡</div>
+          <div><strong>Why hash tables average O(1) but worst-case O(n)</strong> A hash table maps keys to "buckets" via a hash function. With a good hash function and reasonable load factor, collisions are rare, so lookups are typically O(1). But in a pathological case — many keys hashing to the same bucket — that bucket degrades into a list you must scan linearly, giving O(n) worst case. This is also the basis of "hash-flooding" denial-of-service attacks against poorly-randomized hash functions.</div>
+        </div>
+
+        <div class="chapter-foot">
+          <div class="foot-link" data-target="ch10"><div class="dir">← Previous</div>Amortized Analysis</div>
+          <div class="foot-link next" data-target="ch12"><div class="dir">Next →</div>Algorithms Cheat Sheet</div>
+        </div>
+      </section>
+
+      <section class="chapter" id="ch12">
+        <div class="chapter-head"><span class="chapter-num">12</span><h2>Algorithms Cheat Sheet</h2></div>
+        <p class="chapter-dek">Sorting, searching, and graph traversal complexities — the ones interview questions and real systems reach for constantly.</p>
+
+        <h3>Sorting algorithms</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Space</th><th>Stable?</th></tr></thead>
+            <tbody>
+              <tr><td>Bubble sort</td><td><span class="bigo c2">O(n)</span></td><td><span class="bigo c4">O(n²)</span></td><td><span class="bigo c4">O(n²)</span></td><td><span class="bigo c1">O(1)</span></td><td>Yes</td></tr>
+              <tr><td>Insertion sort</td><td><span class="bigo c2">O(n)</span></td><td><span class="bigo c4">O(n²)</span></td><td><span class="bigo c4">O(n²)</span></td><td><span class="bigo c1">O(1)</span></td><td>Yes</td></tr>
+              <tr><td>Selection sort</td><td><span class="bigo c4">O(n²)</span></td><td><span class="bigo c4">O(n²)</span></td><td><span class="bigo c4">O(n²)</span></td><td><span class="bigo c1">O(1)</span></td><td>No</td></tr>
+              <tr><td>Merge sort</td><td><span class="bigo c3">O(n log n)</span></td><td><span class="bigo c3">O(n log n)</span></td><td><span class="bigo c3">O(n log n)</span></td><td><span class="bigo c2">O(n)</span></td><td>Yes</td></tr>
+              <tr><td>Quicksort</td><td><span class="bigo c3">O(n log n)</span></td><td><span class="bigo c3">O(n log n)</span></td><td><span class="bigo c4">O(n²)</span></td><td><span class="bigo c1">O(log n)</span></td><td>No</td></tr>
+              <tr><td>Heap sort</td><td><span class="bigo c3">O(n log n)</span></td><td><span class="bigo c3">O(n log n)</span></td><td><span class="bigo c3">O(n log n)</span></td><td><span class="bigo c1">O(1)</span></td><td>No</td></tr>
+              <tr><td>Counting sort</td><td><span class="bigo c2">O(n + k)</span></td><td><span class="bigo c2">O(n + k)</span></td><td><span class="bigo c2">O(n + k)</span></td><td><span class="bigo c2">O(n + k)</span></td><td>Yes</td></tr>
+              <tr><td>Radix sort</td><td><span class="bigo c2">O(d·(n+k))</span></td><td><span class="bigo c2">O(d·(n+k))</span></td><td><span class="bigo c2">O(d·(n+k))</span></td><td><span class="bigo c2">O(n + k)</span></td><td>Yes</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:13px; color:var(--text-faint);">k = range of input values (counting/radix sort); d = number of digits (radix sort). These aren't comparison-based, which is how they break past the O(n log n) comparison-sort floor described next.</p>
+
+        <div class="callout info">
+          <div class="ic">💡</div>
+          <div><strong>Why O(n log n) is the floor for comparison sorts</strong> Any sorting algorithm that only compares elements (rather than exploiting known properties of the values, like counting/radix sort do) must distinguish between n! possible orderings. Each comparison gives at most 1 bit of information, so you need at least log₂(n!) ≈ n log n comparisons — a hard lower bound. This is a rare case where Big-Omega is the more interesting bound: it proves no comparison sort can ever beat O(n log n), no matter how cleverly written.</div>
+        </div>
+
+        <h3>Searching algorithms</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Requires</th></tr></thead>
+            <tbody>
+              <tr><td>Linear search</td><td><span class="bigo c1">O(1)</span></td><td><span class="bigo c2">O(n)</span></td><td><span class="bigo c2">O(n)</span></td><td>Nothing</td></tr>
+              <tr><td>Binary search</td><td><span class="bigo c1">O(1)</span></td><td><span class="bigo c1">O(log n)</span></td><td><span class="bigo c1">O(log n)</span></td><td>Sorted array</td></tr>
+              <tr><td>Hash table lookup</td><td><span class="bigo c1">O(1)</span></td><td><span class="bigo c1">O(1)</span></td><td><span class="bigo c2">O(n)</span></td><td>Hashable keys</td></tr>
+              <tr><td>BST search (balanced)</td><td><span class="bigo c1">O(1)</span></td><td><span class="bigo c1">O(log n)</span></td><td><span class="bigo c1">O(log n)</span></td><td>Balanced tree</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Graph algorithms</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Algorithm</th><th>Time</th><th>Space</th><th>Use case</th></tr></thead>
+            <tbody>
+              <tr><td>BFS (breadth-first search)</td><td><span class="bigo c2">O(V + E)</span></td><td><span class="bigo c2">O(V)</span></td><td>Shortest path (unweighted)</td></tr>
+              <tr><td>DFS (depth-first search)</td><td><span class="bigo c2">O(V + E)</span></td><td><span class="bigo c2">O(V)</span></td><td>Connectivity, cycle detection</td></tr>
+              <tr><td>Dijkstra's (with binary heap)</td><td><span class="bigo c3">O((V+E) log V)</span></td><td><span class="bigo c2">O(V)</span></td><td>Shortest path (weighted, non-negative)</td></tr>
+              <tr><td>Bellman-Ford</td><td><span class="bigo c4">O(V·E)</span></td><td><span class="bigo c2">O(V)</span></td><td>Shortest path (handles negative weights)</td></tr>
+              <tr><td>Floyd-Warshall</td><td><span class="bigo c4">O(V³)</span></td><td><span class="bigo c4">O(V²)</span></td><td>All-pairs shortest paths</td></tr>
+              <tr><td>Kruskal's (MST)</td><td><span class="bigo c3">O(E log E)</span></td><td><span class="bigo c2">O(V)</span></td><td>Minimum spanning tree</td></tr>
+              <tr><td>Prim's (MST, with heap)</td><td><span class="bigo c3">O(E log V)</span></td><td><span class="bigo c2">O(V)</span></td><td>Minimum spanning tree</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:13px; color:var(--text-faint);">V = number of vertices, E = number of edges.</p>
+
+        <div class="chapter-foot">
+          <div class="foot-link" data-target="ch11"><div class="dir">← Previous</div>Data Structures Cheat Sheet</div>
+          <div class="foot-link next" data-target="ch13"><div class="dir">Next →</div>How to Identify Complexity Fast</div>
+        </div>
+      </section>
+
+      <section class="chapter" id="ch13">
+        <div class="chapter-head"><span class="chapter-num">13</span><h2>How to Identify Complexity Fast</h2></div>
+        <p class="chapter-dek">Once the rules are second nature, you stop calculating and start <em>recognizing</em>. Here's the mental checklist experienced engineers run almost subconsciously when they look at code.</p>
+
+        <h3>The visual pattern-matching cheat sheet</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>What you see in the code</th><th>Likely complexity</th></tr></thead>
+            <tbody>
+              <tr><td>No loops, no recursion — just statements and conditionals</td><td><span class="bigo c1">O(1)</span></td></tr>
+              <tr><td>Loop variable is multiplied/divided each iteration (e.g. <code>i *= 2</code>); or repeatedly halving a search range</td><td><span class="bigo c1">O(log n)</span></td></tr>
+              <tr><td>A single loop over the input, constant work per iteration</td><td><span class="bigo c2">O(n)</span></td></tr>
+              <tr><td>Two separate (sequential, not nested) single loops</td><td><span class="bigo c2">O(n)</span></td></tr>
+              <tr><td>A loop combined with a sort, or a loop containing a halving/doubling inner loop</td><td><span class="bigo c3">O(n log n)</span></td></tr>
+              <tr><td>Two nested loops, both bounded by n (full or triangular)</td><td><span class="bigo c4">O(n²)</span></td></tr>
+              <tr><td>k nested loops, all bounded by n</td><td><span class="bigo c4">O(nᵏ)</span></td></tr>
+              <tr><td>Recursion that makes 2+ calls per level without shrinking enough, with overlapping subproblems</td><td><span class="bigo c5">O(2ⁿ)</span></td></tr>
+              <tr><td>Generating all permutations / orderings of the input</td><td><span class="bigo c5">O(n!)</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>The five-question checklist</h3>
+        <div class="steps">
+          <div class="step">
+            <h4>1. Are there any loops or recursive calls?</h4>
+            <p>If no — it's <span class="bigo c1">O(1)</span> regardless of how many lines of code there are. Straight-line code never scales with n.</p>
+          </div>
+          <div class="step">
+            <h4>2. How many levels of nesting, and are they independent?</h4>
+            <p>Sequential → add. Nested → multiply. Watch for hidden nesting inside function calls (Chapter 4, Rule 7) — a "single" loop calling an O(n) function inside it is secretly nested.</p>
+          </div>
+          <div class="step">
+            <h4>3. Does the loop variable change additively or multiplicatively?</h4>
+            <p>Additive (<code>i += 1</code>) → linear contribution. Multiplicative (<code>i *= 2</code> or halving a range) → logarithmic contribution.</p>
+          </div>
+          <div class="step">
+            <h4>4. If recursive — how many calls per level, and how much does the input shrink?</h4>
+            <p>One call, input halved → O(log n). Two calls, input halved, O(n) combine work → O(n log n) (merge sort pattern). Two calls, input only reduced by 1 each time → O(2ⁿ) (naive Fibonacci pattern).</p>
+          </div>
+          <div class="step">
+            <h4>5. Are there hidden costs inside built-in operations?</h4>
+            <p>Sorting inside a loop, <code>in</code> checks on a list (not a set) inside a loop, string concatenation in a loop, <code>.copy()</code> or slicing inside a loop — these silently multiply your complexity. Always ask: "what is the actual cost of this single line, not just whether it looks like one operation?"</p>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <div class="ic">✓</div>
+          <div><strong>The fastest sanity check</strong> Pick a tiny, a medium, and a large value of n in your head (say 10, 1,000, 100,000) and ask "roughly how many total operations would this run?" If doubling n roughly doubles the work → O(n). If it roughly quadruples the work → O(n²). If it adds a small constant amount of extra work → O(log n). This rough mental simulation catches most analysis mistakes faster than working through formal rules.</div>
+        </div>
+
+        <div class="chapter-foot">
+          <div class="foot-link" data-target="ch12"><div class="dir">← Previous</div>Algorithms Cheat Sheet</div>
+          <div class="foot-link next" data-target="ch14"><div class="dir">Next →</div>Common Mistakes &amp; Tricky Cases</div>
+        </div>
+      </section>
+
+      <section class="chapter" id="ch14">
+        <div class="chapter-head"><span class="chapter-num">14</span><h2>Common Mistakes &amp; Tricky Cases</h2></div>
+        <p class="chapter-dek">A collection of the analysis traps that catch even experienced programmers off guard.</p>
+
+        <h3>Mistake 1 — assuming built-in operations are O(1)</h3>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python — looks O(n), is actually O(n²)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">def has_dup_slow(arr):
+    seen = []                  # a LIST, not a set
+    for x in arr:
+        if x in seen:           # 'in' on a list is O(n)!
+            return True
+        seen.append(x)
+    return False
+# n iterations * O(n) membership check each = O(n^2)
+# Fix: use a set() instead — 'in' on a set is O(1) average → O(n) total</code></pre>
+        </div>
+        <p>Other common O(n)-disguised-as-O(1) culprits: <code>list.pop(0)</code> (O(n), shifts every element — use <code>collections.deque</code> instead), string concatenation with <code>+=</code> in a loop (each concatenation can copy the whole string), and <code>list.count()</code> or <code>list.index()</code> inside a loop.</p>
+
+        <h3>Mistake 2 — collapsing two different input sizes into one n</h3>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">def f(list_a, list_b):
+    for x in list_a:
+        for y in list_b:
+            compare(x, y)
+# WRONG: "O(n^2)"
+# RIGHT: O(a * b), where a = len(list_a), b = len(list_b)
+# These are only equal if you specifically know a == b</code></pre>
+        </div>
+
+        <h3>Mistake 3 — confusing total recursive calls with stack depth</h3>
+        <p>As covered in Chapter 8: a recursive function might make O(n) total calls but only ever have O(log n) of them active on the stack simultaneously (e.g. balanced divide-and-conquer). Time complexity counts total calls; space complexity (for the stack) counts maximum simultaneous depth — these are not the same number.</p>
+
+        <h3>Mistake 4 — ignoring the cost of slicing/copying</h3>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">def f(arr):
+    n = len(arr)
+    for i in range(n):
+        sub = arr[i:]      # slicing creates a NEW list — O(n) per call, not O(1)
+        process(sub)
+# n iterations * O(n) slice each = O(n^2) time, not O(n)</code></pre>
+        </div>
+        <p>This exact trap shows up in merge sort implementations that slice arrays recursively (<code>arr[:mid]</code>, <code>arr[mid:]</code>) — each slice is its own O(k) copy operation, which is part of why careful implementations sometimes pass index ranges instead of creating new sub-arrays.</p>
+
+        <h3>Mistake 5 — treating an exponential algorithm with a small constraint as "fine"</h3>
+        <p>O(2ⁿ) looks scary in the abstract, but if a problem guarantees n ≤ 20 (common in some constraint-based problems), 2²⁰ ≈ 1 million — entirely fine. Complexity class alone doesn't tell you whether something is fast enough; you need it <strong>combined with the actual expected input size</strong>.</p>
+
+        <h3>Mistake 6 — forgetting that two loops can hide a third, implicit one</h3>
+        <div class="code-block">
+          <div class="code-bar"><span class="lang">Python — looks O(n), is O(n^2)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code data-lang="python">def flatten_and_sum(matrix):     # matrix: list of lists
+    total = 0
+    for row in matrix:             # n rows
+        for val in row:              # m values per row
+            total += val
+# this is O(n*m), often described loosely as O(n) when really
+# "n" here secretly means "total number of elements across the whole matrix"
+# — always clarify what n actually refers to before quoting a bound</code></pre>
+        </div>
+
+        <h3>Mistake 7 — assuming sorted input is "free"</h3>
+        <p>If a problem statement gives you an unsorted array and your solution requires it sorted first, the <code>O(n log n)</code> sort cost is part of your total complexity — don't silently drop it because "sorting is a separate step." Add it like any other sequential operation (Chapter 4, Rule 1).</p>
+
+        <div class="callout danger">
+          <div class="ic">✕</div>
+          <div><strong>The meta-mistake</strong> The single biggest source of complexity-analysis errors is treating any line of code as "free" without checking what it actually does under the hood. Every operation has a real cost — the skill is knowing (or looking up) what that cost is, not assuming.</div>
+        </div>
+
+        <div class="chapter-foot">
+          <div class="foot-link" data-target="ch13"><div class="dir">← Previous</div>How to Identify Complexity Fast</div>
+          <div class="foot-link next" data-target="ch15"><div class="dir">Next →</div>Practice Problems</div>
+        </div>
+      </section>
+
+      <section class="chapter" id="ch15">
+        <div class="chapter-head"><span class="chapter-num">15</span><h2>Practice Problems</h2></div>
+        <p class="chapter-dek">Work out each one yourself before expanding the solution. These are ordered roughly by difficulty.</p>
+
+        <details class="problem">
+          <summary>Problem 1 — A single loop with a conditional</summary>
+          <div class="problem-body">
+            <div class="code-block">
+              <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+              <pre><code data-lang="python">def f(arr):
+    count = 0
+    for x in arr:
+        if x % 2 == 0:
+            count += 1
+    return count</code></pre>
+            </div>
+            <p><strong>Solution:</strong> One loop over n elements, O(1) work per iteration (a modulo check and maybe an increment). Total: <span class="bigo c2">O(n)</span> time, <span class="bigo c1">O(1)</span> space (just the <code>count</code> variable).</p>
+          </div>
+        </details>
+
+        <details class="problem">
+          <summary>Problem 2 — Nested loops with a dependent bound</summary>
+          <div class="problem-body">
+            <div class="code-block">
+              <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+              <pre><code data-lang="python">def f(arr):
+    n = len(arr)
+    pairs = []
+    for i in range(n):
+        for j in range(i + 1, n):
+            pairs.append((arr[i], arr[j]))
+    return pairs</code></pre>
+            </div>
+            <p><strong>Solution:</strong> Triangular nested loop — total iterations = n(n-1)/2 → <span class="bigo c4">O(n²)</span> time. Space is also <span class="bigo c4">O(n²)</span>, since the <code>pairs</code> list stores roughly n²/2 tuples — don't forget the output itself counts toward space complexity when it scales with n.</p>
+          </div>
+        </details>
+
+        <details class="problem">
+          <summary>Problem 3 — A while loop that halves</summary>
+          <div class="problem-body">
+            <div class="code-block">
+              <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+              <pre><code data-lang="python">def f(n):
+    steps = 0
+    while n &gt; 1:
+        n = n // 2
+        steps += 1
+    return steps</code></pre>
+            </div>
+            <p><strong>Solution:</strong> <code>n</code> is halved each iteration — classic logarithmic signature. <span class="bigo c1">O(log n)</span> time, <span class="bigo c1">O(1)</span> space.</p>
+          </div>
+        </details>
+
+        <details class="problem">
+          <summary>Problem 4 — Two sequential operations, one involving a sort</summary>
+          <div class="problem-body">
+            <div class="code-block">
+              <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+              <pre><code data-lang="python">def f(arr):
+    arr.sort()                  # Timsort: O(n log n)
+    total = 0
+    for x in arr:                 # O(n)
+        total += x
+    return total</code></pre>
+            </div>
+            <p><strong>Solution:</strong> Sequential operations add: O(n log n) + O(n). Keep the dominant term → <span class="bigo c3">O(n log n)</span> time. Python's Timsort uses O(n) auxiliary space in the worst case, so overall space is <span class="bigo c2">O(n)</span>.</p>
+          </div>
+        </details>
+
+        <details class="problem">
+          <summary>Problem 5 — A loop hiding a linear search</summary>
+          <div class="problem-body">
+            <div class="code-block">
+              <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+              <pre><code data-lang="python">def f(arr1, arr2):
+    common = []
+    for x in arr1:
+        if x in arr2:        # 'in' on a list: O(len(arr2))
+            common.append(x)
+    return common</code></pre>
+            </div>
+            <p><strong>Solution:</strong> With <code>n = len(arr1)</code> and <code>m = len(arr2)</code>, this is O(n) iterations × O(m) per check = <span class="bigo c4">O(n·m)</span> time — not O(n). Converting <code>arr2</code> to a <code>set</code> first would bring it down to <span class="bigo c2">O(n + m)</span>, at the cost of <span class="bigo c2">O(m)</span> extra space for the set.</p>
+          </div>
+        </details>
+
+        <details class="problem">
+          <summary>Problem 6 — Recursive function: find the recurrence and solve it</summary>
+          <div class="problem-body">
+            <div class="code-block">
+              <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+              <pre><code data-lang="python">def f(arr, lo, hi):
+    if lo &gt;= hi:
+        return
+    mid = (lo + hi) // 2
+    f(arr, lo, mid)
+    f(arr, mid + 1, hi)
+    for i in range(lo, hi):       # O(n) work at this level
+        touch(arr[i])</code></pre>
+            </div>
+            <p><strong>Solution:</strong> T(n) = 2T(n/2) + O(n) — exactly the merge sort recurrence (a=2, b=2, f(n)=n). By the Master Theorem, Case 2 applies (f(n) = n^(log₂2) = n) → <span class="bigo c3">O(n log n)</span> time. Max recursion depth is O(log n) → <span class="bigo c1">O(log n)</span> auxiliary stack space.</p>
+          </div>
+        </details>
+
+        <details class="problem">
+          <summary>Problem 7 — Multiple independent loops plus a nested one</summary>
+          <div class="problem-body">
+            <div class="code-block">
+              <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+              <pre><code data-lang="python">def f(arr):
+    n = len(arr)
+    for x in arr: print(x)                       # O(n)
+    total = sum(arr)                                # O(n) — sum() scans the list
+    for i in range(n):
+        for j in range(n):
+            if arr[i] + arr[j] == total:               # O(1) per pair
+                print("match")
+    return total</code></pre>
+            </div>
+            <p><strong>Solution:</strong> O(n) + O(n) + O(n²) — the nested loop dominates. Total: <span class="bigo c4">O(n²)</span> time, <span class="bigo c1">O(1)</span> auxiliary space (no structure grows with n beyond fixed variables).</p>
+          </div>
+        </details>
+
+        <details class="problem">
+          <summary>Problem 8 — Spot the exponential blowup, and fix it</summary>
+          <div class="problem-body">
+            <div class="code-block">
+              <div class="code-bar"><span class="lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+              <pre><code data-lang="python">def count_paths(n):
+    if n &lt;= 1:
+        return 1
+    return count_paths(n - 1) + count_paths(n - 2)</code></pre>
+            </div>
+            <p><strong>Solution:</strong> Same shape as naive Fibonacci: T(n) = T(n-1) + T(n-2) + O(1), two branches each shrinking by a small constant, heavy subproblem overlap → <span class="bigo c5">O(2ⁿ)</span> time, O(n) space (max recursion depth, since one branch always recurses down to the base case before backtracking).</p>
+            <p><strong>The fix:</strong> memoize results by <code>n</code> (a dictionary or array cache). Each of the n unique subproblems then computes once → <span class="bigo c2">O(n)</span> time, <span class="bigo c2">O(n)</span> space for the cache plus the call stack.</p>
+          </div>
+        </details>
+
+        <div class="callout tip" style="margin-top:28px;">
+          <div class="ic">🎯</div>
+          <div><strong>Next step</strong> The fastest way to internalize all of this is to pick a handful of functions from your own projects — or from a well-known library — and analyze them cold using the five-question checklist from Chapter 13. Pattern recognition only sticks through repetition.</div>
+        </div>
+
+        <div class="chapter-foot">
+          <div class="foot-link" data-target="ch14"><div class="dir">← Previous</div>Common Mistakes &amp; Tricky Cases</div>
+          <div class="foot-link next" data-target="ch1"><div class="dir">↻ Back to start</div>Why Complexity Analysis Matters</div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<script>
+/* ============================= SYNTAX HIGHLIGHTER ============================= */
+function highlightCode(code, lang){
+  // escape HTML first
+  let s = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  if(lang === 'text'){ return s; }
+
+  const pyKeywords = ['def','return','if','elif','else','for','while','in','not','and','or','break','continue','class','import','from','as','True','False','None','is','lambda','yield','try','except','finally','with','pass','raise'];
+
+  // Protect strings and comments first by tokenizing
+  const tokens = [];
+  let placeholder = (str, cls) => { tokens.push({cls, str}); return `\u0000${tokens.length-1}\u0001`; };
+
+  // comments (# ...)
+  s = s.replace(/#.*$/gm, m => placeholder(m, 'tok-com'));
+  // strings (single, double, triple)
+  s = s.replace(/("""[\s\S]*?"""|'''[\s\S]*?'''|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, m => placeholder(m, 'tok-str'));
+  // numbers
+  s = s.replace(/\b(\d+\.?\d*)\b/g, m => placeholder(m, 'tok-num'));
+  // function names (word followed by open paren), but not keywords
+  s = s.replace(/\b([A-Za-z_][A-Za-z0-9_]*)(?=\()/g, (m, p1) => {
+    if(pyKeywords.includes(p1)) return m;
+    return placeholder(m, 'tok-fn');
+  });
+  // keywords
+  const kwPattern = new RegExp('\\b(' + pyKeywords.join('|') + ')\\b', 'g');
+  s = s.replace(kwPattern, m => placeholder(m, 'tok-kw'));
+
+  // restore placeholders wrapped in spans
+  s = s.replace(/\u0000(\d+)\u0001/g, (m, idx) => {
+    const t = tokens[idx];
+    return `<span class="${t.cls}">${t.str}</span>`;
+  });
+
+  return s;
+}
+
+document.querySelectorAll('.code-block pre code').forEach(block => {
+  const lang = block.getAttribute('data-lang') || 'text';
+  const raw = block.textContent;
+  block.innerHTML = highlightCode(raw, lang);
+});
+
+/* ============================= COPY BUTTON ============================= */
+function copyCode(btn){
+  const block = btn.closest('.code-block').querySelector('pre code');
+  const text = block.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const original = btn.textContent;
+    btn.textContent = 'Copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1600);
+  }).catch(() => {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+    btn.textContent = 'Copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1600);
+  });
+}
+
+/* ============================= NAVIGATION ============================= */
+const navItems = document.querySelectorAll('.nav-item');
+const chapters = document.querySelectorAll('.chapter');
+const chapterOrder = Array.from(chapters).map(c => c.id);
+const progressLabel = document.getElementById('progressLabel');
+
+function scrollToChapter(id){
+  const el = document.getElementById(id);
+  if(el){
+    const y = el.getBoundingClientRect().top + window.scrollY - 76;
+    window.scrollTo({top: y, behavior: 'smooth'});
+  }
+}
+
+navItems.forEach(item => {
+  item.addEventListener('click', () => {
+    scrollToChapter(item.getAttribute('data-target'));
+    closeSidebarOnMobile();
+  });
+});
+
+document.querySelectorAll('.foot-link[data-target]').forEach(item => {
+  item.addEventListener('click', () => scrollToChapter(item.getAttribute('data-target')));
+});
+
+function setActiveNav(id){
+  navItems.forEach(item => {
+    item.classList.toggle('active', item.getAttribute('data-target') === id);
+  });
+  const idx = chapterOrder.indexOf(id);
+  if(idx > -1 && progressLabel){
+    progressLabel.textContent = `Chapter ${idx + 1} of ${chapterOrder.length}`;
+  }
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      setActiveNav(entry.target.id);
+    }
+  });
+}, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+
+chapters.forEach(ch => observer.observe(ch));
+
+/* ============================= MOBILE SIDEBAR ============================= */
+const sidebar = document.getElementById('sidebar');
+const backdrop = document.getElementById('backdrop');
+const menuBtn = document.getElementById('menuBtn');
+
+function openSidebar(){
+  sidebar.classList.add('open');
+  backdrop.classList.add('show');
+}
+function closeSidebarOnMobile(){
+  if(window.innerWidth <= 980){
+    sidebar.classList.remove('open');
+    backdrop.classList.remove('show');
+  }
+}
+menuBtn.addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  backdrop.classList.toggle('show');
+});
+backdrop.addEventListener('click', closeSidebarOnMobile);
+
+/* ============================= SEARCH ============================= */
+const searchInput = document.getElementById('searchInput');
+let searchTimeout;
+searchInput.addEventListener('input', (e) => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    const query = e.target.value.trim();
+    // clear previous highlights
+    document.querySelectorAll('mark.hl').forEach(m => {
+      const parent = m.parentNode;
+      parent.replaceChild(document.createTextNode(m.textContent), m);
+      parent.normalize();
+    });
+    if(query.length < 2) return;
+
+    const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+    let firstMatch = null;
+
+    document.querySelectorAll('.chapter p, .chapter li, .chapter h3, .chapter h4').forEach(node => {
+      if(node.closest('.code-block')) return;
+      const text = node.textContent;
+      if(regex.test(text)){
+        // walk text nodes only, to avoid breaking nested tags
+        highlightTextNodes(node, query);
+        if(!firstMatch) firstMatch = node;
+      }
+    });
+
+    if(firstMatch){
+      firstMatch.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+  }, 250);
+});
+
+function highlightTextNodes(root, query){
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+  const nodes = [];
+  let n;
+  while(n = walker.nextNode()) nodes.push(n);
+  const re = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+  nodes.forEach(textNode => {
+    const val = textNode.nodeValue;
+    if(re.test(val)){
+      re.lastIndex = 0;
+      const frag = document.createDocumentFragment();
+      let lastIdx = 0;
+      let m;
+      while((m = re.exec(val)) !== null){
+        frag.appendChild(document.createTextNode(val.slice(lastIdx, m.index)));
+        const mark = document.createElement('mark');
+        mark.className = 'hl';
+        mark.textContent = m[0];
+        frag.appendChild(mark);
+        lastIdx = m.index + m[0].length;
+        if(m.index === re.lastIndex) re.lastIndex++;
+      }
+      frag.appendChild(document.createTextNode(val.slice(lastIdx)));
+      textNode.parentNode.replaceChild(frag, textNode);
+    }
+  });
+}
+
+/* ============================= GROWTH CHART LEGEND TOGGLE ============================= */
+document.querySelectorAll('.legend-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const key = item.getAttribute('data-curve');
+    const curve = document.querySelector(`polyline[data-curve="${key}"]`);
+    item.classList.toggle('off');
+    if(curve){
+      curve.style.display = item.classList.contains('off') ? 'none' : '';
+    }
+  });
+});
+
+/* set initial active nav */
+setActiveNav('ch1');
+</script>
+</body>
+</html>

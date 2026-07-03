@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>16-Week Dev Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --surface: #161616;
+    --surface2: #1e1e1e;
+    --border: #2a2a2a;
+    --text: #f0ede8;
+    --muted: #888;
+    --teal: #00c896;
+    --blue: #4a9eff;
+    --amber: #f5a623;
+    --coral: #ff6b6b;
+    --purple: #9b7fe8;
+    --green: #5dc87a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Lora', Georgia, serif;
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* SIDEBAR */
+  .layout { display: flex; min-height: 100vh; }
+
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 2rem 1.25rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .sidebar-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sidebar-logo::before {
+    content: '';
+    width: 8px; height: 8px;
+    background: var(--teal);
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 10px var(--teal);
+  }
+
+  .nav-section { margin-bottom: 1.5rem; }
+
+  .nav-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .nav-link {
+    display: block;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #aaa;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+    margin-bottom: 2px;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+  }
+
+  .nav-link:hover { color: var(--text); background: var(--surface2); }
+  .nav-link.active { color: var(--teal); border-left-color: var(--teal); background: rgba(0,200,150,0.07); }
+
+  .progress-mini { margin-top: 2rem; }
+  .prog-label { font-family: 'Syne', sans-serif; font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+  .prog-bar { background: var(--border); border-radius: 4px; height: 4px; margin-bottom: 8px; overflow: hidden; }
+  .prog-fill { height: 100%; border-radius: 4px; }
+
+  /* MAIN */
+  .main { flex: 1; padding: 3rem 3.5rem; max-width: 900px; }
+
+  /* HERO */
+  .hero {
+    margin-bottom: 4rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--teal);
+    letter-spacing: 0.08em;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  .hero h1 span { color: var(--teal); }
+
+  .hero-sub {
+    font-size: 16px;
+    color: #aaa;
+    max-width: 520px;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text);
+    display: block;
+  }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* SECTIONS */
+  .section { margin-bottom: 4rem; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--surface2);
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  /* PILLARS */
+  .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 2rem; }
+
+  .pillar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pillar::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .pillar.teal::before { background: var(--teal); }
+  .pillar.blue::before { background: var(--blue); }
+  .pillar.amber::before { background: var(--amber); }
+
+  .pillar-icon {
+    font-size: 22px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .pillar-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .pillar-detail {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* PHASE CARDS */
+  .phase-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  .phase-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 16px; bottom: 16px;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+  }
+
+  .phase-card.ph1::before { background: var(--teal); }
+  .phase-card.ph2::before { background: var(--blue); }
+  .phase-card.ph3::before { background: var(--amber); }
+  .phase-card.ph4::before { background: var(--coral); }
+
+  .phase-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .phase-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+
+  .phase-weeks {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .phase-badge {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    flex-shrink: 0;
+  }
+
+  .badge-teal { background: rgba(0,200,150,0.1); color: var(--teal); }
+  .badge-blue { background: rgba(74,158,255,0.1); color: var(--blue); }
+  .badge-amber { background: rgba(245,166,35,0.1); color: var(--amber); }
+  .badge-coral { background: rgba(255,107,107,0.1); color: var(--coral); }
+
+  .topic-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+  .topic-col { }
+
+  .topic-col-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .topic-item {
+    font-size: 13px;
+    color: #ccc;
+    padding: 3px 0;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+  }
+
+  /* TIMETABLE */
+  .timetable { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+
+  .timetable th {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .timetable td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    vertical-align: top;
+  }
+
+  .timetable tr:hover td { background: var(--surface2); }
+
+  .time-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--teal);
+    white-space: nowrap;
+  }
+
+  .act-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+
+  .act-detail { font-size: 12px; color: var(--muted); }
+
+  .dur-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 2px 8px;
+    background: var(--surface2);
+    border-radius: 4px;
+    color: #aaa;
+    white-space: nowrap;
+  }
+
+  /* WEEKLY TRACKER */
+  .week-tracker { }
+
+  .tracker-week {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 10px;
+  }
+
+  .tracker-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .tracker-week-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .tracker-week-sub {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .check-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #aaa;
+    cursor: pointer;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .check-item:hover { border-color: var(--teal); color: var(--text); }
+  .check-item.done { border-color: var(--teal); color: var(--teal); background: rgba(0,200,150,0.07); }
+  .check-item.done::before { content: '✓ '; }
+
+  /* PROJECTS */
+  .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+
+  .proj-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .proj-card:hover { border-color: #444; }
+
+  .proj-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 60px;
+    font-weight: 800;
+    color: var(--surface2);
+    position: absolute;
+    top: -10px; right: 12px;
+    line-height: 1;
+    user-select: none;
+  }
+
+  .proj-tag-sm {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    display: inline-block;
+  }
+
+  .proj-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .proj-desc { font-size: 13px; color: #aaa; line-height: 1.6; margin-bottom: 10px; }
+
+  .tech-pills { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tech-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: #888;
+  }
+
+  /* RESOURCES */
+  .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+
+  .res-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+  }
+
+  .res-domain {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+
+  .res-item {
+    font-size: 13px;
+    color: #bbb;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .res-item:last-child { border-bottom: none; }
+
+  .res-item strong {
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+  /* TIPS */
+  .tip {
+    background: rgba(0,200,150,0.05);
+    border: 1px solid rgba(0,200,150,0.2);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-top: 1.5rem;
+  }
+
+  .tip-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--teal);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+
+  .tip p { font-size: 13px; color: #bbb; line-height: 1.6; }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* PRINT */
+  @media print {
+    .sidebar { display: none; }
+    .main { max-width: 100%; padding: 1.5rem; }
+    body { background: white; color: black; }
+    .phase-card, .pillar, .tracker-week, .proj-card, .res-card {
+      background: #f9f9f9; border-color: #ddd;
+    }
+    .hero h1, .phase-title, .pillar-title, .proj-title { color: #111; }
+    .timetable td, .timetable th { border-color: #ddd; }
+  }
+
+  @media (max-width: 900px) {
+    .layout { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: static; }
+    .main { padding: 2rem 1.5rem; }
+    .pillars { grid-template-columns: 1fr; }
+    .topic-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">Dev Roadmap</div>
+
+    <nav>
+      <div class="nav-section">
+        <div class="nav-label">Overview</div>
+        <a class="nav-link active" href="#overview">The Plan</a>
+        <a class="nav-link" href="#pillars">3 Pillars</a>
+        <a class="nav-link" href="#daily">Daily Schedule</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">Phases</div>
+        <a class="nav-link" href="#phase1">Phase 1 — Wk 1–4</a>
+        <a class="nav-link" href="#phase2">Phase 2 — Wk 5–8</a>
+        <a class="nav-link" href="#phase3">Phase 3 — Wk 9–12</a>
+        <a class="nav-link" href="#phase4">Phase 4 — Wk 13–16</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">Tracker</div>
+        <a class="nav-link" href="#tracker">Weekly Checklist</a>
+        <a class="nav-link" href="#projects">Projects</a>
+        <a class="nav-link" href="#resources">Resources</a>
+      </div>
+    </nav>
+
+    <div class="progress-mini">
+      <div class="prog-label">Overall progress</div>
+      <div class="prog-bar"><div class="prog-fill" style="width:6%;background:var(--teal);"></div></div>
+
+      <div class="prog-label">DSA</div>
+      <div class="prog-bar"><div class="prog-fill" style="width:5%;background:var(--teal);"></div></div>
+
+      <div class="prog-label">Full Stack</div>
+      <div class="prog-bar"><div class="prog-fill" style="width:10%;background:var(--blue);"></div></div>
+
+      <div class="prog-label">AWS</div>
+      <div class="prog-bar"><div class="prog-fill" style="width:3%;background:var(--amber);"></div></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- HERO -->
+    <section id="overview" class="hero">
+      <div class="hero-tag">// your_summer_grind.py — 16 weeks · 3 domains · 3 projects</div>
+      <h1>Build yourself.<br><span>From zero to hired.</span></h1>
+      <p class="hero-sub">A structured 16-week plan across your internship and 2 months after — covering DSA in Python, Full Stack (React + Node), and AWS Cloud.</p>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num">16</span>
+          <span class="stat-label">weeks total</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">3</span>
+          <span class="stat-label">domains</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">3</span>
+          <span class="stat-label">resume projects</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">150+</span>
+          <span class="stat-label">DSA problems</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">1</span>
+          <span class="stat-label">AWS cert target</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PILLARS -->
+    <section id="pillars" class="section">
+      <div class="section-header">
+        <h2>The 3 Pillars</h2>
+        <span class="section-num">01</span>
+      </div>
+      <div class="pillars">
+        <div class="pillar teal">
+          <span class="pillar-icon">🐍</span>
+          <div class="pillar-title">DSA in Python</div>
+          <div class="pillar-detail">NeetCode 150 pattern-based. 5–6 problems/week. Arrays → Trees → DP. ~45 min/day. LeetCode + NeetCode.io.</div>
+        </div>
+        <div class="pillar blue">
+          <span class="pillar-icon">⚛️</span>
+          <div class="pillar-title">Full Stack Web</div>
+          <div class="pillar-detail">React (restart from Hooks) + Node.js + Express + MongoDB/PostgreSQL. Build real deployed apps. ~1.5 hrs/day.</div>
+        </div>
+        <div class="pillar amber">
+          <span class="pillar-icon">☁️</span>
+          <div class="pillar-title">AWS Cloud</div>
+          <div class="pillar-detail">Hands-on free tier only. S3, EC2, Lambda, RDS, CloudFront. Deploy your own projects. Target: SAA-C03 cert. ~45 min/day.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DAILY SCHEDULE -->
+    <section id="daily" class="section">
+      <div class="section-header">
+        <h2>Daily Schedule</h2>
+        <span class="section-num">02</span>
+      </div>
+
+      <table class="timetable">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Activity</th>
+            <th>Duration</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="time-tag">6:00 AM</span></td>
+            <td>
+              <div class="act-name">DSA Problem</div>
+              <div class="act-detail">1 LeetCode problem — no skipping, no excuses</div>
+            </td>
+            <td><span class="dur-tag">30 min</span></td>
+            <td style="font-size:12px;color:var(--muted);">NeetCode.io → Python solution</td>
+          </tr>
+          <tr>
+            <td><span class="time-tag">7:00 PM</span></td>
+            <td>
+              <div class="act-name">Full Stack Study</div>
+              <div class="act-detail">Watch + build. Never just watch.</div>
+            </td>
+            <td><span class="dur-tag">90 min</span></td>
+            <td style="font-size:12px;color:var(--muted);">Current phase topic</td>
+          </tr>
+          <tr>
+            <td><span class="time-tag">8:30 PM</span></td>
+            <td>
+              <div class="act-name">AWS Hands-on</div>
+              <div class="act-detail">Console only. No theory without doing.</div>
+            </td>
+            <td><span class="dur-tag">45 min</span></td>
+            <td style="font-size:12px;color:var(--muted);">Free tier — deploy something</td>
+          </tr>
+          <tr>
+            <td><span class="time-tag">9:15 PM</span></td>
+            <td>
+              <div class="act-name">Log & Plan</div>
+              <div class="act-detail">Write what you built. Plan tomorrow in 3 lines.</div>
+            </td>
+            <td><span class="dur-tag">15 min</span></td>
+            <td style="font-size:12px;color:var(--muted);">Notion / notebook</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table class="timetable">
+        <thead>
+          <tr>
+            <th colspan="4">Weekend</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="time-tag">Sat AM</span></td>
+            <td><div class="act-name">Project Work</div><div class="act-detail">Build resume project — 2–3 focused hours</div></td>
+            <td><span class="dur-tag">3 hrs</span></td>
+            <td style="font-size:12px;color:var(--muted);">No tutorials. Just build.</td>
+          </tr>
+          <tr>
+            <td><span class="time-tag">Sat PM</span></td>
+            <td><div class="act-name">DSA Deep Dive</div><div class="act-detail">One topic thoroughly — not many problems</div></td>
+            <td><span class="dur-tag">1.5 hrs</span></td>
+            <td style="font-size:12px;color:var(--muted);">Review patterns, not new problems</td>
+          </tr>
+          <tr>
+            <td><span class="time-tag">Sun AM</span></td>
+            <td><div class="act-name">AWS Architecture</div><div class="act-detail">Deploy something. Explore a new service.</div></td>
+            <td><span class="dur-tag">2 hrs</span></td>
+            <td style="font-size:12px;color:var(--muted);">AWS Skill Builder or hands-on</td>
+          </tr>
+          <tr>
+            <td><span class="time-tag">Sun PM</span></td>
+            <td><div class="act-name">Rest & Review</div><div class="act-detail">Reread notes. No new concepts. Rest is part of the plan.</div></td>
+            <td><span class="dur-tag">Flexible</span></td>
+            <td style="font-size:12px;color:var(--muted);">Recovery = better retention</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- PHASES -->
+    <section id="phase1" class="section">
+      <div class="section-header">
+        <h2>Phase 1 — Foundation</h2>
+        <span class="section-num">03</span>
+      </div>
+
+      <div class="phase-card ph1">
+        <div class="phase-top">
+          <div>
+            <div class="phase-title">Week 1 — React reboot + JS revision</div>
+            <div class="phase-weeks">Internship period · Foundation</div>
+          </div>
+          <span class="phase-badge badge-teal">Start here</span>
+        </div>
+        <div class="topic-grid">
+          <div class="topic-col">
+            <div class="topic-col-label">Full Stack</div>
+            <div class="topic-item">Revise ES6+ essentials</div>
+            <div class="topic-item">React: components, props</div>
+            <div class="topic-item">useState + useEffect</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">DSA (Python)</div>
+            <div class="topic-item">Arrays — two pointer</div>
+            <div class="topic-item">Sliding window pattern</div>
+            <div class="topic-item">5 LeetCode Easy problems</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">AWS</div>
+            <div class="topic-item">Create free tier account</div>
+            <div class="topic-item">Explore AWS console</div>
+            <div class="topic-item">IAM basics</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-card ph1">
+        <div class="phase-top">
+          <div>
+            <div class="phase-title">Week 2 — React deeper + Node intro</div>
+            <div class="phase-weeks">Internship period</div>
+          </div>
+        </div>
+        <div class="topic-grid">
+          <div class="topic-col">
+            <div class="topic-col-label">Full Stack</div>
+            <div class="topic-item">useContext, custom hooks</div>
+            <div class="topic-item">React Router v6</div>
+            <div class="topic-item">Node.js basics: modules, http</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">DSA (Python)</div>
+            <div class="topic-item">Strings + HashMap</div>
+            <div class="topic-item">Frequency counters</div>
+            <div class="topic-item">Anagram, duplicates</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">AWS</div>
+            <div class="topic-item">S3 — create bucket</div>
+            <div class="topic-item">Upload files, static hosting</div>
+            <div class="topic-item">S3 permissions</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-card ph1">
+        <div class="phase-top">
+          <div>
+            <div class="phase-title">Week 3 — Express + MongoDB</div>
+            <div class="phase-weeks">Internship period</div>
+          </div>
+        </div>
+        <div class="topic-grid">
+          <div class="topic-col">
+            <div class="topic-col-label">Full Stack</div>
+            <div class="topic-item">Express.js routing + middleware</div>
+            <div class="topic-item">REST API design</div>
+            <div class="topic-item">MongoDB + Mongoose CRUD</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">DSA (Python)</div>
+            <div class="topic-item">Linked Lists</div>
+            <div class="topic-item">Reverse, detect cycle</div>
+            <div class="topic-item">Merge sorted lists</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">AWS</div>
+            <div class="topic-item">EC2 — launch Linux instance</div>
+            <div class="topic-item">SSH into instance</div>
+            <div class="topic-item">Deploy Node app on EC2</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-card ph1">
+        <div class="phase-top">
+          <div>
+            <div class="phase-title">Week 4 — Connect frontend + backend</div>
+            <div class="phase-weeks">Internship period</div>
+          </div>
+        </div>
+        <div class="topic-grid">
+          <div class="topic-col">
+            <div class="topic-col-label">Full Stack</div>
+            <div class="topic-item">Axios / Fetch API, CORS</div>
+            <div class="topic-item">JWT auth + bcrypt</div>
+            <div class="topic-item">.env setup + security</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">DSA (Python)</div>
+            <div class="topic-item">Stacks + Queues</div>
+            <div class="topic-item">Valid parentheses</div>
+            <div class="topic-item">Min stack, queue with stacks</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">AWS</div>
+            <div class="topic-item">IAM — users, roles, policies</div>
+            <div class="topic-item">Security best practices</div>
+            <div class="topic-item">MFA setup</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="phase2" class="section">
+      <div class="section-header">
+        <h2>Phase 2 — Build Real Things</h2>
+        <span class="section-num">04</span>
+      </div>
+
+      <div class="phase-card ph2">
+        <div class="phase-top">
+          <div>
+            <div class="phase-title">Week 5 — First full stack project</div>
+            <div class="phase-weeks">Internship period</div>
+          </div>
+          <span class="phase-badge badge-blue">Project 1 start</span>
+        </div>
+        <div class="topic-grid">
+          <div class="topic-col">
+            <div class="topic-col-label">Full Stack</div>
+            <div class="topic-item">Build full MERN notes/blog app</div>
+            <div class="topic-item">Deploy frontend on Vercel</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">DSA (Python)</div>
+            <div class="topic-item">Binary Search variations</div>
+            <div class="topic-item">Rotated sorted array</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">AWS</div>
+            <div class="topic-item">Lambda — first function</div>
+            <div class="topic-item">Test in console</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-card ph2">
+        <div class="phase-top">
+          <div>
+            <div class="phase-title">Week 6 — React advanced patterns</div>
+            <div class="phase-weeks">Internship period</div>
+          </div>
+        </div>
+        <div class="topic-grid">
+          <div class="topic-col">
+            <div class="topic-col-label">Full Stack</div>
+            <div class="topic-item">Redux Toolkit or Zustand</div>
+            <div class="topic-item">React Hook Form</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">DSA (Python)</div>
+            <div class="topic-item">Trees — inorder, level order</div>
+            <div class="topic-item">Tree height, max depth</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">AWS</div>
+            <div class="topic-item">API Gateway + Lambda</div>
+            <div class="topic-item">Build REST API serverless</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-card ph2">
+        <div class="phase-top">
+          <div>
+            <div class="phase-title">Week 7 — PostgreSQL + SQL</div>
+            <div class="phase-weeks">Internship period</div>
+          </div>
+        </div>
+        <div class="topic-grid">
+          <div class="topic-col">
+            <div class="topic-col-label">Full Stack</div>
+            <div class="topic-item">Switch to PostgreSQL</div>
+            <div class="topic-item">SQL joins, indexes</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">DSA (Python)</div>
+            <div class="topic-item">Graphs — BFS, DFS</div>
+            <div class="topic-item">Adjacency list</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">AWS</div>
+            <div class="topic-item">RDS — set up PostgreSQL</div>
+            <div class="topic-item">Connect from local app</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-card ph2">
+        <div class="phase-top">
+          <div>
+            <div class="phase-title">Week 8 — Docker + deployment</div>
+            <div class="phase-weeks">Internship period</div>
+          </div>
+          <span class="phase-badge badge-blue">Project 1 done</span>
+        </div>
+        <div class="topic-grid">
+          <div class="topic-col">
+            <div class="topic-col-label">Full Stack</div>
+            <div class="topic-item">Docker + docker-compose</div>
+            <div class="topic-item">GitHub Actions CI/CD</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">DSA (Python)</div>
+            <div class="topic-item">Recursion + backtracking</div>
+            <div class="topic-item">N-Queens, subsets</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">AWS</div>
+            <div class="topic-item">Elastic Beanstalk</div>
+            <div class="topic-item">Deploy containerized app</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="phase3" class="section">
+      <div class="section-header">
+        <h2>Phase 3 — Go Deeper</h2>
+        <span class="section-num">05</span>
+      </div>
+
+      <div class="phase-card ph3">
+        <div class="phase-top">
+          <div>
+            <div class="phase-title">Week 9 — Big project begins</div>
+            <div class="phase-weeks">Post-internship · Free time</div>
+          </div>
+          <span class="phase-badge badge-amber">Project 2 start</span>
+        </div>
+        <div class="topic-grid">
+          <div class="topic-col">
+            <div class="topic-col-label">Full Stack</div>
+            <div class="topic-item">Job tracker / SaaS app</div>
+            <div class="topic-item">Auth, Stripe, file uploads</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">DSA (Python)</div>
+            <div class="topic-item">Dynamic Programming</div>
+            <div class="topic-item">0/1 Knapsack, LCS</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">AWS</div>
+            <div class="topic-item">CloudFront CDN</div>
+            <div class="topic-item">S3 for file storage</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-card ph3">
+        <div class="phase-top">
+          <div>
+            <div class="phase-title">Week 10 — TypeScript + testing</div>
+            <div class="phase-weeks">Post-internship</div>
+          </div>
+        </div>
+        <div class="topic-grid">
+          <div class="topic-col">
+            <div class="topic-col-label">Full Stack</div>
+            <div class="topic-item">Migrate project to TypeScript</div>
+            <div class="topic-item">Jest + React Testing Library</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">DSA (Python)</div>
+            <div class="topic-item">Heaps, Priority Queue</div>
+            <div class="topic-item">Top K elements</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">AWS</div>
+            <div class="topic-item">VPC, subnets, security groups</div>
+            <div class="topic-item">Networking fundamentals</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-card ph3">
+        <div class="phase-top">
+          <div>
+            <div class="phase-title">Week 11 — Performance + optimization</div>
+            <div class="phase-weeks">Post-internship</div>
+          </div>
+        </div>
+        <div class="topic-grid">
+          <div class="topic-col">
+            <div class="topic-col-label">Full Stack</div>
+            <div class="topic-item">React: lazy, memo, useMemo</div>
+            <div class="topic-item">Redis caching, pagination</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">DSA (Python)</div>
+            <div class="topic-item">Trie, Segment Tree</div>
+            <div class="topic-item">Union Find</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">AWS</div>
+            <div class="topic-item">CloudWatch monitoring</div>
+            <div class="topic-item">SNS notifications</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-card ph3">
+        <div class="phase-top">
+          <div>
+            <div class="phase-title">Week 12 — System design basics</div>
+            <div class="phase-weeks">Post-internship</div>
+          </div>
+          <span class="phase-badge badge-amber">Project 2 done</span>
+        </div>
+        <div class="topic-grid">
+          <div class="topic-col">
+            <div class="topic-col-label">Full Stack</div>
+            <div class="topic-item">Load balancers, caching</div>
+            <div class="topic-item">Design URL shortener</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">DSA (Python)</div>
+            <div class="topic-item">Hard problems review</div>
+            <div class="topic-item">Weak area focus</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">AWS</div>
+            <div class="topic-item">Well-Architected Framework</div>
+            <div class="topic-item">SAA-C03 intro</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="phase4" class="section">
+      <div class="section-header">
+        <h2>Phase 4 — Polish & Launch</h2>
+        <span class="section-num">06</span>
+      </div>
+
+      <div class="phase-card ph4">
+        <div class="phase-top">
+          <div>
+            <div class="phase-title">Week 13 — Portfolio + resume</div>
+            <div class="phase-weeks">Post-internship</div>
+          </div>
+          <span class="phase-badge badge-coral">Project 3 start</span>
+        </div>
+        <div class="topic-grid">
+          <div class="topic-col">
+            <div class="topic-col-label">Full Stack</div>
+            <div class="topic-item">Finish + polish all projects</div>
+            <div class="topic-item">Build portfolio website</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">DSA (Python)</div>
+            <div class="topic-item">Mock interview — timed</div>
+            <div class="topic-item">2 problems/day</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">AWS</div>
+            <div class="topic-item">SAA-C03 practice Qs</div>
+            <div class="topic-item">Architecture review</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-card ph4">
+        <div class="phase-top">
+          <div>
+            <div class="phase-title">Week 14 — Interview prep</div>
+            <div class="phase-weeks">Post-internship</div>
+          </div>
+        </div>
+        <div class="topic-grid">
+          <div class="topic-col">
+            <div class="topic-col-label">Full Stack</div>
+            <div class="topic-item">STAR method behavioral prep</div>
+            <div class="topic-item">Mock interviews (Pramp)</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">DSA (Python)</div>
+            <div class="topic-item">Blind 75 review</div>
+            <div class="topic-item">Review all solved problems</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">AWS</div>
+            <div class="topic-item">Cloud Practitioner exam</div>
+            <div class="topic-item">Quick win certification</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-card ph4">
+        <div class="phase-top">
+          <div>
+            <div class="phase-title">Week 15 — Open source + networking</div>
+            <div class="phase-weeks">Post-internship</div>
+          </div>
+        </div>
+        <div class="topic-grid">
+          <div class="topic-col">
+            <div class="topic-col-label">Full Stack</div>
+            <div class="topic-item">1 open source PR</div>
+            <div class="topic-item">Update LinkedIn</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">DSA (Python)</div>
+            <div class="topic-item">Company-specific problems</div>
+            <div class="topic-item">Glassdoor lists</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">AWS</div>
+            <div class="topic-item">Review deployed project architecture</div>
+            <div class="topic-item">Cost optimization</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-card ph4">
+        <div class="phase-top">
+          <div>
+            <div class="phase-title">Week 16 — Final review + apply</div>
+            <div class="phase-weeks">Post-internship</div>
+          </div>
+          <span class="phase-badge badge-coral">Launch</span>
+        </div>
+        <div class="topic-grid">
+          <div class="topic-col">
+            <div class="topic-col-label">Full Stack</div>
+            <div class="topic-item">Final portfolio review</div>
+            <div class="topic-item">Cold emails / job applications</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">DSA (Python)</div>
+            <div class="topic-item">Full 45-min mock interview</div>
+            <div class="topic-item">Timed problem set</div>
+          </div>
+          <div class="topic-col">
+            <div class="topic-col-label">AWS</div>
+            <div class="topic-item">SAA-C03 attempt</div>
+            <div class="topic-item">Schedule exam date</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRACKER -->
+    <section id="tracker" class="section">
+      <div class="section-header">
+        <h2>Weekly Checklist</h2>
+        <span class="section-num">07</span>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:1.25rem;">Click any item to mark it done. Your checks are saved in the browser.</p>
+
+      <div class="week-tracker" id="checklist-container"></div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="section">
+      <div class="section-header">
+        <h2>Resume Projects</h2>
+        <span class="section-num">08</span>
+      </div>
+      <div class="projects-grid">
+        <div class="proj-card">
+          <div class="proj-num">01</div>
+          <div class="proj-tag-sm" style="background:rgba(0,200,150,0.1);color:var(--teal);">Weeks 4–6 · Beginner</div>
+          <div class="proj-title">Full Stack Notes App</div>
+          <div class="proj-desc">CRUD app with user auth, rich text, tags, and search. Deploy frontend on Vercel, backend on EC2 or Render.</div>
+          <div class="tech-pills">
+            <span class="tech-pill">React</span>
+            <span class="tech-pill">Node.js</span>
+            <span class="tech-pill">MongoDB</span>
+            <span class="tech-pill">JWT</span>
+            <span class="tech-pill">AWS S3</span>
+          </div>
+        </div>
+        <div class="proj-card">
+          <div class="proj-num">02</div>
+          <div class="proj-tag-sm" style="background:rgba(74,158,255,0.1);color:var(--blue);">Weeks 8–11 · Intermediate</div>
+          <div class="proj-title">Job Application Tracker</div>
+          <div class="proj-desc">Kanban pipeline for job apps, email reminders via Lambda, dashboard with charts. Solves a real problem.</div>
+          <div class="tech-pills">
+            <span class="tech-pill">React + TS</span>
+            <span class="tech-pill">Express</span>
+            <span class="tech-pill">PostgreSQL</span>
+            <span class="tech-pill">Lambda</span>
+            <span class="tech-pill">RDS</span>
+          </div>
+        </div>
+        <div class="proj-card">
+          <div class="proj-num">03</div>
+          <div class="proj-tag-sm" style="background:rgba(245,166,35,0.1);color:var(--amber);">Weeks 12–15 · Advanced</div>
+          <div class="proj-title">Cloud-native SaaS Tool</div>
+          <div class="proj-desc">URL shortener / file sharing with analytics. Fully serverless on AWS. Shows real cloud architecture knowledge.</div>
+          <div class="tech-pills">
+            <span class="tech-pill">React</span>
+            <span class="tech-pill">API Gateway</span>
+            <span class="tech-pill">Lambda</span>
+            <span class="tech-pill">DynamoDB</span>
+            <span class="tech-pill">CloudFront</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESOURCES -->
+    <section id="resources" class="section">
+      <div class="section-header">
+        <h2>Resources</h2>
+        <span class="section-num">09</span>
+      </div>
+      <div class="resources-grid">
+        <div class="res-card">
+          <div class="res-domain" style="color:var(--teal);">DSA (Python)</div>
+          <div class="res-item"><strong>NeetCode.io</strong> — primary resource</div>
+          <div class="res-item"><strong>LeetCode</strong> — Python filter</div>
+          <div class="res-item"><strong>Grokking Algorithms</strong> — book</div>
+          <div class="res-item"><strong>NeetCode YouTube</strong> — video solutions</div>
+          <div class="res-item"><strong>Back To Back SWE</strong> — concepts</div>
+        </div>
+        <div class="res-card">
+          <div class="res-domain" style="color:var(--blue);">Full Stack</div>
+          <div class="res-item"><strong>react.dev</strong> — official React docs</div>
+          <div class="res-item"><strong>The Odin Project</strong> — free curriculum</div>
+          <div class="res-item"><strong>Fireship YouTube</strong> — quick concepts</div>
+          <div class="res-item"><strong>Tech With Tim</strong> — Python + web</div>
+          <div class="res-item"><strong>Josh W Comeau</strong> — CSS deep dives</div>
+        </div>
+        <div class="res-card">
+          <div class="res-domain" style="color:var(--amber);">AWS Cloud</div>
+          <div class="res-item"><strong>AWS Free Tier</strong> — 12 months free</div>
+          <div class="res-item"><strong>AWS Skill Builder</strong> — free courses</div>
+          <div class="res-item"><strong>TechWithLucy</strong> — YouTube</div>
+          <div class="res-item"><strong>FreeCodeCamp AWS</strong> — YouTube</div>
+          <div class="res-item"><strong>Stephane Maarek</strong> — Udemy (sale)</div>
+        </div>
+      </div>
+
+      <div class="tip">
+        <div class="tip-label">One rule above all</div>
+        <p>Build something every single day, even if it's tiny. A 30-line component or one Lambda function counts. The streak matters more than the size. Don't break the chain.</p>
+      </div>
+    </section>
+
+    <div class="footer">
+      <span>16-week dev roadmap · DSA · Full Stack · AWS</span>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;">generated for your summer grind</span>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  const weeks = [
+    { label: "Week 1", sub: "React reboot + JS revision", items: ["Revise ES6+ (arrow, destructuring, async)", "React: components, props, useState", "useEffect + lifecycle", "5 LeetCode array problems", "Create AWS free tier account", "Explore IAM basics"] },
+    { label: "Week 2", sub: "React deeper + Node intro", items: ["useContext + custom hooks", "React Router v6", "Node.js basics: modules, fs", "HashMap + frequency counter DSA", "S3 bucket setup + static hosting", "S3 permissions"] },
+    { label: "Week 3", sub: "Express + MongoDB", items: ["Express routing + middleware", "REST API design (GET/POST/PUT/DELETE)", "MongoDB + Mongoose CRUD", "Linked list problems (reverse, cycle)", "EC2 — launch Linux instance", "SSH + deploy Node app on EC2"] },
+    { label: "Week 4", sub: "Connect frontend + backend", items: ["Axios / Fetch API + CORS", "JWT auth + bcrypt hashing", ".env + environment variables", "Stacks + Queues (valid parentheses)", "IAM users, roles, policies", "MFA setup"] },
+    { label: "Week 5", sub: "First full stack project", items: ["Build MERN notes/blog app", "Deploy frontend on Vercel", "Deploy backend on EC2/Render", "Binary search variations", "LeetCode rotated array", "AWS Lambda — first function"] },
+    { label: "Week 6", sub: "React advanced patterns", items: ["Redux Toolkit or Zustand", "React Hook Form + validation", "Error boundaries", "Tree traversal (inorder, level order)", "Tree height + max depth", "API Gateway + Lambda REST API"] },
+    { label: "Week 7", sub: "PostgreSQL + SQL", items: ["Switch to PostgreSQL", "SQL joins, indexes, queries", "Sequelize ORM or pg module", "Graph BFS + DFS", "Adjacency list representation", "RDS — PostgreSQL setup"] },
+    { label: "Week 8", sub: "Docker + deployment", items: ["Dockerfile + docker-compose", "GitHub Actions CI/CD pipeline", "Auto-deploy on push", "Recursion + backtracking", "N-Queens, subsets problems", "Elastic Beanstalk deploy"] },
+    { label: "Week 9", sub: "Big project begins (post-internship)", items: ["Start Job Tracker / SaaS app", "Implement auth flow", "Add Stripe payments (test mode)", "Dynamic programming: 0/1 Knapsack", "LCS problem", "CloudFront CDN setup + S3"] },
+    { label: "Week 10", sub: "TypeScript + testing", items: ["Migrate a project to TypeScript", "Type interfaces and generics", "Jest unit tests for backend", "React Testing Library basics", "Heaps + Priority Queue", "VPC, subnets, security groups"] },
+    { label: "Week 11", sub: "Performance + optimization", items: ["React.lazy + Suspense", "useMemo + useCallback", "Redis caching setup", "Backend pagination", "Trie + Union Find", "CloudWatch + SNS"] },
+    { label: "Week 12", sub: "System design basics", items: ["Study load balancers + caching", "Design URL shortener on paper", "Design chat app architecture", "Review all weak DSA areas", "AWS Well-Architected Framework", "Start SAA-C03 practice questions"] },
+    { label: "Week 13", sub: "Portfolio + polish", items: ["Finish + deploy all projects", "Write good README for each", "Build personal portfolio site", "Add project screenshots", "Timed DSA mock interview", "SAA-C03 practice tests"] },
+    { label: "Week 14", sub: "Interview preparation", items: ["Write 5 STAR behavioral stories", "Pramp mock interview session", "Blind 75 full review", "Revisit all solved problems", "Cloud Practitioner exam prep", "Schedule exam date"] },
+    { label: "Week 15", sub: "Open source + networking", items: ["Find and contribute 1 open source PR", "Update LinkedIn with all projects", "Write about your projects on LinkedIn", "Company-specific LeetCode problems", "Glassdoor interview prep", "AWS architecture review"] },
+    { label: "Week 16", sub: "Final launch", items: ["Final portfolio walkthrough", "Apply to 10+ target companies", "Cold email 5 engineers/recruiters", "Full 45-min timed mock interview", "SAA-C03 exam attempt", "Celebrate — you did the work"] },
+  ];
+
+  function renderChecklist() {
+    const container = document.getElementById('checklist-container');
+    const saved = JSON.parse(localStorage.getItem('roadmap-checks') || '{}');
+
+    weeks.forEach((week, wi) => {
+      const div = document.createElement('div');
+      div.className = 'tracker-week';
+      div.innerHTML = `
+        <div class="tracker-top">
+          <div>
+            <div class="tracker-week-label">${week.label}</div>
+            <div class="tracker-week-sub">${week.sub}</div>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);" id="count-${wi}"></div>
+        </div>
+        <div class="check-row" id="row-${wi}"></div>
+      `;
+      container.appendChild(div);
+
+      const row = div.querySelector(`#row-${wi}`);
+      week.items.forEach((item, ii) => {
+        const key = `w${wi}-i${ii}`;
+        const el = document.createElement('div');
+        el.className = 'check-item' + (saved[key] ? ' done' : '');
+        el.textContent = item;
+        el.onclick = () => {
+          el.classList.toggle('done');
+          const s = JSON.parse(localStorage.getItem('roadmap-checks') || '{}');
+          s[key] = el.classList.contains('done');
+          localStorage.setItem('roadmap-checks', JSON.stringify(s));
+          updateCount(wi);
+        };
+        row.appendChild(el);
+      });
+
+      updateCount(wi);
+    });
+  }
+
+  function updateCount(wi) {
+    const row = document.getElementById(`row-${wi}`);
+    const items = row.querySelectorAll('.check-item');
+    const done = row.querySelectorAll('.check-item.done').length;
+    document.getElementById(`count-${wi}`).textContent = `${done}/${items.length} done`;
+  }
+
+  renderChecklist();
+
+  // Smooth nav highlight
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+    });
+    navLinks.forEach(l => {
+      l.classList.toggle('active', l.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+</body>
+</html>

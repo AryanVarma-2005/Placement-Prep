@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dynamic Programming Mastery — Complete DSA Course</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#09090f;--bg2:#0f0f1a;--bg3:#161625;--bg4:#1e1e30;
+  --border:#252540;
+  --a1:#e879f9;--a2:#38bdf8;--a3:#4ade80;--a4:#fb923c;--a5:#facc15;
+  --text:#eeeef8;--text2:#8888aa;--text3:#44445a;
+  --codebg:#060610;--sw:282px;--r:8px;
+}
+[data-theme="light"]{
+  --bg:#f4f3ff;--bg2:#fff;--bg3:#eceaf8;--bg4:#e0ddf5;
+  --border:#d0cce8;--text:#12122a;--text2:#4a4870;--text3:#9a98b8;--codebg:#12122a;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.74;overflow-x:hidden;transition:background .25s,color .25s}
+::selection{background:var(--a1);color:#000}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--a1);border-radius:2px}
+
+/* LAYOUT */
+.shell{display:flex;min-height:100vh}
+.sidebar{width:var(--sw);background:var(--bg2);border-right:1px solid var(--border);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;display:flex;flex-direction:column;transition:transform .3s}
+.sb-top{padding:22px 18px 14px;border-bottom:1px solid var(--border)}
+.sb-icon{font-size:2.2rem;display:block;margin-bottom:6px;line-height:1}
+.sb-title{font-size:1.08rem;font-weight:800;letter-spacing:-.3px;line-height:1.2}
+.sb-title .hl{color:var(--a1)}
+.sb-sub{font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:3px;text-transform:uppercase;color:var(--text3);margin-top:4px}
+.sb-nav{padding:9px 0;flex:1}
+.ngrp{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:3px;text-transform:uppercase;color:var(--text3);padding:10px 18px 3px}
+.nl{display:flex;align-items:center;gap:9px;padding:7px 18px;font-size:.8rem;font-weight:600;color:var(--text2);cursor:pointer;border-left:2px solid transparent;transition:all .15s}
+.nl:hover{color:var(--text);background:var(--bg3);border-left-color:var(--a1)}
+.nl.active{color:var(--a1);border-left-color:var(--a1);background:var(--bg3)}
+.nl .n{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--text3);min-width:20px}
+.sb-foot{padding:13px 18px;border-top:1px solid var(--border)}
+.pl{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:1px;color:var(--text3);margin-bottom:5px}
+.pb{height:3px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.pf{height:100%;background:linear-gradient(90deg,var(--a1),var(--a2));width:0%;transition:width .5s}
+
+.main{margin-left:var(--sw);flex:1;max-width:940px;padding:0 44px 100px}
+.topbar{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--border);padding:12px 44px;margin:0 -44px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(10px)}
+.bc{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--text3)}
+.tbtns{display:flex;gap:8px}
+.pill{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:5px 13px;border-radius:20px;cursor:pointer;font-size:.74rem;font-weight:700;transition:all .2s}
+.pill:hover{border-color:var(--a1);color:var(--a1)}
+.hbg{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer}
+
+/* HERO */
+.hero{padding:52px 0 40px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;right:-20px;top:-20px;font-size:16rem;line-height:1;opacity:.06;pointer-events:none;user-select:none;font-weight:800}
+.hchip{display:inline-flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--a1);background:rgba(232,121,249,.07);border:1px solid rgba(232,121,249,.2);padding:3px 11px;border-radius:3px;margin-bottom:16px}
+.hero h2{font-size:clamp(2.6rem,6vw,4.6rem);font-weight:800;letter-spacing:-2.5px;line-height:1.02;margin-bottom:13px}
+.hero h2 .hl{color:var(--a1)}
+.hlead{font-size:.97rem;color:var(--text2);max-width:580px;margin-bottom:26px}
+.hstats{display:flex;gap:28px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;gap:2px}
+.sn{font-size:2.3rem;font-weight:800;color:var(--a1);line-height:1;letter-spacing:-2px}
+.sl{font-family:'Space Mono',monospace;font-size:.57rem;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
+
+/* SECTIONS */
+.section{margin-bottom:70px;scroll-margin-top:70px}
+.shdr{display:flex;align-items:flex-start;gap:12px;margin-bottom:24px;padding-bottom:15px;border-bottom:1px solid var(--border)}
+.snum{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:2px;color:var(--a1);background:rgba(232,121,249,.07);border:1px solid rgba(232,121,249,.18);padding:3px 8px;border-radius:3px;margin-top:6px;white-space:nowrap}
+.stitle{font-size:clamp(1.5rem,3.5vw,2.1rem);font-weight:800;letter-spacing:-1.5px;line-height:1.1}
+.ssub{color:var(--text2);margin-top:4px;font-size:.88rem}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:15px}
+.cttl{font-size:.92rem;font-weight:700;margin-bottom:11px;display:flex;align-items:center;gap:8px}
+.tag{font-family:'Space Mono',monospace;font-size:.54rem;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:2px;font-weight:400}
+.t1{background:rgba(232,121,249,.1);color:var(--a1)}
+.t2{background:rgba(56,189,248,.09);color:var(--a2)}
+.t3{background:rgba(74,222,128,.08);color:var(--a3)}
+.t4{background:rgba(251,146,60,.09);color:var(--a4)}
+.t5{background:rgba(250,204,21,.08);color:var(--a5)}
+
+/* CALLOUTS */
+.callout{padding:13px 17px;border-radius:var(--r);margin:13px 0;border-left:3px solid;display:flex;gap:11px;align-items:flex-start}
+.ci{font-size:1.05rem;margin-top:2px;flex-shrink:0}.cb{flex:1}
+.cbt{font-size:.81rem;font-weight:700;margin-bottom:3px}
+.callout.info{background:rgba(232,121,249,.05);border-color:var(--a1)}
+.callout.warn{background:rgba(251,146,60,.05);border-color:var(--a4)}
+.callout.tip{background:rgba(56,189,248,.05);border-color:var(--a2)}
+.callout.ok{background:rgba(74,222,128,.05);border-color:var(--a3)}
+.callout.gold{background:rgba(250,204,21,.05);border-color:var(--a5)}
+
+/* CODE */
+.cb2{position:relative;margin:13px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border)}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:7px 13px;background:var(--bg3);border-bottom:1px solid var(--border)}
+.cl{font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:2px;text-transform:uppercase;color:var(--a3)}
+.cpb{background:none;border:1px solid var(--border);color:var(--text3);padding:2px 8px;border-radius:2px;cursor:pointer;font-family:'Space Mono',monospace;font-size:.56rem;transition:all .18s}
+.cpb:hover{color:var(--text);border-color:var(--a1)}
+pre{background:var(--codebg);padding:17px;overflow-x:auto;margin:0;font-family:'Space Mono',monospace;font-size:.78rem;line-height:1.72}
+.kw{color:#c792ea}.fn{color:#82aaff}.str{color:#c3e88d}.num{color:#f78c6c}.cm{color:#3a3a5a;font-style:italic}.cls{color:#ffcb6b}.bl{color:#ff5370}.self{color:#80cbc4}
+
+/* TABLES */
+.tw{overflow-x:auto;margin:13px 0;border-radius:var(--r);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;background:var(--bg2)}
+th{background:var(--bg3);padding:10px 14px;text-align:left;font-size:.76rem;font-weight:700;border-bottom:1px solid var(--border);font-family:'Space Mono',monospace}
+td{padding:9px 14px;border-bottom:1px solid var(--border);font-size:.84rem;vertical-align:middle}
+tr:last-child td{border-bottom:none}tr:hover td{background:var(--bg3)}
+.g{color:var(--a3);font-weight:600}.b{color:var(--a1);font-weight:600}.ok2{color:var(--a4);font-weight:600}
+
+/* VIZ */
+.viz{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:16px 0}
+.vtitle{font-size:1rem;font-weight:700;color:var(--text2);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.vctl{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.vbtn{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:7px 15px;border-radius:var(--r);cursor:pointer;font-size:.76rem;font-weight:700;transition:all .18s}
+.vbtn:hover{background:var(--a1);border-color:var(--a1);color:#000}
+.vbtn.b2:hover{background:var(--a2);border-color:var(--a2);color:#000}
+.vbtn.b3:hover{background:var(--a3);border-color:var(--a3);color:#000}
+.vbtn.red:hover{background:var(--a4);border-color:var(--a4);color:#fff}
+.vinput{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:6px 11px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:.8rem;outline:none}
+.vinput:focus{border-color:var(--a1)}
+.vlog{margin-top:11px;padding:9px 13px;background:var(--bg);border-radius:var(--r);font-family:'Space Mono',monospace;font-size:.74rem;color:var(--text2);min-height:33px;border:1px solid var(--border)}
+.vok{color:var(--a3)}.verr{color:var(--a1)}.vinf{color:var(--a2)}
+
+/* DP TABLE */
+.dp-table-wrap{overflow-x:auto;margin:12px 0}
+.dp-table{border-collapse:collapse;font-family:'Space Mono',monospace;font-size:.76rem}
+.dp-table th,.dp-table td{border:1px solid var(--border);padding:6px 10px;text-align:center;min-width:40px}
+.dp-table th{background:var(--bg3);color:var(--text3);font-size:.65rem}
+.dp-table td{background:var(--bg2);color:var(--text2);transition:all .3s}
+.dp-table td.active{background:rgba(232,121,249,.2);color:var(--a1);border-color:var(--a1);font-weight:700}
+.dp-table td.filled{background:rgba(74,222,128,.1);color:var(--a3);border-color:var(--a3)}
+.dp-table td.path{background:rgba(250,204,21,.15);color:var(--a5);border-color:var(--a5);font-weight:700}
+.dp-table td.source{background:rgba(56,189,248,.12);color:var(--a2);border-color:var(--a2)}
+
+/* DRY RUN */
+.dry{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:14px 17px;margin:10px 0;font-family:'Space Mono',monospace;font-size:.74rem;line-height:1.85}
+.ds{display:flex;gap:10px;margin-bottom:2px;align-items:flex-start}
+.dsn{color:var(--text3);min-width:30px}.dsa{color:var(--text);flex:1}.dss{color:var(--a3);white-space:nowrap;margin-left:auto}
+
+/* QUIZ */
+.quiz{background:linear-gradient(135deg,rgba(232,121,249,.03),rgba(56,189,248,.04));border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:20px 0}
+.qttl{font-size:.86rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.qq{font-size:.88rem;color:var(--text);margin-bottom:12px;font-style:italic}
+.qopts{display:flex;flex-direction:column;gap:6px}
+.qopt{background:var(--bg2);border:1px solid var(--border);padding:9px 14px;border-radius:var(--r);cursor:pointer;font-size:.8rem;font-weight:500;text-align:left;color:var(--text2);transition:all .18s}
+.qopt:hover{border-color:var(--a1);color:var(--text)}
+.qopt.correct{border-color:var(--a3);background:rgba(74,222,128,.08);color:var(--a3)}
+.qopt.wrong{border-color:var(--a1);background:rgba(232,121,249,.08);color:var(--a1)}
+.qfb{margin-top:10px;padding:8px 12px;border-radius:var(--r);font-size:.81rem;display:none}
+.qfb.show{display:block}
+.qfb.ok{background:rgba(74,222,128,.06);color:var(--a3);border-left:2px solid var(--a3)}
+.qfb.no{background:rgba(232,121,249,.06);color:var(--a1);border-left:2px solid var(--a1)}
+
+/* DEEP */
+.deep{border:1px solid var(--border);border-radius:var(--r);margin:13px 0;overflow:hidden}
+.dhdr{padding:12px 17px;background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:.84rem;font-weight:700;user-select:none;transition:background .18s}
+.dhdr:hover{background:var(--bg4)}
+.darr{transition:transform .3s;color:var(--text3)}
+.deep.open .darr{transform:rotate(180deg)}
+.dbdy{display:none;padding:17px;border-top:1px solid var(--border)}
+.deep.open .dbdy{display:block}
+
+/* PROBLEMS */
+.prob{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px}
+.phdr{padding:13px 17px;background:var(--bg3);display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.ptitle{font-size:.88rem;font-weight:700;flex:1}
+.diff{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:20px}
+.de{background:rgba(74,222,128,.12);color:var(--a3)}.dm{background:rgba(250,204,21,.12);color:var(--a5)}.dh{background:rgba(232,121,249,.12);color:var(--a1)}
+.pbody{padding:17px}
+.ptabs{display:flex;gap:2px;margin-bottom:13px;border-bottom:1px solid var(--border)}
+.ptab{font-size:.73rem;font-weight:700;padding:6px 12px;cursor:pointer;border-bottom:2px solid transparent;color:var(--text3);transition:all .18s;margin-bottom:-1px}
+.ptab:hover{color:var(--text)}.ptab.active{border-bottom-color:var(--a1);color:var(--a1)}
+.ptc{display:none}.ptc.active{display:block}
+
+/* CX */
+.cxrow{display:flex;gap:9px;flex-wrap:wrap;margin:10px 0}
+.cx{display:flex;flex-direction:column;align-items:center;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:8px 13px;gap:2px;min-width:85px}
+.cxop{font-family:'Space Mono',monospace;font-size:.56rem;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.cxv{font-family:'Space Mono',monospace;font-size:.9rem;font-weight:700}
+.o1 .cxv{color:var(--a3)}.on .cxv{color:var(--a4)}.on2 .cxv{color:var(--a1)}.ologn .cxv{color:var(--a2)}
+
+/* PATTERNS */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:13px 0}
+.pc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:15px;transition:all .18s;cursor:default}
+.pc:hover{border-color:var(--a1);transform:translateY(-2px)}
+.pi{font-size:1.6rem;margin-bottom:7px}
+.pn{font-size:.84rem;font-weight:700;margin-bottom:4px}
+.pd{font-size:.75rem;color:var(--text2)}
+
+/* ROADMAP */
+.roadmap{position:relative;padding:8px 0}
+.roadmap::before{content:'';position:absolute;left:22px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--a1),var(--a2),var(--a3))}
+.rday{display:flex;gap:16px;margin-bottom:20px;position:relative}
+.rdot{width:46px;height:46px;border-radius:50%;background:var(--bg2);border:2px solid var(--a1);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:.7rem;font-weight:700;flex-shrink:0;z-index:1;color:var(--a1)}
+.rbody{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 17px;margin-top:6px}
+.rttl{font-size:.86rem;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.badge{font-size:.57rem;padding:2px 7px;border-radius:20px;font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase}
+.be{background:rgba(74,222,128,.1);color:var(--a3)}.bm{background:rgba(250,204,21,.1);color:var(--a5)}.bh{background:rgba(232,121,249,.1);color:var(--a1)}
+.rlist{list-style:none;display:flex;flex-direction:column;gap:3px}
+.rlist li{font-size:.82rem;color:var(--text2);display:flex;gap:7px;align-items:flex-start}
+.rlist li::before{content:'›';color:var(--a1);font-weight:700}
+
+/* CHEAT */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:13px;margin:13px 0}
+.ci2{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.cit{font-size:.78rem;font-weight:700;margin-bottom:8px;color:var(--a1)}
+.ci2 p,.ci2 li{font-size:.79rem;color:var(--text2);line-height:1.55}
+.ci2 ul{list-style:none;padding:0}
+.ci2 ul li::before{content:'› ';color:var(--a3)}
+
+/* IBOX */
+.ibox{background:rgba(250,204,21,.04);border:1px solid rgba(250,204,21,.2);border-radius:var(--r);padding:17px 20px;margin:16px 0}
+.iboxt{font-size:.86rem;font-weight:700;color:var(--a5);margin-bottom:9px;display:flex;align-items:center;gap:7px}
+.ibox ul{padding-left:14px}
+.ibox li{font-size:.84rem;color:var(--text2);margin-bottom:4px}
+
+/* STEP BOXES */
+.steps{display:flex;flex-direction:column;gap:12px;margin:14px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{width:32px;height:32px;border-radius:50%;background:rgba(232,121,249,.12);border:2px solid var(--a1);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;color:var(--a1);flex-shrink:0;margin-top:2px}
+.step-body{flex:1}
+.step-title{font-size:.88rem;font-weight:700;margin-bottom:3px}
+.step-desc{font-size:.83rem;color:var(--text2)}
+
+/* MEMO VIZ */
+.memo-cell{display:inline-flex;align-items:center;justify-content:center;min-width:40px;height:36px;border:1px solid var(--border);background:var(--bg3);font-family:'Space Mono',monospace;font-size:.8rem;font-weight:700;border-radius:4px;margin:2px;transition:all .3s}
+.memo-cell.cached{background:rgba(74,222,128,.12);border-color:var(--a3);color:var(--a3)}
+.memo-cell.computing{background:rgba(232,121,249,.12);border-color:var(--a1);color:var(--a1);animation:pulse .6s ease infinite}
+.memo-cell.empty{color:var(--text3)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* Grid DP cell animation */
+@keyframes fillCell{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+.dp-table td.active{animation:fillCell .25s ease}
+
+p{margin-bottom:10px}p:last-child{margin-bottom:0}
+strong{color:var(--text)}ul,ol{padding-left:17px;margin-bottom:10px}
+li{margin-bottom:3px;font-size:.88rem}
+.footer{text-align:center;padding:38px 0;border-top:1px solid var(--border);margin-top:58px;font-family:'Space Mono',monospace;font-size:.68rem;color:var(--text3)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99}
+.overlay.show{display:block}
+
+@media(max-width:768px){
+  :root{--sw:0px}
+  .sidebar{transform:translateX(-282px);width:282px}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding:0 16px 60px}
+  .topbar{padding:12px 16px;margin:0 -16px}
+  .hbg{display:block}
+  .hero-bg{display:none}
+  .cgrid,.pgrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="overlay" id="overlay" onclick="closeSb()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-top">
+    <span class="sb-icon">🧩</span>
+    <div class="sb-title">Dynamic <span class="hl">Programming</span></div>
+    <div class="sb-sub">Complete DSA Course</div>
+  </div>
+  <nav class="sb-nav">
+    <div class="ngrp">Foundations</div>
+    <a class="nl active" onclick="gt('s1')"><span class="n">01</span>What is DP?</a>
+    <a class="nl" onclick="gt('s2')"><span class="n">02</span>Memoization</a>
+    <a class="nl" onclick="gt('s3')"><span class="n">03</span>Tabulation</a>
+    <a class="nl" onclick="gt('s4')"><span class="n">04</span>Space Optimization</a>
+    <div class="ngrp">Classic Patterns</div>
+    <a class="nl" onclick="gt('s5')"><span class="n">05</span>1D DP — Fibonacci Family</a>
+    <a class="nl" onclick="gt('s6')"><span class="n">06</span>Knapsack (0/1 & Unbounded)</a>
+    <a class="nl" onclick="gt('s7')"><span class="n">07</span>LCS & Edit Distance</a>
+    <a class="nl" onclick="gt('s8')"><span class="n">08</span>Grid / Matrix DP</a>
+    <div class="ngrp">Advanced Patterns</div>
+    <a class="nl" onclick="gt('s9')"><span class="n">09</span>Interval DP</a>
+    <a class="nl" onclick="gt('s10')"><span class="n">10</span>DP on Trees</a>
+    <a class="nl" onclick="gt('s11')"><span class="n">11</span>Bitmask DP</a>
+    <a class="nl" onclick="gt('s12')"><span class="n">12</span>Stock Problems</a>
+    <div class="ngrp">Interview Prep</div>
+    <a class="nl" onclick="gt('s13')"><span class="n">13</span>Interview Problems</a>
+    <a class="nl" onclick="gt('s14')"><span class="n">14</span>Cheat Sheet & Roadmap</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="pl">Progress</div>
+    <div class="pb"><div class="pf" id="pf"></div></div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="hbg" onclick="openSb()">☰</button>
+      <div class="bc">dynamic-programming / complete-course</div>
+    </div>
+    <div class="tbtns"><button class="pill" onclick="toggleTheme()">🌓 Theme</button></div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-bg">DP</div>
+    <div class="hchip">🧩 Interview-Ready in 7 Days</div>
+    <h2>DYNAMIC<br><span class="hl">PROGRAMMING</span></h2>
+    <p class="hlead">The most feared topic in DSA interviews. Break it down to overlapping subproblems, learn 8 core patterns, and solve any DP problem systematically.</p>
+    <div class="hstats">
+      <div class="stat"><span class="sn">14</span><span class="sl">Sections</span></div>
+      <div class="stat"><span class="sn">18+</span><span class="sl">Problems</span></div>
+      <div class="stat"><span class="sn">30+</span><span class="sl">Code Examples</span></div>
+      <div class="stat"><span class="sn">7</span><span class="sl">Day Plan</span></div>
+    </div>
+  </div>
+
+  <!-- S1: WHAT IS DP -->
+  <section class="section" id="s1">
+    <div class="shdr"><span class="snum">01</span>
+      <div><div class="stitle">What is Dynamic Programming?</div><div class="ssub">Understand the core idea before touching any problem</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Concept</span>The Big Idea</div>
+      <p><strong>Dynamic Programming</strong> is an optimization technique that solves a problem by breaking it into <strong>overlapping subproblems</strong>, solving each subproblem <strong>once</strong>, and storing the results to avoid redundant computation.</p>
+      <p>Two essential properties must hold for DP to apply:</p>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Optimal Substructure</div><div class="step-desc">The optimal solution to the problem can be built from optimal solutions to its subproblems. (e.g., shortest path, max profit)</div></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Overlapping Subproblems</div><div class="step-desc">The same subproblems are solved multiple times in a naive recursive approach. DP stores them to avoid recomputation.</div></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Analogy</span>The Real-World Intuition</div>
+      <p>Imagine you're climbing stairs and want to count ways to reach step n (taking 1 or 2 steps at a time). A naive approach recalculates <code>ways(n-1)</code> and <code>ways(n-2)</code> over and over. DP says: <em>write the answer on a sticky note so you never compute it twice.</em></p>
+      <div class="callout info">
+        <div class="ci">🧠</div>
+        <div class="cb"><div class="cbt">Memorize this distinction</div>
+          <strong>Divide and Conquer</strong> = subproblems are <em>independent</em> (merge sort). <br>
+          <strong>DP</strong> = subproblems <em>overlap</em> (Fibonacci). The same overlap that makes recursion exponential makes DP linear!
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Framework</span>The 5-Step DP Framework</div>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Define the State</div><div class="step-desc">What does dp[i] or dp[i][j] represent? This is the hardest step. Be precise.</div></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Write the Recurrence</div><div class="step-desc">How does dp[i] relate to dp[i-1], dp[i-2], etc.? Express the transition.</div></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Identify Base Cases</div><div class="step-desc">What are the smallest subproblems with known answers?</div></div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">Determine Order</div><div class="step-desc">Bottom-up (tabulation) or top-down (memoization)? Which subproblems depend on which?</div></div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-body"><div class="step-title">Optimize Space (Optional)</div><div class="step-desc">Can you reduce the dp array from O(n²) to O(n) or O(1) by only keeping recent rows/values?</div></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Comparison</span>Recursion vs Memoization vs Tabulation</div>
+      <div class="tw"><table>
+        <tr><th>Approach</th><th>Time</th><th>Space</th><th>Pros</th><th>Cons</th></tr>
+        <tr><td>Plain Recursion</td><td class="b">Exponential</td><td class="g">O(n)</td><td>Intuitive</td><td>Way too slow</td></tr>
+        <tr><td>Memoization (Top-Down)</td><td class="g">O(n)</td><td class="ok2">O(n)</td><td>Easy to code, natural</td><td>Stack overhead</td></tr>
+        <tr><td>Tabulation (Bottom-Up)</td><td class="g">O(n)</td><td class="ok2">O(n)</td><td>No recursion limit</td><td>Requires careful ordering</td></tr>
+        <tr><td>Space-Optimized DP</td><td class="g">O(n)</td><td class="g">O(1) or O(k)</td><td>Minimal memory</td><td>Harder to read/debug</td></tr>
+      </table></div>
+    </div>
+
+    <div class="quiz">
+      <div class="qttl">⚡ Quick Check</div>
+      <div class="qq">Which property is required for DP but NOT divide-and-conquer?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,'wrong','q1')">Optimal Substructure</button>
+        <button class="qopt" onclick="cq(this,'correct','q1')">Overlapping Subproblems</button>
+        <button class="qopt" onclick="cq(this,'wrong','q1')">Recursive decomposition</button>
+        <button class="qopt" onclick="cq(this,'wrong','q1')">Greedy choice property</button>
+      </div>
+      <div class="qfb" id="q1">✅ Overlapping Subproblems! Divide and conquer (merge sort, quick sort) breaks problems into independent subproblems. DP's subproblems overlap — they share computation, which is why memoization helps.</div>
+    </div>
+  </section>
+
+  <!-- S2: MEMOIZATION -->
+  <section class="section" id="s2">
+    <div class="shdr"><span class="snum">02</span>
+      <div><div class="stitle">Memoization (Top-Down DP)</div><div class="ssub">Add a cache to recursion — turn exponential into polynomial</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t2">Concept</span>How Memoization Works</div>
+      <p>Memoization = recursion + a cache (dict/array). Before computing, <strong>check if result is cached</strong>. After computing, <strong>store the result</strong>. That's it.</p>
+    </div>
+
+    <!-- FIBO VIZ -->
+    <div class="viz">
+      <div class="vtitle">🎮 FIBONACCI MEMOIZATION VISUALIZER</div>
+      <div class="vctl">
+        <label style="font-family:'Space Mono',monospace;font-size:.72rem;color:var(--text2)">n = </label>
+        <input class="vinput" id="fibN" type="number" value="7" min="1" max="15" style="width:60px">
+        <button class="vbtn" onclick="runFibMemo()">Run with Memo</button>
+        <button class="vbtn red" onclick="runFibNaive()">Run Naive</button>
+        <button class="vbtn" onclick="resetFib()">Reset</button>
+      </div>
+      <div style="margin-bottom:8px;font-family:'Space Mono',monospace;font-size:.68rem;color:var(--text3)">Cache state (green = cached, purple = computing):</div>
+      <div id="fibCacheDisplay" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;min-height:44px"></div>
+      <div class="vlog" id="fibLog"><span class="vinf">Press "Run with Memo" to see memoized Fibonacci.</span></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Fibonacci: Naive vs Memoization vs Tabulation</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># ══ NAIVE RECURSION — O(2^n) time ══</span>
+<span class="kw">def</span> <span class="fn">fib_naive</span>(n):
+    <span class="kw">if</span> n <= <span class="num">1</span>: <span class="kw">return</span> n
+    <span class="kw">return</span> fib_naive(n-<span class="num">1</span>) + fib_naive(n-<span class="num">2</span>)
+<span class="cm"># fib(40) makes ~2^40 calls! ≈ 1 trillion</span>
+
+<span class="cm"># ══ MEMOIZATION — O(n) time, O(n) space ══</span>
+<span class="kw">def</span> <span class="fn">fib_memo</span>(n, memo={}):
+    <span class="kw">if</span> n <span class="kw">in</span> memo: <span class="kw">return</span> memo[n]   <span class="cm"># Cache hit!</span>
+    <span class="kw">if</span> n <= <span class="num">1</span>: <span class="kw">return</span> n
+    memo[n] = fib_memo(n-<span class="num">1</span>, memo) + fib_memo(n-<span class="num">2</span>, memo)
+    <span class="kw">return</span> memo[n]
+
+<span class="cm"># Cleaner with @lru_cache (Python's built-in memoize)</span>
+<span class="kw">from</span> functools <span class="kw">import</span> lru_cache
+
+<span class="kw">@lru_cache</span>(maxsize=<span class="bl">None</span>)
+<span class="kw">def</span> <span class="fn">fib</span>(n):
+    <span class="kw">if</span> n <= <span class="num">1</span>: <span class="kw">return</span> n
+    <span class="kw">return</span> fib(n-<span class="num">1</span>) + fib(n-<span class="num">2</span>)
+
+<span class="cm"># ══ TABULATION — O(n) time, O(n) space ══</span>
+<span class="kw">def</span> <span class="fn">fib_tab</span>(n):
+    <span class="kw">if</span> n <= <span class="num">1</span>: <span class="kw">return</span> n
+    dp = [<span class="num">0</span>] * (n + <span class="num">1</span>)
+    dp[<span class="num">0</span>], dp[<span class="num">1</span>] = <span class="num">0</span>, <span class="num">1</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="num">2</span>, n + <span class="num">1</span>):
+        dp[i] = dp[i-<span class="num">1</span>] + dp[i-<span class="num">2</span>]
+    <span class="kw">return</span> dp[n]
+
+<span class="cm"># ══ SPACE OPTIMIZED — O(n) time, O(1) space ══</span>
+<span class="kw">def</span> <span class="fn">fib_opt</span>(n):
+    <span class="kw">if</span> n <= <span class="num">1</span>: <span class="kw">return</span> n
+    a, b = <span class="num">0</span>, <span class="num">1</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(<span class="num">2</span>, n + <span class="num">1</span>):
+        a, b = b, a + b
+    <span class="kw">return</span> b</pre></div>
+    </div>
+
+    <div class="callout tip">
+      <div class="ci">💡</div>
+      <div class="cb"><div class="cbt">When to Use Memoization vs Tabulation</div>
+        Use <strong>memoization</strong> when: the recursion is natural, not all subproblems need solving, or the dependency order is unclear.<br>
+        Use <strong>tabulation</strong> when: all subproblems must be solved, recursion depth is a concern (Python default limit ≈ 1000), or you want to optimize space.
+      </div>
+    </div>
+  </section>
+
+  <!-- S3: TABULATION -->
+  <section class="section" id="s3">
+    <div class="shdr"><span class="snum">03</span>
+      <div><div class="stitle">Tabulation (Bottom-Up DP)</div><div class="ssub">Fill a table iteratively from base cases upward</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t2">Concept</span>How Tabulation Works</div>
+      <p>Tabulation fills a DP table starting from the smallest subproblems (base cases) and builds up to the answer. No recursion — just loops. The key questions are: <em>what do the rows/columns represent?</em> and <em>what order do I fill the table?</em></p>
+    </div>
+
+    <!-- COIN CHANGE VIZ -->
+    <div class="viz">
+      <div class="vtitle">💰 COIN CHANGE — TABULATION VISUALIZER</div>
+      <div class="vctl">
+        <div>
+          <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--text3);margin-bottom:4px">Coins (comma-sep)</div>
+          <input class="vinput" id="coinInput" value="1,3,5" style="width:120px">
+        </div>
+        <div>
+          <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--text3);margin-bottom:4px">Amount</div>
+          <input class="vinput" id="amtInput" type="number" value="11" style="width:70px">
+        </div>
+        <button class="vbtn b3" onclick="initCoin()">▶ Setup</button>
+        <button class="vbtn" onclick="coinStep()">Fill Next →</button>
+        <button class="vbtn red" onclick="coinAuto()">Auto Fill ▶▶</button>
+        <button class="vbtn" onclick="resetCoin()">Reset</button>
+      </div>
+      <div class="dp-table-wrap" id="coinTableWrap"></div>
+      <div class="vlog" id="coinLog"><span class="vinf">Setup table first, then fill step by step.</span></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Coin Change — Classic DP</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="kw">def</span> <span class="fn">coinChange</span>(coins, amount):
+    <span class="str">"""
+    State: dp[i] = min coins to make amount i
+    Recurrence: dp[i] = min(dp[i-c]+1) for all coins c
+    Base: dp[0] = 0 (0 coins needed for amount 0)
+    Time: O(amount * len(coins)) | Space: O(amount)
+    """</span>
+    INF = <span class="kw">float</span>(<span class="str">'inf'</span>)
+    dp = [INF] * (amount + <span class="num">1</span>)
+    dp[<span class="num">0</span>] = <span class="num">0</span>  <span class="cm"># Base case</span>
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, amount + <span class="num">1</span>):
+        <span class="kw">for</span> coin <span class="kw">in</span> coins:
+            <span class="kw">if</span> coin <= i:
+                dp[i] = <span class="kw">min</span>(dp[i], dp[i - coin] + <span class="num">1</span>)
+
+    <span class="kw">return</span> dp[amount] <span class="kw">if</span> dp[amount] != INF <span class="kw">else</span> -<span class="num">1</span>
+
+<span class="cm"># coinChange([1,3,5], 11) = 3  (5+5+1 = 11, 3 coins)</span>
+<span class="cm"># coinChange([2], 3)      = -1 (impossible)</span>
+
+<span class="cm"># DRY RUN for coins=[1,3,5], amount=6:
+# dp[0]=0 (base)
+# dp[1]=dp[0]+1=1   (use coin 1)
+# dp[2]=dp[1]+1=2   (use coin 1)
+# dp[3]=min(dp[2]+1, dp[0]+1)=1  (use coin 3!)
+# dp[4]=min(dp[3]+1, dp[1]+1)=2  (use coin 3)
+# dp[5]=min(dp[4]+1, dp[2]+1, dp[0]+1)=1 (use coin 5!)
+# dp[6]=min(dp[5]+1, dp[3]+1, dp[1]+1)=2 (5+1 or 3+3)</span></pre></div>
+    </div>
+
+    <div class="quiz">
+      <div class="qttl">⚡ Quick Check</div>
+      <div class="qq">For Coin Change with coins=[1,5,6] and amount=10, what is dp[10]?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,'wrong','q2')">3 (5+4×1)</button>
+        <button class="qopt" onclick="cq(this,'correct','q2')">2 (5+5)</button>
+        <button class="qopt" onclick="cq(this,'wrong','q2')">4 (use only 1s after 6)</button>
+        <button class="qopt" onclick="cq(this,'wrong','q2')">1 (one coin covers all)</button>
+      </div>
+      <div class="qfb" id="q2">✅ dp[10]=2! Use two 5-coins. dp[5]=1 (use coin 5), dp[10]=dp[5]+1=2. Greedy (6+1+1+1+1) would give 5, but DP finds the optimal 5+5=2 coins.</div>
+    </div>
+  </section>
+
+  <!-- S4: SPACE OPTIMIZATION -->
+  <section class="section" id="s4">
+    <div class="shdr"><span class="snum">04</span>
+      <div><div class="stitle">Space Optimization</div><div class="ssub">Reduce O(n²) to O(n) or O(1) — critical for interviews</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Space Optimization Patterns</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python — Space Optimization</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># ══ PATTERN 1: Keep only last k values ══</span>
+<span class="cm"># House Robber — only need dp[i-1] and dp[i-2]</span>
+<span class="kw">def</span> <span class="fn">rob</span>(nums):
+    prev2 = prev1 = <span class="num">0</span>
+    <span class="kw">for</span> n <span class="kw">in</span> nums:
+        curr = <span class="kw">max</span>(prev1, prev2 + n)
+        prev2, prev1 = prev1, curr
+    <span class="kw">return</span> prev1   <span class="cm"># O(1) space instead of O(n)</span>
+
+<span class="cm"># ══ PATTERN 2: Keep only last 2 rows (2D → 1D) ══</span>
+<span class="cm"># Unique Paths — reduce O(m*n) table to O(n) array</span>
+<span class="kw">def</span> <span class="fn">uniquePaths</span>(m, n):
+    dp = [<span class="num">1</span>] * n  <span class="cm"># One row only</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, m):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, n):
+            dp[j] += dp[j-<span class="num">1</span>]  <span class="cm"># dp[j] = from above, dp[j-1] = from left</span>
+    <span class="kw">return</span> dp[-<span class="num">1</span>]
+
+<span class="cm"># ══ PATTERN 3: In-place update ══</span>
+<span class="cm"># Triangle — update from bottom to top in-place</span>
+<span class="kw">def</span> <span class="fn">minimumTotal</span>(triangle):
+    dp = triangle[-<span class="num">1</span>][:]  <span class="cm"># Start with bottom row</span>
+    <span class="kw">for</span> row <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(triangle)-<span class="num">2</span>, -<span class="num">1</span>, -<span class="num">1</span>):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(triangle[row])):
+            dp[j] = triangle[row][j] + <span class="kw">min</span>(dp[j], dp[j+<span class="num">1</span>])
+    <span class="kw">return</span> dp[<span class="num">0</span>]
+
+<span class="cm"># ══ KEY RULE: Direction of iteration matters! ══</span>
+<span class="cm"># If dp[i] depends on dp[i-c] (coin change, unbounded):
+#   → iterate LEFT TO RIGHT (use new value)
+# If dp[i][j] depends on dp[i-1][j-w] (0/1 knapsack):
+#   → iterate RIGHT TO LEFT (use old value, avoid reuse)</span></pre></div>
+    </div>
+  </section>
+
+  <!-- S5: 1D DP -->
+  <section class="section" id="s5">
+    <div class="shdr"><span class="snum">05</span>
+      <div><div class="stitle">1D DP — Fibonacci Family</div><div class="ssub">Climbing stairs, house robber, jump game — the entry point to DP</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Climbing Stairs, Jump Game, House Robber</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python — 1D DP Classics</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># ══ CLIMBING STAIRS (LC 70) ══</span>
+<span class="cm"># State: dp[i] = ways to reach step i</span>
+<span class="cm"># Recurrence: dp[i] = dp[i-1] + dp[i-2]</span>
+<span class="kw">def</span> <span class="fn">climbStairs</span>(n):
+    <span class="kw">if</span> n <= <span class="num">2</span>: <span class="kw">return</span> n
+    a, b = <span class="num">1</span>, <span class="num">2</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(<span class="num">3</span>, n + <span class="num">1</span>):
+        a, b = b, a + b
+    <span class="kw">return</span> b   <span class="cm"># Exactly Fibonacci! O(n), O(1)</span>
+
+<span class="cm"># ══ HOUSE ROBBER (LC 198) ══</span>
+<span class="cm"># State: dp[i] = max money robbing houses 0..i</span>
+<span class="cm"># Recurrence: dp[i] = max(dp[i-1], dp[i-2]+nums[i])</span>
+<span class="cm"># (skip current house OR rob it + best from i-2)</span>
+<span class="kw">def</span> <span class="fn">rob</span>(nums):
+    prev2 = prev1 = <span class="num">0</span>
+    <span class="kw">for</span> n <span class="kw">in</span> nums:
+        prev2, prev1 = prev1, <span class="kw">max</span>(prev1, prev2 + n)
+    <span class="kw">return</span> prev1   <span class="cm"># O(n), O(1)</span>
+
+<span class="cm"># ══ JUMP GAME (LC 55) ══</span>
+<span class="cm"># Greedy is simpler but DP also works</span>
+<span class="kw">def</span> <span class="fn">canJump</span>(nums):
+    max_reach = <span class="num">0</span>
+    <span class="kw">for</span> i, n <span class="kw">in</span> <span class="kw">enumerate</span>(nums):
+        <span class="kw">if</span> i > max_reach: <span class="kw">return False</span>
+        max_reach = <span class="kw">max</span>(max_reach, i + n)
+    <span class="kw">return True</span>
+
+<span class="cm"># ══ JUMP GAME II (LC 45) — min jumps ══</span>
+<span class="kw">def</span> <span class="fn">jump</span>(nums):
+    jumps = curr_end = curr_far = <span class="num">0</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(nums) - <span class="num">1</span>):
+        curr_far = <span class="kw">max</span>(curr_far, i + nums[i])
+        <span class="kw">if</span> i == curr_end:
+            jumps += <span class="num">1</span>
+            curr_end = curr_far
+    <span class="kw">return</span> jumps
+
+<span class="cm"># ══ DECODE WAYS (LC 91) ══</span>
+<span class="cm"># How many ways to decode a string of digits? (1→A, 26→Z)</span>
+<span class="kw">def</span> <span class="fn">numDecodings</span>(s):
+    <span class="kw">if not</span> s <span class="kw">or</span> s[<span class="num">0</span>] == <span class="str">'0'</span>: <span class="kw">return</span> <span class="num">0</span>
+    n = <span class="kw">len</span>(s)
+    dp = [<span class="num">0</span>] * (n + <span class="num">1</span>)
+    dp[<span class="num">0</span>] = <span class="num">1</span>  <span class="cm"># Empty string</span>
+    dp[<span class="num">1</span>] = <span class="num">1</span>  <span class="cm"># Single digit (not '0')</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="num">2</span>, n + <span class="num">1</span>):
+        one  = <span class="kw">int</span>(s[i-<span class="num">1</span>])       <span class="cm"># Single digit</span>
+        two  = <span class="kw">int</span>(s[i-<span class="num">2</span>:i])     <span class="cm"># Two digits</span>
+        <span class="kw">if</span>   <span class="num">1</span> <= one <= <span class="num">9</span>:  dp[i] += dp[i-<span class="num">1</span>]
+        <span class="kw">if</span>  <span class="num">10</span> <= two <= <span class="num">26</span>: dp[i] += dp[i-<span class="num">2</span>]
+    <span class="kw">return</span> dp[n]</pre></div>
+    </div>
+  </section>
+
+  <!-- S6: KNAPSACK -->
+  <section class="section" id="s6">
+    <div class="shdr"><span class="snum">06</span>
+      <div><div class="stitle">Knapsack — 0/1 & Unbounded</div><div class="ssub">The most fundamental 2D DP pattern</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Concept</span>0/1 Knapsack — The Core Pattern</div>
+      <p><strong>Problem:</strong> n items with weights and values. Knapsack capacity W. Maximize total value without exceeding capacity. Each item can be used <strong>at most once</strong>.</p>
+      <div class="dry">
+        <div style="font-weight:700;margin-bottom:6px;font-size:.83rem">State definition is everything:</div>
+        <div class="ds"><span class="dsn">dp[i][w]</span><span class="dsa">= max value using first i items with capacity w</span></div>
+        <div class="ds"><span class="dsn">Skip:</span><span class="dsa">dp[i][w] = dp[i-1][w]  (don't take item i)</span></div>
+        <div class="ds"><span class="dsn">Take:</span><span class="dsa">dp[i][w] = dp[i-1][w-wt[i]] + val[i]  (take item i)</span></div>
+        <div class="ds"><span class="dsn">Answer:</span><span class="dsa">dp[i][w] = max(Skip, Take) if wt[i] <= w</span></div>
+      </div>
+    </div>
+
+    <!-- KNAPSACK VIZ -->
+    <div class="viz">
+      <div class="vtitle">🎒 0/1 KNAPSACK VISUALIZER</div>
+      <div class="vctl">
+        <button class="vbtn b3" onclick="initKnapsack()">▶ Setup</button>
+        <button class="vbtn" onclick="ksStep()">Fill Next →</button>
+        <button class="vbtn red" onclick="ksAuto()">Auto Fill ▶▶</button>
+        <button class="vbtn" onclick="resetKS()">Reset</button>
+      </div>
+      <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:var(--text3);margin-bottom:8px">Items: weights=[1,3,4,5] values=[1,4,5,7] capacity=7</div>
+      <div class="dp-table-wrap" id="ksTableWrap"></div>
+      <div class="vlog" id="ksLog"><span class="vinf">Click "Setup" then fill the table step by step.</span></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>0/1 Knapsack & Unbounded Knapsack</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># ══ 0/1 KNAPSACK — each item used at most once ══</span>
+<span class="kw">def</span> <span class="fn">knapsack01</span>(weights, values, W):
+    n = <span class="kw">len</span>(weights)
+    dp = [[<span class="num">0</span>] * (W + <span class="num">1</span>) <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(n + <span class="num">1</span>)]
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, n + <span class="num">1</span>):
+        <span class="kw">for</span> w <span class="kw">in</span> <span class="kw">range</span>(W + <span class="num">1</span>):
+            <span class="cm"># Don't take item i</span>
+            dp[i][w] = dp[i-<span class="num">1</span>][w]
+            <span class="cm"># Take item i (if it fits)</span>
+            <span class="kw">if</span> weights[i-<span class="num">1</span>] <= w:
+                dp[i][w] = <span class="kw">max</span>(dp[i][w],
+                               dp[i-<span class="num">1</span>][w - weights[i-<span class="num">1</span>]] + values[i-<span class="num">1</span>])
+
+    <span class="kw">return</span> dp[n][W]  <span class="cm"># O(n*W) time, O(n*W) space</span>
+
+<span class="cm"># Space-optimized 0/1 knapsack (1D dp, iterate RIGHT TO LEFT)</span>
+<span class="kw">def</span> <span class="fn">knapsack01_opt</span>(weights, values, W):
+    dp = [<span class="num">0</span>] * (W + <span class="num">1</span>)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(weights)):
+        <span class="kw">for</span> w <span class="kw">in</span> <span class="kw">range</span>(W, weights[i] - <span class="num">1</span>, -<span class="num">1</span>):  <span class="cm"># ← RIGHT TO LEFT!</span>
+            dp[w] = <span class="kw">max</span>(dp[w], dp[w - weights[i]] + values[i])
+    <span class="kw">return</span> dp[W]   <span class="cm"># O(n*W) time, O(W) space</span>
+
+<span class="cm"># ══ UNBOUNDED KNAPSACK — each item used unlimited times ══</span>
+<span class="cm"># Coin change is unbounded knapsack!</span>
+<span class="kw">def</span> <span class="fn">unboundedKnapsack</span>(weights, values, W):
+    dp = [<span class="num">0</span>] * (W + <span class="num">1</span>)
+    <span class="kw">for</span> w <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, W + <span class="num">1</span>):
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(weights)):
+            <span class="kw">if</span> weights[i] <= w:
+                dp[w] = <span class="kw">max</span>(dp[w], dp[w - weights[i]] + values[i])
+    <span class="kw">return</span> dp[W]   <span class="cm"># LEFT TO RIGHT (reuse allowed)</span>
+
+<span class="cm"># KEY DIFFERENCE:
+# 0/1: loop items OUTSIDE, iterate weight RIGHT TO LEFT
+# Unbounded: iterate weight LEFT TO RIGHT (reuse new value)</span>
+
+<span class="cm"># ══ SUBSET SUM — can we make sum W from array? ══</span>
+<span class="kw">def</span> <span class="fn">canMakeSum</span>(nums, target):
+    dp = [<span class="bl">False</span>] * (target + <span class="num">1</span>)
+    dp[<span class="num">0</span>] = <span class="bl">True</span>
+    <span class="kw">for</span> n <span class="kw">in</span> nums:
+        <span class="kw">for</span> w <span class="kw">in</span> <span class="kw">range</span>(target, n - <span class="num">1</span>, -<span class="num">1</span>):  <span class="cm"># RIGHT TO LEFT</span>
+            dp[w] = dp[w] <span class="kw">or</span> dp[w - n]
+    <span class="kw">return</span> dp[target]</pre></div>
+    </div>
+
+    <div class="ibox">
+      <div class="iboxt">🎯 Knapsack Interview Insight</div>
+      <ul>
+        <li><strong>0/1 Knapsack (RIGHT TO LEFT)</strong> — each item once: LC 416 (Partition Equal Subset Sum), LC 494 (Target Sum)</li>
+        <li><strong>Unbounded Knapsack (LEFT TO RIGHT)</strong> — reuse items: LC 322 (Coin Change), LC 518 (Coin Change 2)</li>
+        <li>The direction of the inner loop is the ONLY difference in the 1D version</li>
+        <li>Subset Sum = 0/1 Knapsack with boolean dp</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- S7: LCS & EDIT DISTANCE -->
+  <section class="section" id="s7">
+    <div class="shdr"><span class="snum">07</span>
+      <div><div class="stitle">LCS, LIS & Edit Distance</div><div class="ssub">String and sequence DP — among the most common interview problems</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>LCS, LIS, Edit Distance</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python — Sequence DP</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># ══ LCS — Longest Common Subsequence (LC 1143) ══</span>
+<span class="cm"># State: dp[i][j] = LCS of text1[:i] and text2[:j]</span>
+<span class="kw">def</span> <span class="fn">longestCommonSubsequence</span>(text1, text2):
+    m, n = <span class="kw">len</span>(text1), <span class="kw">len</span>(text2)
+    dp = [[<span class="num">0</span>] * (n + <span class="num">1</span>) <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(m + <span class="num">1</span>)]
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, m + <span class="num">1</span>):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, n + <span class="num">1</span>):
+            <span class="kw">if</span> text1[i-<span class="num">1</span>] == text2[j-<span class="num">1</span>]:  <span class="cm"># Match!</span>
+                dp[i][j] = dp[i-<span class="num">1</span>][j-<span class="num">1</span>] + <span class="num">1</span>
+            <span class="kw">else</span>:
+                dp[i][j] = <span class="kw">max</span>(dp[i-<span class="num">1</span>][j], dp[i][j-<span class="num">1</span>])
+
+    <span class="kw">return</span> dp[m][n]  <span class="cm"># O(m*n) time+space</span>
+
+<span class="cm"># ══ LIS — Longest Increasing Subsequence (LC 300) ══</span>
+<span class="cm"># State: dp[i] = LIS ending at index i</span>
+<span class="kw">def</span> <span class="fn">lengthOfLIS</span>(nums):
+    <span class="kw">if not</span> nums: <span class="kw">return</span> <span class="num">0</span>
+    n = <span class="kw">len</span>(nums)
+    dp = [<span class="num">1</span>] * n  <span class="cm"># Every element is LIS of length 1</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, n):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="kw">range</span>(i):
+            <span class="kw">if</span> nums[j] < nums[i]:
+                dp[i] = <span class="kw">max</span>(dp[i], dp[j] + <span class="num">1</span>)
+    <span class="kw">return</span> <span class="kw">max</span>(dp)  <span class="cm"># O(n²). O(n log n) with patience sort</span>
+
+<span class="cm"># O(n log n) LIS using binary search</span>
+<span class="kw">import</span> bisect
+<span class="kw">def</span> <span class="fn">lengthOfLIS_fast</span>(nums):
+    tails = []
+    <span class="kw">for</span> n <span class="kw">in</span> nums:
+        pos = bisect.bisect_left(tails, n)
+        <span class="kw">if</span> pos == <span class="kw">len</span>(tails): tails.append(n)
+        <span class="kw">else</span>: tails[pos] = n
+    <span class="kw">return</span> <span class="kw">len</span>(tails)
+
+<span class="cm"># ══ EDIT DISTANCE (LC 72) ══</span>
+<span class="cm"># State: dp[i][j] = min ops to convert word1[:i] to word2[:j]</span>
+<span class="kw">def</span> <span class="fn">minDistance</span>(word1, word2):
+    m, n = <span class="kw">len</span>(word1), <span class="kw">len</span>(word2)
+    dp = [[<span class="num">0</span>] * (n + <span class="num">1</span>) <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(m + <span class="num">1</span>)]
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(m + <span class="num">1</span>): dp[i][<span class="num">0</span>] = i  <span class="cm"># Delete all</span>
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="kw">range</span>(n + <span class="num">1</span>): dp[<span class="num">0</span>][j] = j  <span class="cm"># Insert all</span>
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, m + <span class="num">1</span>):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, n + <span class="num">1</span>):
+            <span class="kw">if</span> word1[i-<span class="num">1</span>] == word2[j-<span class="num">1</span>]:
+                dp[i][j] = dp[i-<span class="num">1</span>][j-<span class="num">1</span>]  <span class="cm"># No operation needed</span>
+            <span class="kw">else</span>:
+                dp[i][j] = <span class="num">1</span> + <span class="kw">min</span>(
+                    dp[i-<span class="num">1</span>][j],    <span class="cm"># Delete from word1</span>
+                    dp[i][j-<span class="num">1</span>],    <span class="cm"># Insert into word1</span>
+                    dp[i-<span class="num">1</span>][j-<span class="num">1</span>]  <span class="cm"># Replace</span>
+                )
+    <span class="kw">return</span> dp[m][n]</pre></div>
+    </div>
+  </section>
+
+  <!-- S8: GRID DP -->
+  <section class="section" id="s8">
+    <div class="shdr"><span class="snum">08</span>
+      <div><div class="stitle">Grid / Matrix DP</div><div class="ssub">2D table where position (i,j) encodes both row and column subproblems</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Unique Paths, Min Path Sum, Triangle</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python — Grid DP</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># ══ UNIQUE PATHS (LC 62) ══</span>
+<span class="cm"># Robot moves only right or down in m×n grid</span>
+<span class="kw">def</span> <span class="fn">uniquePaths</span>(m, n):
+    dp = [[<span class="num">1</span>] * n <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(m)]  <span class="cm"># Edges all 1</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, m):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, n):
+            dp[i][j] = dp[i-<span class="num">1</span>][j] + dp[i][j-<span class="num">1</span>]  <span class="cm"># From top + from left</span>
+    <span class="kw">return</span> dp[m-<span class="num">1</span>][n-<span class="num">1</span>]
+
+<span class="cm"># ══ UNIQUE PATHS II — with obstacles (LC 63) ══</span>
+<span class="kw">def</span> <span class="fn">uniquePathsWithObstacles</span>(grid):
+    m, n = <span class="kw">len</span>(grid), <span class="kw">len</span>(grid[<span class="num">0</span>])
+    dp = [[<span class="num">0</span>]*n <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(m)]
+    dp[<span class="num">0</span>][<span class="num">0</span>] = <span class="num">1</span> <span class="kw">if</span> grid[<span class="num">0</span>][<span class="num">0</span>] == <span class="num">0</span> <span class="kw">else</span> <span class="num">0</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(m):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="kw">range</span>(n):
+            <span class="kw">if</span> grid[i][j] == <span class="num">1</span>: dp[i][j] = <span class="num">0</span>; <span class="kw">continue</span>
+            <span class="kw">if</span> i > <span class="num">0</span>: dp[i][j] += dp[i-<span class="num">1</span>][j]
+            <span class="kw">if</span> j > <span class="num">0</span>: dp[i][j] += dp[i][j-<span class="num">1</span>]
+    <span class="kw">return</span> dp[m-<span class="num">1</span>][n-<span class="num">1</span>]
+
+<span class="cm"># ══ MINIMUM PATH SUM (LC 64) ══</span>
+<span class="kw">def</span> <span class="fn">minPathSum</span>(grid):
+    m, n = <span class="kw">len</span>(grid), <span class="kw">len</span>(grid[<span class="num">0</span>])
+    dp = [[<span class="num">0</span>]*n <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(m)]
+    dp[<span class="num">0</span>][<span class="num">0</span>] = grid[<span class="num">0</span>][<span class="num">0</span>]
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, n): dp[<span class="num">0</span>][j] = dp[<span class="num">0</span>][j-<span class="num">1</span>] + grid[<span class="num">0</span>][j]
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, m): dp[i][<span class="num">0</span>] = dp[i-<span class="num">1</span>][<span class="num">0</span>] + grid[i][<span class="num">0</span>]
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, m):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, n):
+            dp[i][j] = grid[i][j] + <span class="kw">min</span>(dp[i-<span class="num">1</span>][j], dp[i][j-<span class="num">1</span>])
+    <span class="kw">return</span> dp[m-<span class="num">1</span>][n-<span class="num">1</span>]
+
+<span class="cm"># ══ MAXIMAL SQUARE (LC 221) ══</span>
+<span class="cm"># State: dp[i][j] = side of largest square with bottom-right at (i,j)</span>
+<span class="kw">def</span> <span class="fn">maximalSquare</span>(matrix):
+    m, n = <span class="kw">len</span>(matrix), <span class="kw">len</span>(matrix[<span class="num">0</span>])
+    dp = [[<span class="num">0</span>]*n <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(m)]
+    max_side = <span class="num">0</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(m):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="kw">range</span>(n):
+            <span class="kw">if</span> matrix[i][j] == <span class="str">'1'</span>:
+                <span class="kw">if</span> i == <span class="num">0</span> <span class="kw">or</span> j == <span class="num">0</span>: dp[i][j] = <span class="num">1</span>
+                <span class="kw">else</span>: dp[i][j] = <span class="kw">min</span>(dp[i-<span class="num">1</span>][j],dp[i][j-<span class="num">1</span>],dp[i-<span class="num">1</span>][j-<span class="num">1</span>])+<span class="num">1</span>
+                max_side = <span class="kw">max</span>(max_side, dp[i][j])
+    <span class="kw">return</span> max_side * max_side</pre></div>
+    </div>
+  </section>
+
+  <!-- S9: INTERVAL DP -->
+  <section class="section" id="s9">
+    <div class="shdr"><span class="snum">09</span>
+      <div><div class="stitle">Interval DP</div><div class="ssub">dp[i][j] = answer for subarray/string from i to j</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Matrix Chain Multiplication, Burst Balloons, Palindrome</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python — Interval DP</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># ══ PALINDROMIC SUBSTRINGS (LC 647) ══</span>
+<span class="cm"># State: dp[i][j] = True if s[i..j] is palindrome</span>
+<span class="kw">def</span> <span class="fn">countSubstrings</span>(s):
+    n = <span class="kw">len</span>(s)
+    dp = [[<span class="bl">False</span>]*n <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(n)]
+    count = <span class="num">0</span>
+    <span class="kw">for</span> length <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, n+<span class="num">1</span>):       <span class="cm"># length of interval</span>
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(n - length + <span class="num">1</span>):   <span class="cm"># start index</span>
+            j = i + length - <span class="num">1</span>              <span class="cm"># end index</span>
+            <span class="kw">if</span> s[i] == s[j] <span class="kw">and</span> (length <= <span class="num">2</span> <span class="kw">or</span> dp[i+<span class="num">1</span>][j-<span class="num">1</span>]):
+                dp[i][j] = <span class="bl">True</span>; count += <span class="num">1</span>
+    <span class="kw">return</span> count
+
+<span class="cm"># ══ BURST BALLOONS (LC 312) — Hard interval DP ══</span>
+<span class="cm"># Add 1 at each end: [1] + nums + [1]
+# State: dp[i][j] = max coins from balloons i+1..j-1
+# Key trick: k is the LAST balloon to burst in (i,j)</span>
+<span class="kw">def</span> <span class="fn">maxCoins</span>(nums):
+    nums = [<span class="num">1</span>] + nums + [<span class="num">1</span>]
+    n = <span class="kw">len</span>(nums)
+    dp = [[<span class="num">0</span>]*n <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(n)]
+
+    <span class="kw">for</span> length <span class="kw">in</span> <span class="kw">range</span>(<span class="num">2</span>, n):          <span class="cm"># interval length</span>
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(n - length):       <span class="cm"># left boundary</span>
+            j = i + length
+            <span class="kw">for</span> k <span class="kw">in</span> <span class="kw">range</span>(i+<span class="num">1</span>, j):       <span class="cm"># k = last burst</span>
+                coins = nums[i]*nums[k]*nums[j] + dp[i][k] + dp[k][j]
+                dp[i][j] = <span class="kw">max</span>(dp[i][j], coins)
+
+    <span class="kw">return</span> dp[<span class="num">0</span>][n-<span class="num">1</span>]
+
+<span class="cm"># ══ LONGEST PALINDROMIC SUBSEQUENCE (LC 516) ══</span>
+<span class="kw">def</span> <span class="fn">longestPalindromeSubseq</span>(s):
+    n = <span class="kw">len</span>(s)
+    dp = [[<span class="num">0</span>]*n <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(n)]
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(n): dp[i][i] = <span class="num">1</span>  <span class="cm"># Each char is palindrome of len 1</span>
+    <span class="kw">for</span> length <span class="kw">in</span> <span class="kw">range</span>(<span class="num">2</span>, n+<span class="num">1</span>):
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(n - length + <span class="num">1</span>):
+            j = i + length - <span class="num">1</span>
+            <span class="kw">if</span> s[i] == s[j]: dp[i][j] = dp[i+<span class="num">1</span>][j-<span class="num">1</span>] + <span class="num">2</span>
+            <span class="kw">else</span>: dp[i][j] = <span class="kw">max</span>(dp[i+<span class="num">1</span>][j], dp[i][j-<span class="num">1</span>])
+    <span class="kw">return</span> dp[<span class="num">0</span>][n-<span class="num">1</span>]</pre></div>
+    </div>
+  </section>
+
+  <!-- S10: DP ON TREES -->
+  <section class="section" id="s10">
+    <div class="shdr"><span class="snum">10</span>
+      <div><div class="stitle">DP on Trees</div><div class="ssub">DFS + memo — each node's subproblem depends on children</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Tree DP Patterns</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python — Tree DP</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># ══ HOUSE ROBBER III (LC 337) — Can't rob parent+child ══</span>
+<span class="cm"># State: return (rob_root, skip_root) for each node
+# rob_root  = best value including this node
+# skip_root = best value excluding this node</span>
+<span class="kw">def</span> <span class="fn">rob3</span>(root):
+    <span class="kw">def</span> <span class="fn">dfs</span>(node):
+        <span class="kw">if not</span> node: <span class="kw">return</span> (<span class="num">0</span>, <span class="num">0</span>)
+        left_rob,  left_skip  = dfs(node.left)
+        right_rob, right_skip = dfs(node.right)
+        <span class="cm"># Rob current: can't rob children</span>
+        rob  = node.val + left_skip + right_skip
+        <span class="cm"># Skip current: take best from each child</span>
+        skip = <span class="kw">max</span>(left_rob, left_skip) + <span class="kw">max</span>(right_rob, right_skip)
+        <span class="kw">return</span> (rob, skip)
+    rob, skip = dfs(root)
+    <span class="kw">return</span> <span class="kw">max</span>(rob, skip)
+
+<span class="cm"># ══ DIAMETER OF BINARY TREE (LC 543) — Classic tree DP ══</span>
+<span class="kw">def</span> <span class="fn">diameterOfBinaryTree</span>(root):
+    max_diam = [<span class="num">0</span>]
+    <span class="kw">def</span> <span class="fn">height</span>(node):
+        <span class="kw">if not</span> node: <span class="kw">return</span> <span class="num">0</span>
+        L, R = height(node.left), height(node.right)
+        max_diam[<span class="num">0</span>] = <span class="kw">max</span>(max_diam[<span class="num">0</span>], L + R)
+        <span class="kw">return</span> <span class="num">1</span> + <span class="kw">max</span>(L, R)
+    height(root)
+    <span class="kw">return</span> max_diam[<span class="num">0</span>]
+
+<span class="cm"># ══ BINARY TREE CAMERAS (LC 968) — Greedy+DP on trees ══</span>
+<span class="cm"># State: 0=not covered, 1=covered (no camera), 2=has camera
+# Return minimum cameras to cover all nodes</span>
+<span class="kw">def</span> <span class="fn">minCameraCover</span>(root):
+    cameras = [<span class="num">0</span>]
+    <span class="kw">def</span> <span class="fn">dfs</span>(node):
+        <span class="kw">if not</span> node: <span class="kw">return</span> <span class="num">1</span>  <span class="cm"># Null = covered</span>
+        left, right = dfs(node.left), dfs(node.right)
+        <span class="kw">if</span> left == <span class="num">0</span> <span class="kw">or</span> right == <span class="num">0</span>:  <span class="cm"># Child needs coverage</span>
+            cameras[<span class="num">0</span>] += <span class="num">1</span>; <span class="kw">return</span> <span class="num">2</span>
+        <span class="kw">if</span> left == <span class="num">2</span> <span class="kw">or</span> right == <span class="num">2</span>:  <span class="cm"># Child has camera, covers us</span>
+            <span class="kw">return</span> <span class="num">1</span>
+        <span class="kw">return</span> <span class="num">0</span>  <span class="cm"># Not covered — parent must cover us</span>
+    <span class="kw">if</span> dfs(root) == <span class="num">0</span>: cameras[<span class="num">0</span>] += <span class="num">1</span>  <span class="cm"># Root uncovered</span>
+    <span class="kw">return</span> cameras[<span class="num">0</span>]</pre></div>
+    </div>
+  </section>
+
+  <!-- S11: BITMASK DP -->
+  <section class="section" id="s11">
+    <div class="shdr"><span class="snum">11</span>
+      <div><div class="stitle">Bitmask DP</div><div class="ssub">Represent subsets as integers — O(2ⁿ × n) for small n</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>TSP & Partition into Subsets</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python — Bitmask DP</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># ══ TRAVELLING SALESMAN (TSP) ══</span>
+<span class="cm"># dp[mask][i] = min cost to visit cities in mask, ending at i
+# Time: O(2^n * n^2) | Space: O(2^n * n)</span>
+<span class="kw">def</span> <span class="fn">tsp</span>(dist):
+    n = <span class="kw">len</span>(dist)
+    INF = <span class="kw">float</span>(<span class="str">'inf'</span>)
+    dp = [[INF]*n <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span><<n)]
+    dp[<span class="num">1</span>][<span class="num">0</span>] = <span class="num">0</span>  <span class="cm"># Start at 0, mask=0001</span>
+    <span class="kw">for</span> mask <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span><<n):
+        <span class="kw">for</span> u <span class="kw">in</span> <span class="kw">range</span>(n):
+            <span class="kw">if not</span> (mask>>u)&<span class="num">1</span> <span class="kw">or</span> dp[mask][u]==INF: <span class="kw">continue</span>
+            <span class="kw">for</span> v <span class="kw">in</span> <span class="kw">range</span>(n):
+                <span class="kw">if</span> (mask>>v)&<span class="num">1</span>: <span class="kw">continue</span>
+                new_mask = mask|(1<<v)
+                dp[new_mask][v] = <span class="kw">min</span>(dp[new_mask][v], dp[mask][u]+dist[u][v])
+    full = (<span class="num">1</span><<n)-<span class="num">1</span>
+    <span class="kw">return</span> <span class="kw">min</span>(dp[full][i]+dist[i][<span class="num">0</span>] <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(n))
+
+<span class="cm"># ══ PARTITION TO K EQUAL SUBSETS (LC 698) ══</span>
+<span class="kw">def</span> <span class="fn">canPartitionKSubsets</span>(nums, k):
+    total = <span class="kw">sum</span>(nums)
+    <span class="kw">if</span> total % k != <span class="num">0</span>: <span class="kw">return False</span>
+    target = total // k
+    n = <span class="kw">len</span>(nums)
+    dp = [<span class="bl">False</span>]*(1<<n); dp[<span class="num">0</span>] = <span class="bl">True</span>
+    curr_sum = [<span class="num">0</span>]*(1<<n)
+
+    <span class="kw">for</span> mask <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span><<n):
+        <span class="kw">if not</span> dp[mask]: <span class="kw">continue</span>
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(n):
+            <span class="kw">if</span> (mask>>i)&<span class="num">1</span>: <span class="kw">continue</span>
+            nxt = mask|(1<<i)
+            <span class="kw">if</span> curr_sum[mask]+nums[i] <= target:
+                dp[nxt] = <span class="bl">True</span>
+                curr_sum[nxt] = (curr_sum[mask]+nums[i]) % target
+    <span class="kw">return</span> dp[(<span class="num">1</span><<n)-<span class="num">1</span>]</pre></div>
+    </div>
+  </section>
+
+  <!-- S12: STOCK PROBLEMS -->
+  <section class="section" id="s12">
+    <div class="shdr"><span class="snum">12</span>
+      <div><div class="stitle">Stock Buy & Sell — State Machine DP</div><div class="ssub">A DP pattern where states encode buying, holding, and selling</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>All 6 Stock Problems</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python — Stock DP</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># ══ I: ONE TRANSACTION (LC 121) ══</span>
+<span class="kw">def</span> <span class="fn">maxProfit1</span>(prices):
+    min_price = <span class="kw">float</span>(<span class="str">'inf'</span>); max_profit = <span class="num">0</span>
+    <span class="kw">for</span> p <span class="kw">in</span> prices:
+        min_price = <span class="kw">min</span>(min_price, p)
+        max_profit = <span class="kw">max</span>(max_profit, p - min_price)
+    <span class="kw">return</span> max_profit
+
+<span class="cm"># ══ II: UNLIMITED TRANSACTIONS (LC 122) ══</span>
+<span class="kw">def</span> <span class="fn">maxProfit2</span>(prices):
+    <span class="cm"># Buy every ascending pair</span>
+    <span class="kw">return</span> <span class="kw">sum</span>(<span class="kw">max</span>(prices[i]-prices[i-<span class="num">1</span>],<span class="num">0</span>) <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>,<span class="kw">len</span>(prices)))
+
+<span class="cm"># ══ III: AT MOST 2 TRANSACTIONS (LC 123) ══</span>
+<span class="kw">def</span> <span class="fn">maxProfit3</span>(prices):
+    b1=b2=-<span class="kw">float</span>(<span class="str">'inf'</span>); s1=s2=<span class="num">0</span>
+    <span class="kw">for</span> p <span class="kw">in</span> prices:
+        b1=<span class="kw">max</span>(b1,-p)          <span class="cm"># Best buy for 1st</span>
+        s1=<span class="kw">max</span>(s1,b1+p)        <span class="cm"># Best sell for 1st</span>
+        b2=<span class="kw">max</span>(b2,s1-p)        <span class="cm"># Best buy for 2nd (use s1 profit)</span>
+        s2=<span class="kw">max</span>(s2,b2+p)        <span class="cm"># Best sell for 2nd</span>
+    <span class="kw">return</span> s2
+
+<span class="cm"># ══ IV: AT MOST K TRANSACTIONS (LC 188) ══</span>
+<span class="kw">def</span> <span class="fn">maxProfit4</span>(k, prices):
+    n = <span class="kw">len</span>(prices)
+    <span class="kw">if</span> k >= n // <span class="num">2</span>: <span class="kw">return</span> maxProfit2(prices)  <span class="cm"># Unlimited</span>
+    buy  = [-<span class="kw">float</span>(<span class="str">'inf'</span>)] * (k + <span class="num">1</span>)
+    sell = [<span class="num">0</span>] * (k + <span class="num">1</span>)
+    <span class="kw">for</span> p <span class="kw">in</span> prices:
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="kw">range</span>(k, <span class="num">0</span>, -<span class="num">1</span>):
+            sell[j] = <span class="kw">max</span>(sell[j], buy[j] + p)
+            buy[j]  = <span class="kw">max</span>(buy[j],  sell[j-<span class="num">1</span>] - p)
+    <span class="kw">return</span> sell[k]
+
+<span class="cm"># ══ COOLDOWN (LC 309) ══</span>
+<span class="cm"># States: held, sold (cooldown), rest</span>
+<span class="kw">def</span> <span class="fn">maxProfitCooldown</span>(prices):
+    held = -<span class="kw">float</span>(<span class="str">'inf'</span>); sold = rest = <span class="num">0</span>
+    <span class="kw">for</span> p <span class="kw">in</span> prices:
+        held, sold, rest = \
+            <span class="kw">max</span>(held, rest - p), held + p, <span class="kw">max</span>(rest, sold)
+    <span class="kw">return</span> <span class="kw">max</span>(sold, rest)
+
+<span class="cm"># ══ WITH FEE (LC 714) ══</span>
+<span class="kw">def</span> <span class="fn">maxProfitFee</span>(prices, fee):
+    hold = -prices[<span class="num">0</span>]; cash = <span class="num">0</span>
+    <span class="kw">for</span> p <span class="kw">in</span> prices[<span class="num">1</span>:]:
+        hold = <span class="kw">max</span>(hold, cash - p)
+        cash = <span class="kw">max</span>(cash, hold + p - fee)
+    <span class="kw">return</span> cash</pre></div>
+    </div>
+  </section>
+
+  <!-- S13: INTERVIEW PROBLEMS -->
+  <section class="section" id="s13">
+    <div class="shdr"><span class="snum">13</span>
+      <div><div class="stitle">Interview Problems</div><div class="ssub">18 must-know DP problems — identified by pattern</div></div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">1. Climbing Stairs</div><span class="diff de">Easy</span><span style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--text3)">LC 70</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p1e')">Explain</div><div class="ptab" onclick="st(this,'p1c')">Code</div></div>
+        <div class="ptc active" id="p1e"><p><strong>Pattern:</strong> 1D Fibonacci-style DP. dp[i] = dp[i-1] + dp[i-2]. Ways to step i = ways from i-1 (1-step) + ways from i-2 (2-step).</p></div>
+        <div class="ptc" id="p1c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">climbStairs</span>(n):
+    a, b = <span class="num">1</span>, <span class="num">2</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(<span class="num">3</span>, n+<span class="num">1</span>): a, b = b, a+b
+    <span class="kw">return</span> b <span class="kw">if</span> n >= <span class="num">2</span> <span class="kw">else</span> n  <span class="cm"># O(n), O(1)</span></pre></div></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">2. Coin Change</div><span class="diff dm">Medium</span><span style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--text3)">LC 322</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p2e')">Explain</div></div>
+        <div class="ptc active" id="p2e"><p><strong>Pattern:</strong> Unbounded knapsack. dp[i] = min coins for amount i. Iterate LEFT to RIGHT. Full code with visualizer in Section 3.</p></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">3. Longest Increasing Subsequence</div><span class="diff dm">Medium</span><span style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--text3)">LC 300</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p3e')">Explain</div></div>
+        <div class="ptc active" id="p3e"><p><strong>Pattern:</strong> 1D DP. dp[i] = LIS ending at i. O(n²) DP or O(n log n) with patience sorting. Full code in Section 7.</p></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">4. Longest Common Subsequence</div><span class="diff dm">Medium</span><span style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--text3)">LC 1143</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p4e')">Explain</div></div>
+        <div class="ptc active" id="p4e"><p><strong>Pattern:</strong> 2D DP on two strings. If chars match: dp[i][j]=dp[i-1][j-1]+1. Else: max(dp[i-1][j], dp[i][j-1]). Full code in Section 7.</p></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">5. Partition Equal Subset Sum</div><span class="diff dm">Medium</span><span style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--text3)">LC 416</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p5e')">Explain</div><div class="ptab" onclick="st(this,'p5c')">Code</div></div>
+        <div class="ptc active" id="p5e"><p><strong>Pattern:</strong> 0/1 Knapsack. Can we reach target = sum/2? Use boolean dp array, iterate RIGHT TO LEFT.</p></div>
+        <div class="ptc" id="p5c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">canPartition</span>(nums):
+    total = <span class="kw">sum</span>(nums)
+    <span class="kw">if</span> total % <span class="num">2</span>: <span class="kw">return False</span>
+    target = total // <span class="num">2</span>
+    dp = [<span class="bl">False</span>] * (target + <span class="num">1</span>)
+    dp[<span class="num">0</span>] = <span class="bl">True</span>
+    <span class="kw">for</span> n <span class="kw">in</span> nums:
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="kw">range</span>(target, n-<span class="num">1</span>, -<span class="num">1</span>):  <span class="cm"># RIGHT to LEFT!</span>
+            dp[j] = dp[j] <span class="kw">or</span> dp[j-n]
+    <span class="kw">return</span> dp[target]</pre></div></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">6. Unique Paths</div><span class="diff dm">Medium</span><span style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--text3)">LC 62</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p6e')">Explain</div></div>
+        <div class="ptc active" id="p6e"><p><strong>Pattern:</strong> Grid DP. dp[i][j] = dp[i-1][j] + dp[i][j-1]. Space optimizable to O(n). Full code in Section 8.</p></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">7. Edit Distance</div><span class="diff dm">Medium</span><span style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--text3)">LC 72</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p7e')">Explain</div></div>
+        <div class="ptc active" id="p7e"><p><strong>Pattern:</strong> 2D string DP. 3 operations: insert, delete, replace. Base cases: dp[i][0]=i, dp[0][j]=j. Full code in Section 7.</p></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">8. Word Break</div><span class="diff dm">Medium</span><span style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--text3)">LC 139</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p8e')">Explain</div><div class="ptab" onclick="st(this,'p8c')">Code</div></div>
+        <div class="ptc active" id="p8e"><p><strong>Pattern:</strong> 1D DP. dp[i] = can we form s[:i] using wordDict? Check all endpoints j where dp[j] is True and s[j:i] is a word.</p></div>
+        <div class="ptc" id="p8c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">wordBreak</span>(s, wordDict):
+    words = <span class="kw">set</span>(wordDict)
+    n = <span class="kw">len</span>(s)
+    dp = [<span class="bl">False</span>] * (n + <span class="num">1</span>)
+    dp[<span class="num">0</span>] = <span class="bl">True</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, n+<span class="num">1</span>):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="kw">range</span>(i):
+            <span class="kw">if</span> dp[j] <span class="kw">and</span> s[j:i] <span class="kw">in</span> words:
+                dp[i] = <span class="bl">True</span>; <span class="kw">break</span>
+    <span class="kw">return</span> dp[n]  <span class="cm"># O(n^2) time, O(n) space</span></pre></div></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">9. Longest Palindromic Substring</div><span class="diff dm">Medium</span><span style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--text3)">LC 5</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p9e')">Explain</div><div class="ptab" onclick="st(this,'p9c')">Code</div></div>
+        <div class="ptc active" id="p9e"><p><strong>Pattern:</strong> Expand around center OR interval DP. Expand-around-center is O(n) space vs O(n²) for table.</p></div>
+        <div class="ptc" id="p9c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">longestPalindrome</span>(s):
+    res = <span class="str">""</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(s)):
+        <span class="kw">for</span> odd, even <span class="kw">in</span> [(i,i),(i,i+<span class="num">1</span>)]:  <span class="cm"># Odd & even centers</span>
+            l, r = odd, even
+            <span class="kw">while</span> l>=<span class="num">0</span> <span class="kw">and</span> r<<span class="kw">len</span>(s) <span class="kw">and</span> s[l]==s[r]: l-=<span class="num">1</span>;r+=<span class="num">1</span>
+            <span class="kw">if</span> r-l-<span class="num">1</span> > <span class="kw">len</span>(res): res = s[l+<span class="num">1</span>:r]
+    <span class="kw">return</span> res  <span class="cm"># O(n^2) time, O(1) space</span></pre></div></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">10. Maximum Subarray (Kadane's)</div><span class="diff dm">Medium</span><span style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--text3)">LC 53</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p10e')">Explain</div><div class="ptab" onclick="st(this,'p10c')">Code</div></div>
+        <div class="ptc active" id="p10e"><p><strong>Pattern:</strong> Kadane's algorithm — 1D DP. dp[i] = max subarray ending at i = max(nums[i], dp[i-1]+nums[i]). Track global max.</p></div>
+        <div class="ptc" id="p10c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">maxSubArray</span>(nums):
+    curr = best = nums[<span class="num">0</span>]
+    <span class="kw">for</span> n <span class="kw">in</span> nums[<span class="num">1</span>:]:
+        curr = <span class="kw">max</span>(n, curr + n)
+        best = <span class="kw">max</span>(best, curr)
+    <span class="kw">return</span> best  <span class="cm"># O(n), O(1)</span></pre></div></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">11. Best Time to Buy and Sell Stock (with Cooldown)</div><span class="diff dm">Medium</span><span style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--text3)">LC 309</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p11e')">Explain</div></div>
+        <div class="ptc active" id="p11e"><p><strong>Pattern:</strong> State machine DP. Three states: held (have stock), sold (just sold, in cooldown), rest (can buy). Full stock family in Section 12.</p></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">12. Decode Ways</div><span class="diff dm">Medium</span><span style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--text3)">LC 91</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p12e')">Explain</div></div>
+        <div class="ptc active" id="p12e"><p><strong>Pattern:</strong> 1D Fibonacci-style DP with conditions. dp[i] += dp[i-1] if 1-9 digit, dp[i] += dp[i-2] if 10-26 two-digit. Full code in Section 5.</p></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">13. Burst Balloons</div><span class="diff dh">Hard</span><span style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--text3)">LC 312</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p13e')">Explain</div></div>
+        <div class="ptc active" id="p13e"><p><strong>Pattern:</strong> Interval DP. Key trick: think of k as the LAST balloon burst in interval (i,j), not first. This avoids tracking which balloons remain. Full code in Section 9.</p></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">14. Maximal Square</div><span class="diff dm">Medium</span><span style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--text3)">LC 221</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p14e')">Explain</div></div>
+        <div class="ptc active" id="p14e"><p><strong>Pattern:</strong> Grid DP. dp[i][j] = side of largest square with bottom-right at (i,j). Formula: min(top, left, top-left) + 1. Full code in Section 8.</p></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">15. Regular Expression Matching</div><span class="diff dh">Hard</span><span style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--text3)">LC 10</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p15e')">Explain</div><div class="ptab" onclick="st(this,'p15c')">Code</div></div>
+        <div class="ptc active" id="p15e"><p><strong>Pattern:</strong> 2D string DP. Handle '*' by looking 2 positions back. dp[i][j] = does s[:i] match p[:j]?</p></div>
+        <div class="ptc" id="p15c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">isMatch</span>(s, p):
+    m, n = <span class="kw">len</span>(s), <span class="kw">len</span>(p)
+    dp = [[<span class="bl">False</span>]*(n+<span class="num">1</span>) <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(m+<span class="num">1</span>)]
+    dp[<span class="num">0</span>][<span class="num">0</span>] = <span class="bl">True</span>
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="kw">range</span>(<span class="num">2</span>, n+<span class="num">1</span>):
+        <span class="kw">if</span> p[j-<span class="num">1</span>] == <span class="str">'*'</span>: dp[<span class="num">0</span>][j] = dp[<span class="num">0</span>][j-<span class="num">2</span>]
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, m+<span class="num">1</span>):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, n+<span class="num">1</span>):
+            <span class="kw">if</span> p[j-<span class="num">1</span>] <span class="kw">in</span> (s[i-<span class="num">1</span>], <span class="str">'.'</span>): dp[i][j] = dp[i-<span class="num">1</span>][j-<span class="num">1</span>]
+            <span class="kw">elif</span> p[j-<span class="num">1</span>] == <span class="str">'*'</span>:
+                dp[i][j] = dp[i][j-<span class="num">2</span>]  <span class="cm"># Zero occurrences</span>
+                <span class="kw">if</span> p[j-<span class="num">2</span>] <span class="kw">in</span> (s[i-<span class="num">1</span>], <span class="str">'.'</span>): dp[i][j] |= dp[i-<span class="num">1</span>][j]
+    <span class="kw">return</span> dp[m][n]</pre></div></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">16. Russian Doll Envelopes</div><span class="diff dh">Hard</span><span style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--text3)">LC 354</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p16e')">Explain</div><div class="ptab" onclick="st(this,'p16c')">Code</div></div>
+        <div class="ptc active" id="p16e"><p><strong>Pattern:</strong> Sort + LIS. Sort by width asc, then height DESC (to prevent same-width nesting). Then find LIS on heights only.</p></div>
+        <div class="ptc" id="p16c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">import</span> bisect
+<span class="kw">def</span> <span class="fn">maxEnvelopes</span>(envelopes):
+    envelopes.sort(key=<span class="kw">lambda</span> x: (x[<span class="num">0</span>], -x[<span class="num">1</span>]))
+    tails = []
+    <span class="kw">for</span> _, h <span class="kw">in</span> envelopes:
+        pos = bisect.bisect_left(tails, h)
+        <span class="kw">if</span> pos == <span class="kw">len</span>(tails): tails.append(h)
+        <span class="kw">else</span>: tails[pos] = h
+    <span class="kw">return</span> <span class="kw">len</span>(tails)  <span class="cm"># O(n log n)</span></pre></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S14: CHEAT SHEET & ROADMAP -->
+  <section class="section" id="s14">
+    <div class="shdr"><span class="snum">14</span>
+      <div><div class="stitle">Cheat Sheet & 7-Day Roadmap</div><div class="ssub">Everything for interview day + a structured daily plan</div></div>
+    </div>
+
+    <div class="cgrid">
+      <div class="ci2">
+        <div class="cit">🧩 5-Step DP Framework</div>
+        <ul>
+          <li>1. Define state dp[i] or dp[i][j]</li>
+          <li>2. Write recurrence relation</li>
+          <li>3. Identify base cases</li>
+          <li>4. Fill order (memo or tabulation)</li>
+          <li>5. Optimize space if needed</li>
+        </ul>
+      </div>
+      <div class="ci2">
+        <div class="cit">📦 Knapsack Templates</div>
+        <div class="cb2" style="margin:0"><pre style="font-size:.67rem;padding:10px"><span class="cm"># 0/1: RIGHT to LEFT</span>
+<span class="kw">for</span> item <span class="kw">in</span> items:
+  <span class="kw">for</span> w <span class="kw">in</span> <span class="kw">range</span>(W,wt-<span class="num">1</span>,-<span class="num">1</span>):
+    dp[w]=<span class="kw">max</span>(dp[w],dp[w-wt]+val)
+<span class="cm"># Unbounded: LEFT to RIGHT</span>
+<span class="kw">for</span> w <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>,W+<span class="num">1</span>):
+  <span class="kw">for</span> c <span class="kw">in</span> coins:
+    dp[w]=<span class="kw">min</span>(dp[w],dp[w-c]+<span class="num">1</span>)</pre></div>
+      </div>
+      <div class="ci2">
+        <div class="cit">📊 Complexity by Pattern</div>
+        <ul>
+          <li>1D DP (Fibonacci, stairs): O(n), O(1)</li>
+          <li>Knapsack (1D opt): O(n×W), O(W)</li>
+          <li>LCS/Edit Distance: O(m×n), O(m×n)</li>
+          <li>Interval DP: O(n³), O(n²)</li>
+          <li>Bitmask DP: O(2ⁿ×n²), O(2ⁿ×n)</li>
+          <li>LIS (fast): O(n log n), O(n)</li>
+        </ul>
+      </div>
+      <div class="ci2">
+        <div class="cit">🎯 Pattern Recognition</div>
+        <ul>
+          <li>"Min/max over choices" → DP</li>
+          <li>"Count ways" → DP (add subproblems)</li>
+          <li>"True/False achievable" → boolean DP</li>
+          <li>"Items with weights + capacity" → Knapsack</li>
+          <li>"Two strings comparison" → LCS/Edit</li>
+          <li>"Interval i..j" → Interval DP</li>
+          <li>"Subset of n≤20" → Bitmask DP</li>
+          <li>"Grid traversal" → Grid DP</li>
+        </ul>
+      </div>
+      <div class="ci2">
+        <div class="cit">⚠️ Common Mistakes</div>
+        <ul>
+          <li>Wrong direction (L→R vs R→L for knapsack)</li>
+          <li>Off-by-one in base cases</li>
+          <li>Forgetting to handle impossible case (return -1)</li>
+          <li>State includes wrong information</li>
+          <li>Confusing "at most k" vs "exactly k" transactions</li>
+          <li>Not seeing Fibonacci in "climbing stairs" style</li>
+        </ul>
+      </div>
+      <div class="ci2">
+        <div class="cit">💬 Interview Phrases</div>
+        <ul>
+          <li>"I notice overlapping subproblems, so DP applies"</li>
+          <li>"Let dp[i] represent… [precise definition]"</li>
+          <li>"The recurrence is dp[i] = max/min of [choices]"</li>
+          <li>"Base cases: dp[0] = … because …"</li>
+          <li>"I can optimize space by only keeping the last row"</li>
+          <li>"This is 0/1 knapsack, so I iterate right to left"</li>
+        </ul>
+      </div>
+      <div class="ci2">
+        <div class="cit">🔑 Stock DP States</div>
+        <div class="cb2" style="margin:0"><pre style="font-size:.67rem;padding:10px"><span class="cm"># General k-transaction</span>
+buy[j]  = <span class="kw">max</span>(buy[j], sell[j-<span class="num">1</span>]-p)
+sell[j] = <span class="kw">max</span>(sell[j], buy[j]+p)
+<span class="cm"># Cooldown</span>
+held = <span class="kw">max</span>(held, rest-p)
+sold = held+p
+rest = <span class="kw">max</span>(rest, sold)</pre></div>
+      </div>
+      <div class="ci2">
+        <div class="cit">🧱 Memoization Template</div>
+        <div class="cb2" style="margin:0"><pre style="font-size:.67rem;padding:10px"><span class="kw">from</span> functools <span class="kw">import</span> lru_cache
+
+<span class="kw">@lru_cache</span>(maxsize=<span class="bl">None</span>)
+<span class="kw">def</span> <span class="fn">dp</span>(i, j, ...):
+    <span class="cm"># Base cases</span>
+    <span class="kw">if</span> base_case: <span class="kw">return</span> val
+    <span class="cm"># Recurrence</span>
+    <span class="kw">return</span> <span class="kw">max</span>/<span class="kw">min</span>(choices)</pre></div>
+      </div>
+    </div>
+
+    <div style="margin-top:28px">
+      <div class="stitle" style="font-size:1.6rem;margin-bottom:20px">7-Day Roadmap</div>
+      <div class="roadmap">
+        <div class="rday"><div class="rdot">D1</div>
+          <div class="rbody"><div class="rttl">Day 1 — Foundations <span class="badge be">Beginner</span></div>
+            <ul class="rlist">
+              <li>Read Sections 1–2. Understand overlapping subproblems vs divide-and-conquer.</li>
+              <li>Implement Fibonacci 4 ways: naive, memo, tabulation, O(1) space.</li>
+              <li>Solve: LC 70 (Climbing Stairs), LC 198 (House Robber), LC 746 (Min Cost Climbing).</li>
+              <li>Practice the 5-Step DP Framework on each problem explicitly.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rday"><div class="rdot" style="border-color:var(--a2)">D2</div>
+          <div class="rbody"><div class="rttl">Day 2 — Tabulation & 1D DP <span class="badge be">Beginner</span></div>
+            <ul class="rlist">
+              <li>Master tabulation (Section 3). Use the coin change visualizer.</li>
+              <li>Solve: LC 322 (Coin Change), LC 518 (Coin Change 2 — unbounded).</li>
+              <li>Solve: LC 91 (Decode Ways), LC 53 (Maximum Subarray — Kadane's).</li>
+              <li>Understand LEFT vs RIGHT iteration direction (Section 4).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rday"><div class="rdot" style="border-color:var(--a3)">D3</div>
+          <div class="rbody"><div class="rttl">Day 3 — Knapsack Patterns <span class="badge bm">Intermediate</span></div>
+            <ul class="rlist">
+              <li>Read Section 6 thoroughly. Use the Knapsack visualizer.</li>
+              <li>Trace 0/1 knapsack table by hand for small example.</li>
+              <li>Solve: LC 416 (Partition Equal Subset Sum — 0/1).</li>
+              <li>Solve: LC 494 (Target Sum), LC 474 (Ones and Zeroes).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rday"><div class="rdot" style="border-color:var(--a4)">D4</div>
+          <div class="rbody"><div class="rttl">Day 4 — 2D DP (Strings & Grid) <span class="badge bm">Intermediate</span></div>
+            <ul class="rlist">
+              <li>Read Sections 7–8. Trace LCS table by hand.</li>
+              <li>Solve: LC 1143 (LCS), LC 72 (Edit Distance), LC 5 (Longest Palindromic Substring).</li>
+              <li>Solve: LC 62 (Unique Paths), LC 64 (Min Path Sum), LC 221 (Maximal Square).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rday"><div class="rdot" style="border-color:var(--a1)">D5</div>
+          <div class="rbody"><div class="rttl">Day 5 — LIS & Interval DP <span class="badge bh">Advanced</span></div>
+            <ul class="rlist">
+              <li>Solve: LC 300 (LIS) — both O(n²) and O(n log n).</li>
+              <li>Solve: LC 354 (Russian Doll Envelopes — LIS + sorting).</li>
+              <li>Read Section 9. Understand interval DP loop order.</li>
+              <li>Solve: LC 516 (Longest Palindromic Subsequence), LC 312 (Burst Balloons — Hard).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rday"><div class="rdot" style="border-color:var(--a2)">D6</div>
+          <div class="rbody"><div class="rttl">Day 6 — Stocks & Advanced <span class="badge bh">Advanced</span></div>
+            <ul class="rlist">
+              <li>Read Section 12. Solve all 6 stock problems (LC 121, 122, 123, 188, 309, 714).</li>
+              <li>Read Section 11. Solve: LC 698 (Partition K Subsets — Bitmask DP).</li>
+              <li>Solve: LC 337 (House Robber III — Tree DP), LC 139 (Word Break).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rday"><div class="rdot">D7</div>
+          <div class="rbody"><div class="rttl">Day 7 — Mock Interview <span class="badge bh">Interview</span></div>
+            <ul class="rlist">
+              <li>Revise Cheat Sheet (Section 14) — 30 min, no code.</li>
+              <li>Code coin change, 0/1 knapsack, LCS from memory in under 10 min each.</li>
+              <li>Solve 3 unseen DP problems with 35-min timer. State the 5 steps aloud.</li>
+              <li>Final check: can you identify the correct DP pattern from the problem statement?</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout ok" style="margin-top:24px">
+      <div class="ci">🏆</div>
+      <div class="cb"><div class="cbt">You're Interview-Ready When You Can...</div>
+        <ul style="margin:0;padding-left:16px">
+          <li>Identify which of the 8 DP patterns applies within 2 minutes</li>
+          <li>State the DP definition, recurrence, and base cases before coding</li>
+          <li>Know when to iterate left→right vs right→left (knapsack)</li>
+          <li>Optimize any 2D DP to 1D when only adjacent rows are needed</li>
+          <li>Implement @lru_cache memoization or tabulation fluently</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <div class="ci">🚫</div>
+      <div class="cb"><div class="cbt">When NOT to Use DP</div>
+        <ul style="margin:0;padding-left:16px">
+          <li><strong>No overlapping subproblems</strong> → Use divide and conquer (merge sort)</li>
+          <li><strong>Greedy works</strong> → Activity selection, Huffman, fractional knapsack</li>
+          <li><strong>Graph shortest path (no negative cycles)</strong> → Dijkstra, BFS</li>
+          <li><strong>Simple iteration suffices</strong> → Don't over-engineer with DP</li>
+          <li><strong>Exponential state space AND n is large</strong> → DP won't help</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div>🧩 Dynamic Programming Mastery — Complete DSA Course</div>
+    <div style="margin-top:4px">Overlapping subproblems solved once. Every pattern mastered.</div>
+  </footer>
+</main>
+
+<script>
+/* THEME / SIDEBAR */
+function toggleTheme(){const h=document.documentElement;h.setAttribute('data-theme',h.getAttribute('data-theme')==='dark'?'light':'dark')}
+function openSb(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('show')}
+function closeSb(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
+function gt(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});document.querySelectorAll('.nl').forEach(n=>n.classList.remove('active'));event.currentTarget.classList.add('active');if(window.innerWidth<=768)closeSb()}
+function cc(btn){const c=btn.closest('.cb2').querySelector('pre').innerText;navigator.clipboard.writeText(c).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',1800)})}
+function cq(btn,r,id){btn.closest('.qopts').querySelectorAll('.qopt').forEach(o=>o.disabled=true);const fb=document.getElementById(id);if(r==='correct'){btn.classList.add('correct');fb.className='qfb show ok'}else{btn.classList.add('wrong');fb.className='qfb show no';fb.textContent='❌ Not quite — review the section above!'}}
+function st(tab,cid){const b=tab.closest('.pbody');b.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));b.querySelectorAll('.ptc').forEach(c=>c.classList.remove('active'));tab.classList.add('active');document.getElementById(cid).classList.add('active')}
+
+/* FIBONACCI MEMOIZATION VIZ */
+let fibMemo={},fibCallCount=0,fibNaiveCount=0;
+function fibMemoFn(n,log=[]){
+  if(n in fibMemo){log.push(`cache_hit:${n}`);return fibMemo[n]}
+  log.push(`compute:${n}`);
+  fibCallCount++;
+  if(n<=1){fibMemo[n]=n;return n}
+  fibMemo[n]=fibMemoFn(n-1,log)+fibMemoFn(n-2,log);
+  return fibMemo[n];
+}
+function fibNaiveFn(n){fibNaiveCount++;if(n<=1)return n;return fibNaiveFn(n-1)+fibNaiveFn(n-2)}
+function renderFibCache(){
+  const el=document.getElementById('fibCacheDisplay');el.innerHTML='';
+  const n=parseInt(document.getElementById('fibN').value)||7;
+  for(let i=0;i<=n;i++){
+    const d=document.createElement('span');d.className='memo-cell';
+    d.id='fib_c'+i;
+    if(i in fibMemo){d.classList.add('cached');d.textContent=`f(${i})=${fibMemo[i]}`}
+    else{d.classList.add('empty');d.textContent=`f(${i})=?`}
+    el.appendChild(d);
+  }
+}
+function runFibMemo(){
+  const n=parseInt(document.getElementById('fibN').value)||7;
+  fibMemo={};fibCallCount=0;
+  const log=[];const result=fibMemoFn(n,log);
+  renderFibCache();
+  document.getElementById('fibLog').innerHTML=`<span class="vok">✅ fib(${n}) = ${result} | Unique computations: ${fibCallCount} (vs naive: ${Math.pow(2,n).toFixed(0)})</span>`;
+}
+function runFibNaive(){
+  const n=parseInt(document.getElementById('fibN').value)||7;
+  if(n>20){document.getElementById('fibLog').innerHTML='<span class="verr">⚠️ n>20 would be too slow to animate. Try n≤20.</span>';return}
+  fibNaiveCount=0;const result=fibNaiveFn(n);
+  document.getElementById('fibLog').innerHTML=`<span class="verr">Naive fib(${n})=${result} | Total calls: ${fibNaiveCount} | Memo calls: ${n+1}</span>`;
+}
+function resetFib(){fibMemo={};renderFibCache();document.getElementById('fibLog').innerHTML='<span class="vinf">Reset. Press Run.</span>'}
+
+/* COIN CHANGE VIZ */
+let coinArr=[],coinAmt=0,coinDP=[],coinStep_i=1,coinAutoInt=null;
+function initCoin(){
+  try{coinArr=document.getElementById('coinInput').value.split(',').map(x=>parseInt(x.trim())).filter(x=>!isNaN(x))}catch(e){return}
+  coinAmt=parseInt(document.getElementById('amtInput').value)||11;
+  coinDP=new Array(coinAmt+1).fill(Infinity);coinDP[0]=0;coinStep_i=1;
+  buildCoinTable();
+  document.getElementById('coinLog').innerHTML=`<span class="vinf">Table initialized. dp[0]=0, rest=∞. Fill step by step.</span>`;
+}
+function buildCoinTable(){
+  const wrap=document.getElementById('coinTableWrap');
+  let html='<table class="dp-table"><tr><th>Amount i</th>';
+  for(let i=0;i<=coinAmt;i++)html+=`<th>${i}</th>`;
+  html+='</tr><tr><th>dp[i]</th>';
+  for(let i=0;i<=coinAmt;i++){
+    const v=coinDP[i]===Infinity?'∞':coinDP[i];
+    const cls=coinDP[i]===0?'source':coinDP[i]<Infinity&&i>0?'filled':'';
+    html+=`<td class="${cls}" id="cdp${i}">${v}</td>`;
+  }
+  html+='</tr></table>';
+  wrap.innerHTML=html;
+}
+function coinStep(){
+  if(!coinArr.length){document.getElementById('coinLog').innerHTML='<span class="verr">Click Setup first.</span>';return}
+  if(coinStep_i>coinAmt){document.getElementById('coinLog').innerHTML=`<span class="vok">✅ Done! Min coins for amount ${coinAmt} = ${coinDP[coinAmt]===Infinity?'impossible':coinDP[coinAmt]}</span>`;clearInterval(coinAutoInt);return}
+  const i=coinStep_i;
+  const prev=coinDP[i];
+  for(const c of coinArr)if(c<=i&&coinDP[i-c]+1<coinDP[i])coinDP[i]=coinDP[i-c]+1;
+  const el=document.getElementById('cdp'+i);
+  if(el){el.textContent=coinDP[i]===Infinity?'∞':coinDP[i];el.className=coinDP[i]<Infinity?'active':'';setTimeout(()=>{el.className=coinDP[i]<Infinity?'filled':''},600)}
+  document.getElementById('coinLog').innerHTML=`<span class="vinf">dp[${i}] = min over coins ${JSON.stringify(coinArr)}: ${coinDP[i]===Infinity?'∞':coinDP[i]}</span>`;
+  coinStep_i++;
+}
+function coinAuto(){initCoin();coinAutoInt=setInterval(()=>{if(coinStep_i>coinAmt){clearInterval(coinAutoInt);return}coinStep()},180)}
+function resetCoin(){clearInterval(coinAutoInt);document.getElementById('coinTableWrap').innerHTML='';document.getElementById('coinLog').innerHTML='<span class="vinf">Reset.</span>'}
+
+/* KNAPSACK VIZ */
+const KS_W=[1,3,4,5],KS_V=[1,4,5,7],KS_CAP=7;
+let ksDP=null,ks_i=1,ks_j=1,ksAutoInt=null;
+function initKnapsack(){
+  const n=KS_W.length,W=KS_CAP;
+  ksDP=Array.from({length:n+1},()=>new Array(W+1).fill(0));
+  ks_i=1;ks_j=1;
+  buildKSTable();
+  document.getElementById('ksLog').innerHTML=`<span class="vinf">Table initialized (rows=items 0-${n}, cols=capacity 0-${W}). Fill step by step.</span>`;
+}
+function buildKSTable(){
+  const W=KS_CAP,n=KS_W.length;
+  let html='<table class="dp-table"><tr><th>Item↓ Cap→</th>';
+  for(let w=0;w<=W;w++)html+=`<th>${w}</th>`;
+  html+='</tr>';
+  for(let i=0;i<=n;i++){
+    html+=`<tr><th>${i===0?'∅':KS_W[i-1]+'kg/'+KS_V[i-1]+'$'}</th>`;
+    for(let w=0;w<=W;w++){
+      const v=ksDP?ksDP[i][w]:0;
+      html+=`<td class="${v>0?'filled':''}" id="ksd${i}_${w}">${v}</td>`;
+    }
+    html+='</tr>';
+  }
+  html+='</table>';
+  document.getElementById('ksTableWrap').innerHTML=html;
+}
+function ksStep(){
+  if(!ksDP){document.getElementById('ksLog').innerHTML='<span class="verr">Click Setup first.</span>';return}
+  const n=KS_W.length,W=KS_CAP;
+  if(ks_i>n){document.getElementById('ksLog').innerHTML=`<span class="vok">✅ Done! Max value for capacity ${W} = ${ksDP[n][W]}</span>`;clearInterval(ksAutoInt);return}
+  const i=ks_i,j=ks_j,wt=KS_W[i-1],val=KS_V[i-1];
+  ksDP[i][j]=ksDP[i-1][j];
+  if(wt<=j)ksDP[i][j]=Math.max(ksDP[i][j],ksDP[i-1][j-wt]+val);
+  const el=document.getElementById(`ksd${i}_${j}`);
+  if(el){el.textContent=ksDP[i][j];el.className=ksDP[i][j]>0?'active':'';setTimeout(()=>{if(el)el.className=ksDP[i][j]>0?'filled':''},400)}
+  document.getElementById('ksLog').innerHTML=`<span class="vinf">dp[${i}][${j}]: skip=${ksDP[i-1][j]}, ${wt<=j?`take=${ksDP[i-1][j-wt]+val}`:'cant take'} → ${ksDP[i][j]}</span>`;
+  ks_j++;if(ks_j>W){ks_j=1;ks_i++}
+}
+function ksAuto(){initKnapsack();ksAutoInt=setInterval(()=>{if(ks_i>KS_W.length){clearInterval(ksAutoInt);return}ksStep()},120)}
+function resetKS(){clearInterval(ksAutoInt);ksDP=null;document.getElementById('ksTableWrap').innerHTML='';document.getElementById('ksLog').innerHTML='<span class="vinf">Reset. Click Setup.</span>'}
+
+/* PROGRESS */
+function updateProgress(){const s=document.querySelectorAll('.section');let v=0;const sc=window.scrollY+window.innerHeight;s.forEach(x=>{if(x.offsetTop<sc-100)v++});document.getElementById('pf').style.width=Math.min(100,Math.round(v/s.length*100))+'%'}
+function updateNav(){const s=document.querySelectorAll('.section');const ls=document.querySelectorAll('.nl');let a='';s.forEach(x=>{if(x.offsetTop<=window.scrollY+200)a=x.id});ls.forEach(l=>{l.classList.remove('active');const o=l.getAttribute('onclick');if(o&&o.includes(a))l.classList.add('active')})}
+window.addEventListener('scroll',()=>{updateProgress();updateNav()});
+window.addEventListener('load',()=>{renderFibCache()});
+</script>
+</body>
+</html>

@@ -1,0 +1,2096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strings: Beginner to Pro — DSA Mastery Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf7f2;
+    --bg2: #f2ede4;
+    --surface: #ffffff;
+    --surface2: #f7f3ec;
+    --border: #e2d9cc;
+    --border2: #c9bfb0;
+    --ink: #1a1510;
+    --ink2: #3d3228;
+    --muted: #8a7a6a;
+    --accent: #c0392b;
+    --accent2: #d35400;
+    --accent3: #1a6b4a;
+    --blue: #1e3a5f;
+    --gold: #b8860b;
+    --code-bg: #1e1a15;
+    --code-border: #3a3028;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    background: var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-texture {
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.03) 39px, rgba(255,255,255,0.03) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.02) 39px, rgba(255,255,255,0.02) 40px);
+  }
+
+  .hero-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 60px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-top-bar .series-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+  }
+
+  .hero-top-bar .issue-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+
+  .hero-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 5px;
+    color: var(--accent);
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .hero-eyebrow::before,
+  .hero-eyebrow::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(4rem, 12vw, 10rem);
+    font-weight: 900;
+    color: var(--bg);
+    line-height: 0.9;
+    letter-spacing: -4px;
+    margin-bottom: 8px;
+  }
+
+  .hero h1 .italic {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-subtitle {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    color: rgba(255,255,255,0.45);
+    margin-top: 24px;
+    max-width: 560px;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 40px;
+    margin-top: 56px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    width: 100%;
+    max-width: 700px;
+    justify-content: center;
+  }
+
+  .hero-meta-item {
+    text-align: center;
+  }
+
+  .hero-meta-item .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--bg);
+    line-height: 1;
+  }
+
+  .hero-meta-item .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.35);
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+
+  .hero-bottom {
+    display: flex;
+    gap: 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    position: relative;
+    z-index: 2;
+    overflow-x: auto;
+  }
+
+  .hero-bottom a {
+    flex: 1;
+    min-width: 100px;
+    text-align: center;
+    padding: 16px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.35);
+    text-decoration: none;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .hero-bottom a:hover {
+    background: rgba(255,255,255,0.04);
+    color: var(--accent);
+  }
+
+  .hero-bottom a span {
+    display: block;
+    color: rgba(255,255,255,0.2);
+    font-size: 8px;
+    margin-bottom: 3px;
+  }
+
+  /* ── LAYOUT ── */
+  .page { max-width: 960px; margin: 0 auto; padding: 0 32px; }
+
+  /* ── CHAPTER HEADERS ── */
+  .chapter {
+    padding: 80px 0 0;
+  }
+
+  .chapter-header {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0;
+    margin-bottom: 48px;
+    position: relative;
+  }
+
+  .chapter-num-block {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    font-family: 'Playfair Display', serif;
+    font-size: 0.65rem;
+    letter-spacing: 4px;
+    color: var(--muted);
+    padding: 0 16px 0 0;
+    border-right: 2px solid var(--accent);
+    margin-right: 28px;
+    text-transform: uppercase;
+  }
+
+  .chapter-title-area h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -2px;
+    color: var(--ink);
+  }
+
+  .chapter-title-area h2 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .chapter-title-area .desc {
+    margin-top: 12px;
+    font-size: 0.95rem;
+    color: var(--muted);
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  .chapter-rule {
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent), var(--border));
+    margin: 0 0 48px;
+    opacity: 0.5;
+  }
+
+  /* ── CONCEPT CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 36px;
+    margin-bottom: 24px;
+    position: relative;
+    transition: box-shadow 0.3s, border-color 0.3s;
+  }
+
+  .card:hover {
+    box-shadow: 6px 6px 0 var(--border2);
+    border-color: var(--border2);
+  }
+
+  .card.red-accent { border-left: 4px solid var(--accent); }
+  .card.orange-accent { border-left: 4px solid var(--accent2); }
+  .card.green-accent { border-left: 4px solid var(--accent3); }
+  .card.blue-accent { border-left: 4px solid var(--blue); }
+  .card.gold-accent { border-left: 4px solid var(--gold); }
+
+  .tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    padding: 4px 10px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+
+  .tag-basic { background: #fef3f2; color: var(--accent); border: 1px solid #fccaca; }
+  .tag-medium { background: #fef9ec; color: var(--gold); border: 1px solid #f0d060; }
+  .tag-hard { background: #f0f7f4; color: var(--accent3); border: 1px solid #a8d5c2; }
+  .tag-pattern { background: #eef3f8; color: var(--blue); border: 1px solid #b0c8e4; }
+  .tag-advanced { background: #fdf2e9; color: var(--accent2); border: 1px solid #f0b880; }
+
+  .card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 14px;
+    line-height: 1.2;
+  }
+
+  .card p, .card li {
+    font-size: 0.93rem;
+    color: var(--ink2);
+    line-height: 1.7;
+  }
+
+  .card ul, .card ol { padding-left: 20px; margin: 10px 0; }
+  .card li { margin-bottom: 5px; }
+
+  /* ── CODE BLOCKS ── */
+  .code-wrap {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 6px;
+    margin: 22px 0;
+    overflow: hidden;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .code-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 18px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--code-border);
+  }
+
+  .code-dots { display: flex; gap: 7px; }
+  .code-dots span { width: 11px; height: 11px; border-radius: 50%; }
+  .d-r { background: #ff5f57; }
+  .d-y { background: #febc2e; }
+  .d-g { background: #28c840; }
+
+  .code-filename {
+    font-size: 10px;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 1px;
+  }
+
+  .copy-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.3);
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 3px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .copy-btn:hover { color: #febc2e; border-color: #febc2e; }
+
+  pre {
+    padding: 22px 20px;
+    overflow-x: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.75;
+    color: #d4c9b8;
+  }
+
+  /* Syntax colors — warm palette */
+  .kw  { color: #e06c75; }  /* keyword */
+  .fn  { color: #61afef; }  /* function */
+  .cm  { color: #5c6370; font-style: italic; }  /* comment */
+  .st  { color: #98c379; }  /* string */
+  .nm  { color: #d19a66; }  /* number */
+  .op  { color: #56b6c2; }  /* operator */
+  .bi  { color: #c678dd; }  /* builtin */
+  .cl  { color: #e5c07b; }  /* class */
+
+  /* ── INFO BOXES ── */
+  .infobox {
+    display: flex;
+    gap: 14px;
+    padding: 16px 20px;
+    border-radius: 4px;
+    margin: 16px 0;
+    font-size: 0.9rem;
+  }
+
+  .infobox.tip    { background: #fef9ec; border-left: 3px solid var(--gold); }
+  .infobox.note   { background: #eef3f8; border-left: 3px solid var(--blue); }
+  .infobox.warn   { background: #fef3f2; border-left: 3px solid var(--accent); }
+  .infobox.green  { background: #f0f7f4; border-left: 3px solid var(--accent3); }
+
+  .infobox .ico { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+  .infobox p { color: var(--ink2); line-height: 1.6; }
+  .infobox strong { color: var(--ink); }
+
+  /* ── STRING VISUAL ── */
+  .str-visual {
+    display: flex;
+    align-items: stretch;
+    margin: 20px 0;
+    flex-wrap: wrap;
+    gap: 0;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .str-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1.5px solid var(--border);
+    min-width: 44px;
+    transition: all 0.2s;
+    background: var(--surface);
+  }
+
+  .str-cell + .str-cell { border-left: none; }
+
+  .str-cell .ch {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--ink);
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .str-cell .si {
+    font-size: 9px;
+    color: var(--muted);
+    padding: 4px;
+  }
+
+  .str-cell.hl-r .ch  { background: #fef3f2; color: var(--accent); }
+  .str-cell.hl-o .ch  { background: #fef9ec; color: var(--accent2); }
+  .str-cell.hl-g .ch  { background: #f0f7f4; color: var(--accent3); }
+  .str-cell.hl-b .ch  { background: #eef3f8; color: var(--blue); }
+
+  /* ── COMPLEXITY TABLE ── */
+  .ctable {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    margin: 16px 0;
+  }
+
+  .ctable th {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 10px 14px;
+    text-align: left;
+    letter-spacing: 1px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+  }
+
+  .ctable td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink2);
+  }
+
+  .ctable tr:nth-child(even) td { background: var(--bg2); }
+  .ctable tr:hover td { background: #f7ede4; }
+
+  .tc-g { color: var(--accent3); font-weight: 600; }
+  .tc-y { color: var(--gold); font-weight: 600; }
+  .tc-r { color: var(--accent); font-weight: 600; }
+
+  /* ── WEEK PLAN GRID ── */
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 32px 0;
+  }
+
+  .day-tile {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .day-tile::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+  }
+
+  .day-tile:hover { box-shadow: 5px 5px 0 var(--border2); transform: translate(-2px, -2px); }
+  .day-tile:hover::after { transform: scaleX(1); }
+
+  .day-tile .day-n {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .day-tile h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  .day-tile ul { list-style: none; padding: 0; }
+  .day-tile li {
+    font-size: 0.8rem;
+    color: var(--muted);
+    padding: 3px 0 3px 14px;
+    position: relative;
+  }
+  .day-tile li::before { content: '·'; position: absolute; left: 3px; color: var(--accent); font-size: 1rem; line-height: 1.3; }
+
+  /* ── PATTERN CARDS ── */
+  .pattern-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 20px 0;
+  }
+
+  .pat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 18px;
+    border-radius: 3px;
+    transition: all 0.2s;
+  }
+
+  .pat-card:hover { background: #f0e8dc; border-color: var(--border2); }
+
+  .pat-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 7px;
+  }
+
+  .pat-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+  /* ── STICKY NAV ── */
+  .snav {
+    position: fixed;
+    top: 24px; right: 24px;
+    background: var(--ink);
+    border-radius: 4px;
+    padding: 20px;
+    z-index: 100;
+    max-width: 172px;
+    display: none;
+  }
+
+  @media (min-width: 1200px) { .snav { display: block; } }
+
+  .snav .snav-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  .snav a {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.35);
+    text-decoration: none;
+    padding: 5px 0 5px 12px;
+    border-left: 2px solid transparent;
+    transition: all 0.2s;
+    line-height: 1.3;
+  }
+
+  .snav a:hover, .snav a.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: var(--ink);
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    padding: 60px 32px 48px;
+    margin-top: 100px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  .footer .big {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--bg);
+    font-style: italic;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  /* ── HIGHLIGHTS ── */
+  .hl  { color: var(--accent);  font-weight: 600; }
+  .hl2 { color: var(--accent2); font-weight: 600; }
+  .hl3 { color: var(--accent3); font-weight: 600; }
+  .hlb { color: var(--blue);    font-weight: 600; }
+
+  code {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85em;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: var(--accent2);
+  }
+
+  @media (max-width: 600px) {
+    .hero-top-bar { padding: 20px 24px; }
+    .hero-main { padding: 40px 24px; }
+    .page { padding: 0 20px; }
+    .str-cell { min-width: 34px; }
+    .str-cell .ch { font-size: 1rem; padding: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sticky Nav -->
+<nav class="snav">
+  <div class="snav-title">Contents</div>
+  <a href="#overview">Overview</a>
+  <a href="#day1">Day 1 · Basics</a>
+  <a href="#day2">Day 2 · Operations</a>
+  <a href="#day3">Day 3 · Two Pointers</a>
+  <a href="#day4">Day 4 · Sliding Window</a>
+  <a href="#day5">Day 5 · Hashing</a>
+  <a href="#day6">Day 6 · DP & Advanced</a>
+  <a href="#day7">Day 7 · Practice</a>
+</nav>
+
+<!-- ═══════════ HERO ═══════════ -->
+<header class="hero">
+  <div class="hero-texture"></div>
+  <div class="hero-top-bar">
+    <span class="series-tag">DSA Mastery Series · Volume II</span>
+    <span class="issue-num">STRINGS</span>
+  </div>
+  <div class="hero-main">
+    <div class="hero-eyebrow">String Manipulation</div>
+    <h1>Master <span class="italic">Strings</span></h1>
+    <p class="hero-subtitle">A complete 7-day journey from characters & indices to palindromes, anagrams, and dynamic programming. All in Python.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><div class="num">7</div><div class="label">Days</div></div>
+      <div class="hero-meta-item"><div class="num">30+</div><div class="label">Concepts</div></div>
+      <div class="hero-meta-item"><div class="num">25+</div><div class="label">Code Examples</div></div>
+      <div class="hero-meta-item"><div class="num">20+</div><div class="label">Problems</div></div>
+    </div>
+  </div>
+  <div class="hero-bottom">
+    <a href="#day1"><span>DAY 01</span>Basics</a>
+    <a href="#day2"><span>DAY 02</span>Operations</a>
+    <a href="#day3"><span>DAY 03</span>Two Pointers</a>
+    <a href="#day4"><span>DAY 04</span>Sliding Window</a>
+    <a href="#day5"><span>DAY 05</span>Hashing</a>
+    <a href="#day6"><span>DAY 06</span>DP & Advanced</a>
+    <a href="#day7"><span>DAY 07</span>Practice</a>
+  </div>
+</header>
+
+<!-- ═══════════ OVERVIEW ═══════════ -->
+<section id="overview" class="page chapter">
+  <div class="chapter-header">
+    <div class="chapter-num-block">Overview</div>
+    <div class="chapter-title-area">
+      <h2>Your 7-Day <em>Battle Plan</em></h2>
+      <p class="desc">Strings are everywhere in interviews. Master them in order — each day builds directly on the last. Don't skip.</p>
+    </div>
+  </div>
+  <div class="chapter-rule"></div>
+
+  <div class="week-grid">
+    <a href="#day1" class="day-tile">
+      <div class="day-n">DAY 01</div>
+      <h4>String Fundamentals</h4>
+      <ul>
+        <li>What is a string in memory?</li>
+        <li>Immutability in Python</li>
+        <li>Indexing & slicing</li>
+        <li>Traversal methods</li>
+        <li>ASCII & ord/chr</li>
+      </ul>
+    </a>
+    <a href="#day2" class="day-tile">
+      <div class="day-n">DAY 02</div>
+      <h4>Core String Operations</h4>
+      <ul>
+        <li>Built-in methods</li>
+        <li>String searching</li>
+        <li>Split & join</li>
+        <li>Format & replace</li>
+        <li>Reverse a string</li>
+      </ul>
+    </a>
+    <a href="#day3" class="day-tile">
+      <div class="day-n">DAY 03</div>
+      <h4>Two Pointers on Strings</h4>
+      <ul>
+        <li>Palindrome check</li>
+        <li>Valid palindrome II</li>
+        <li>Reverse words</li>
+        <li>Compare with backspace</li>
+        <li>Is subsequence</li>
+      </ul>
+    </a>
+    <a href="#day4" class="day-tile">
+      <div class="day-n">DAY 04</div>
+      <h4>Sliding Window</h4>
+      <ul>
+        <li>Longest substring no repeat</li>
+        <li>Longest with k distinct chars</li>
+        <li>Min window substring</li>
+        <li>Find all anagrams</li>
+        <li>Permutation in string</li>
+      </ul>
+    </a>
+    <a href="#day5" class="day-tile">
+      <div class="day-n">DAY 05</div>
+      <h4>Hashing & Frequency</h4>
+      <ul>
+        <li>Frequency maps</li>
+        <li>Anagram detection</li>
+        <li>Group anagrams</li>
+        <li>First unique character</li>
+        <li>Isomorphic strings</li>
+      </ul>
+    </a>
+    <a href="#day6" class="day-tile">
+      <div class="day-n">DAY 06</div>
+      <h4>DP & Advanced</h4>
+      <ul>
+        <li>Longest common subsequence</li>
+        <li>Longest palindromic substring</li>
+        <li>Edit distance</li>
+        <li>String encoding/decoding</li>
+        <li>KMP pattern matching</li>
+      </ul>
+    </a>
+    <a href="#day7" class="day-tile">
+      <div class="day-n">DAY 07</div>
+      <h4>Practice & Patterns</h4>
+      <ul>
+        <li>Pattern recognition guide</li>
+        <li>Classic interview problems</li>
+        <li>Complexity cheat sheet</li>
+        <li>Python string tricks</li>
+        <li>Common mistakes</li>
+      </ul>
+    </a>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ DAY 1 ═══════════════════════════════════ -->
+<section id="day1" class="page chapter">
+  <div class="chapter-header">
+    <div class="chapter-num-block">Day 01</div>
+    <div class="chapter-title-area">
+      <h2>String <em>Fundamentals</em></h2>
+      <p class="desc">Understand what a string actually IS before writing a single algorithm.</p>
+    </div>
+  </div>
+  <div class="chapter-rule"></div>
+
+  <!-- What is a String -->
+  <div class="card red-accent">
+    <div class="tag tag-basic">Concept 1.1</div>
+    <h3>What is a String?</h3>
+    <p>A string is a <span class="hl">sequence of characters</span> stored contiguously in memory. Each character is encoded as a number (ASCII or Unicode). In Python, strings are <span class="hl2">immutable</span> — you cannot change a character in place. Every "modification" creates a brand new string.</p>
+
+    <div class="infobox warn">
+      <div class="ico">⚠️</div>
+      <p><strong>Immutability is critical!</strong> Unlike lists, you CANNOT do <code>s[0] = 'X'</code> on a string. This affects how you solve problems — you often need to convert to a list, modify, then join back.</p>
+    </div>
+
+    <!-- Visual -->
+    <p style="margin-top:16px;margin-bottom:4px;font-size:0.85rem;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:2px;">STRING: "python"</p>
+    <div class="str-visual">
+      <div class="str-cell hl-r"><span class="ch">p</span><span class="si">0</span></div>
+      <div class="str-cell hl-o"><span class="ch">y</span><span class="si">1</span></div>
+      <div class="str-cell hl-g"><span class="ch">t</span><span class="si">2</span></div>
+      <div class="str-cell hl-b"><span class="ch">h</span><span class="si">3</span></div>
+      <div class="str-cell"><span class="ch">o</span><span class="si">4</span></div>
+      <div class="str-cell"><span class="ch">n</span><span class="si">5</span></div>
+    </div>
+    <div class="str-visual" style="margin-top:4px;">
+      <div class="str-cell hl-r"><span class="ch">p</span><span class="si">-6</span></div>
+      <div class="str-cell hl-o"><span class="ch">y</span><span class="si">-5</span></div>
+      <div class="str-cell hl-g"><span class="ch">t</span><span class="si">-4</span></div>
+      <div class="str-cell hl-b"><span class="ch">h</span><span class="si">-3</span></div>
+      <div class="str-cell"><span class="ch">o</span><span class="si">-2</span></div>
+      <div class="str-cell"><span class="ch">n</span><span class="si">-1</span></div>
+    </div>
+    <p style="font-size:0.8rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:6px;">Positive indices (top) and negative indices (bottom) for "python"</p>
+  </div>
+
+  <!-- Creating and Indexing -->
+  <div class="card red-accent">
+    <div class="tag tag-basic">Concept 1.2</div>
+    <h3>Creating Strings & Indexing</h3>
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">strings_basics.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre><span class="cm"># ── Creating Strings ────────────────────────────────────</span>
+s1 = <span class="st">"hello"</span>
+s2 = <span class="st">'world'</span>
+s3 = <span class="st">"""multi
+line string"""</span>
+s4 = <span class="st">''</span>            <span class="cm"># empty string</span>
+s5 = <span class="st">" "</span> * <span class="nm">5</span>      <span class="cm"># "     " — 5 spaces</span>
+
+<span class="cm"># ── Length ──────────────────────────────────────────────</span>
+s = <span class="st">"python"</span>
+<span class="fn">print</span>(<span class="fn">len</span>(s))      <span class="cm"># 6</span>
+
+<span class="cm"># ── Indexing ────────────────────────────────────────────</span>
+<span class="fn">print</span>(s[<span class="nm">0</span>])       <span class="cm"># 'p'  first character</span>
+<span class="fn">print</span>(s[<span class="nm">2</span>])       <span class="cm"># 't'</span>
+<span class="fn">print</span>(s[<span class="op">-</span><span class="nm">1</span>])      <span class="cm"># 'n'  last character</span>
+<span class="fn">print</span>(s[<span class="op">-</span><span class="nm">2</span>])      <span class="cm"># 'o'  second to last</span>
+
+<span class="cm"># ── Slicing: s[start:end:step] ──────────────────────────</span>
+<span class="fn">print</span>(s[<span class="nm">1</span>:<span class="nm">4</span>])     <span class="cm"># 'yth'   index 1,2,3 (end is exclusive)</span>
+<span class="fn">print</span>(s[<span class="nm">2</span>:])      <span class="cm"># 'thon'  from index 2 to end</span>
+<span class="fn">print</span>(s[:<span class="nm">3</span>])      <span class="cm"># 'pyt'   first 3 characters</span>
+<span class="fn">print</span>(s[::<span class="nm">2</span>])     <span class="cm"># 'pto'   every 2nd character</span>
+<span class="fn">print</span>(s[::<span class="op">-</span><span class="nm">1</span>])    <span class="cm"># 'nohtyp' REVERSED!</span>
+<span class="fn">print</span>(s[:])       <span class="cm"># 'python' full copy</span>
+
+<span class="cm"># ── Immutability — this FAILS: ──────────────────────────</span>
+<span class="cm"># s[0] = 'P'   → TypeError: 'str' object does not support item assignment</span>
+
+<span class="cm"># ── To "modify": convert to list, change, join ──────────</span>
+chars = <span class="fn">list</span>(s)    <span class="cm"># ['p','y','t','h','o','n']</span>
+chars[<span class="nm">0</span>] = <span class="st">'P'</span>
+result = <span class="st">""</span>.join(chars)   <span class="cm"># 'Python'</span></pre>
+    </div>
+  </div>
+
+  <!-- ASCII and char operations -->
+  <div class="card red-accent">
+    <div class="tag tag-basic">Concept 1.3</div>
+    <h3>ASCII, ord() & chr() — Numeric Characters</h3>
+    <p>Every character is stored as a number. Knowing ASCII values is essential for many string problems.</p>
+
+    <div class="infobox tip">
+      <div class="ico">💡</div>
+      <p><strong>Key ASCII values to memorize:</strong> 'a' = 97, 'z' = 122, 'A' = 65, 'Z' = 90, '0' = 48, '9' = 57. The difference between lowercase and uppercase of the same letter is always <strong>32</strong>.</p>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">ascii_operations.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre><span class="cm"># ── ord(): character → ASCII number ─────────────────────</span>
+<span class="fn">print</span>(<span class="fn">ord</span>(<span class="st">'a'</span>))   <span class="cm"># 97</span>
+<span class="fn">print</span>(<span class="fn">ord</span>(<span class="st">'z'</span>))   <span class="cm"># 122</span>
+<span class="fn">print</span>(<span class="fn">ord</span>(<span class="st">'A'</span>))   <span class="cm"># 65</span>
+<span class="fn">print</span>(<span class="fn">ord</span>(<span class="st">'0'</span>))   <span class="cm"># 48</span>
+
+<span class="cm"># ── chr(): ASCII number → character ─────────────────────</span>
+<span class="fn">print</span>(<span class="fn">chr</span>(<span class="nm">97</span>))    <span class="cm"># 'a'</span>
+<span class="fn">print</span>(<span class="fn">chr</span>(<span class="nm">65</span>))    <span class="cm"># 'A'</span>
+
+<span class="cm"># ── Common interview tricks with ASCII ──────────────────</span>
+
+<span class="cm"># Index in alphabet (0-based): 'a'→0, 'b'→1, ..., 'z'→25</span>
+<span class="kw">def</span> <span class="fn">char_index</span>(c):
+    <span class="kw">return</span> <span class="fn">ord</span>(c) - <span class="fn">ord</span>(<span class="st">'a'</span>)
+
+<span class="fn">print</span>(<span class="fn">char_index</span>(<span class="st">'a'</span>))   <span class="cm"># 0</span>
+<span class="fn">print</span>(<span class="fn">char_index</span>(<span class="st">'e'</span>))   <span class="cm"># 4</span>
+<span class="fn">print</span>(<span class="fn">char_index</span>(<span class="st">'z'</span>))   <span class="cm"># 25</span>
+
+<span class="cm"># Check if character is lowercase letter</span>
+<span class="kw">def</span> <span class="fn">is_lowercase</span>(c):
+    <span class="kw">return</span> <span class="st">'a'</span> <= c <= <span class="st">'z'</span>    <span class="cm"># Pythonic range check</span>
+
+<span class="cm"># Convert lowercase to uppercase manually</span>
+<span class="kw">def</span> <span class="fn">to_upper</span>(c):
+    <span class="kw">return</span> <span class="fn">chr</span>(<span class="fn">ord</span>(c) - <span class="nm">32</span>)
+
+<span class="fn">print</span>(<span class="fn">to_upper</span>(<span class="st">'a'</span>))   <span class="cm"># 'A'</span>
+
+<span class="cm"># Shift a character by n positions (Caesar cipher concept)</span>
+<span class="kw">def</span> <span class="fn">shift_char</span>(c, n):
+    <span class="kw">return</span> <span class="fn">chr</span>((<span class="fn">ord</span>(c) - <span class="fn">ord</span>(<span class="st">'a'</span>) + n) % <span class="nm">26</span> + <span class="fn">ord</span>(<span class="st">'a'</span>))
+
+<span class="fn">print</span>(<span class="fn">shift_char</span>(<span class="st">'a'</span>, <span class="nm">3</span>))   <span class="cm"># 'd'</span>
+<span class="fn">print</span>(<span class="fn">shift_char</span>(<span class="st">'z'</span>, <span class="nm">1</span>))   <span class="cm"># 'a'  (wraps around!)</span>
+
+<span class="cm"># Create frequency array of size 26 (for lowercase letters only)</span>
+<span class="kw">def</span> <span class="fn">freq_array</span>(s):
+    freq = [<span class="nm">0</span>] * <span class="nm">26</span>
+    <span class="kw">for</span> c <span class="kw">in</span> s:
+        freq[<span class="fn">ord</span>(c) - <span class="fn">ord</span>(<span class="st">'a'</span>)] += <span class="nm">1</span>
+    <span class="kw">return</span> freq
+
+<span class="fn">print</span>(<span class="fn">freq_array</span>(<span class="st">"hello"</span>))
+<span class="cm"># h=1, e=1, l=2, o=1 at their positions</span></pre>
+    </div>
+  </div>
+
+  <!-- Traversal -->
+  <div class="card red-accent">
+    <div class="tag tag-basic">Concept 1.4</div>
+    <h3>String Traversal Patterns</h3>
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">traversal.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre>s = <span class="st">"hello world"</span>
+
+<span class="cm"># ── 1. Simple for-each ──────────────────────────────────</span>
+<span class="kw">for</span> ch <span class="kw">in</span> s:
+    <span class="fn">print</span>(ch, end=<span class="st">""</span>)
+
+<span class="cm"># ── 2. Index-based (when position matters) ──────────────</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(s)):
+    <span class="fn">print</span>(<span class="st">f"s[{i}] = '{s[i]}'"</span>)
+
+<span class="cm"># ── 3. Enumerate (best — gives both) ────────────────────</span>
+<span class="kw">for</span> i, ch <span class="kw">in</span> <span class="fn">enumerate</span>(s):
+    <span class="fn">print</span>(<span class="st">f"Index {i}: {ch}"</span>)
+
+<span class="cm"># ── 4. Two-pointer traversal ────────────────────────────</span>
+left, right = <span class="nm">0</span>, <span class="fn">len</span>(s) - <span class="nm">1</span>
+<span class="kw">while</span> left < right:
+    <span class="fn">print</span>(s[left], s[right])
+    left += <span class="nm">1</span>; right -= <span class="nm">1</span>
+
+<span class="cm"># ── Count vowels ────────────────────────────────────────</span>
+vowels = <span class="fn">set</span>(<span class="st">"aeiouAEIOU"</span>)
+<span class="fn">print</span>(<span class="fn">sum</span>(<span class="nm">1</span> <span class="kw">for</span> c <span class="kw">in</span> s <span class="kw">if</span> c <span class="kw">in</span> vowels))  <span class="cm"># 3</span>
+
+<span class="cm"># ── Count letters vs digits vs spaces ───────────────────</span>
+letters = <span class="fn">sum</span>(<span class="nm">1</span> <span class="kw">for</span> c <span class="kw">in</span> s <span class="kw">if</span> c.isalpha())
+digits  = <span class="fn">sum</span>(<span class="nm">1</span> <span class="kw">for</span> c <span class="kw">in</span> s <span class="kw">if</span> c.isdigit())
+spaces  = <span class="fn">sum</span>(<span class="nm">1</span> <span class="kw">for</span> c <span class="kw">in</span> s <span class="kw">if</span> c.isspace())</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ DAY 2 ═══════════════════════════════════ -->
+<section id="day2" class="page chapter">
+  <div class="chapter-header">
+    <div class="chapter-num-block">Day 02</div>
+    <div class="chapter-title-area">
+      <h2>Core String <em>Operations</em></h2>
+      <p class="desc">Python's string library is powerful — know every method that matters.</p>
+    </div>
+  </div>
+  <div class="chapter-rule"></div>
+
+  <!-- Built-in Methods -->
+  <div class="card orange-accent">
+    <div class="tag tag-basic">Concept 2.1</div>
+    <h3>Essential Built-in Methods</h3>
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">string_methods.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre>s = <span class="st">"  Hello, World!  "</span>
+
+<span class="cm"># ── Case conversions ────────────────────────────────────</span>
+<span class="fn">print</span>(s.lower())         <span class="cm"># "  hello, world!  "</span>
+<span class="fn">print</span>(s.upper())         <span class="cm"># "  HELLO, WORLD!  "</span>
+<span class="fn">print</span>(s.title())         <span class="cm"># "  Hello, World!  "</span>
+<span class="fn">print</span>(s.swapcase())      <span class="cm"># "  hELLO, wORLD!  "</span>
+
+<span class="cm"># ── Whitespace ──────────────────────────────────────────</span>
+<span class="fn">print</span>(s.strip())         <span class="cm"># "Hello, World!"     (both sides)</span>
+<span class="fn">print</span>(s.lstrip())        <span class="cm"># "Hello, World!  "   (left only)</span>
+<span class="fn">print</span>(s.rstrip())        <span class="cm"># "  Hello, World!"   (right only)</span>
+
+<span class="cm"># ── Search & Check ──────────────────────────────────────</span>
+s2 = <span class="st">"hello world hello"</span>
+<span class="fn">print</span>(s2.find(<span class="st">"hello"</span>))      <span class="cm"># 0     (first occurrence, -1 if not found)</span>
+<span class="fn">print</span>(s2.rfind(<span class="st">"hello"</span>))     <span class="cm"># 12    (last occurrence)</span>
+<span class="fn">print</span>(s2.index(<span class="st">"world"</span>))     <span class="cm"># 6     (like find, but raises ValueError)</span>
+<span class="fn">print</span>(s2.count(<span class="st">"hello"</span>))     <span class="cm"># 2     (count occurrences)</span>
+<span class="fn">print</span>(s2.startswith(<span class="st">"hello"</span>)) <span class="cm"># True</span>
+<span class="fn">print</span>(s2.endswith(<span class="st">"hello"</span>))  <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="st">"hello"</span> <span class="kw">in</span> s2)         <span class="cm"># True  (preferred for existence check)</span>
+
+<span class="cm"># ── Check character types ───────────────────────────────</span>
+<span class="fn">print</span>(<span class="st">"hello"</span>.isalpha())     <span class="cm"># True  — all letters</span>
+<span class="fn">print</span>(<span class="st">"12345"</span>.isdigit())     <span class="cm"># True  — all digits</span>
+<span class="fn">print</span>(<span class="st">"abc123"</span>.isalnum())   <span class="cm"># True  — letters or digits</span>
+<span class="fn">print</span>(<span class="st">"   "</span>.isspace())       <span class="cm"># True  — all whitespace</span>
+<span class="fn">print</span>(<span class="st">"Hello"</span>.isupper())    <span class="cm"># False — not all uppercase</span>
+<span class="fn">print</span>(<span class="st">"hello"</span>.islower())    <span class="cm"># True  — all lowercase</span>
+
+<span class="cm"># ── Replace ─────────────────────────────────────────────</span>
+<span class="fn">print</span>(<span class="st">"aabbcc"</span>.replace(<span class="st">"bb"</span>, <span class="st">"XX"</span>))     <span class="cm"># "aaXXcc"</span>
+<span class="fn">print</span>(<span class="st">"aababab"</span>.replace(<span class="st">"ab"</span>, <span class="st">"X"</span>, <span class="nm">2</span>))  <span class="cm"># "aXXab" (max 2 replacements)</span>
+
+<span class="cm"># ── Padding & Alignment ─────────────────────────────────</span>
+<span class="fn">print</span>(<span class="st">"42"</span>.zfill(<span class="nm">5</span>))          <span class="cm"># "00042"  — zero-pad to width 5</span>
+<span class="fn">print</span>(<span class="st">"hi"</span>.center(<span class="nm">10</span>, <span class="st">'*'</span>))  <span class="cm"># "****hi****"</span>
+<span class="fn">print</span>(<span class="st">"hi"</span>.ljust(<span class="nm">8</span>, <span class="st">'-'</span>))    <span class="cm"># "hi------"</span>
+<span class="fn">print</span>(<span class="st">"hi"</span>.rjust(<span class="nm">8</span>, <span class="st">'-'</span>))    <span class="cm"># "------hi"</span></pre>
+    </div>
+  </div>
+
+  <!-- Split & Join -->
+  <div class="card orange-accent">
+    <div class="tag tag-basic">Concept 2.2</div>
+    <h3>Split & Join — The Power Duo</h3>
+    <p><span class="hl">split()</span> breaks a string into a list. <span class="hl2">join()</span> merges a list into a string. Together they're one of the most-used string patterns in DSA.</p>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">split_join.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre><span class="cm"># ── split() ─────────────────────────────────────────────</span>
+s = <span class="st">"hello world python"</span>
+<span class="fn">print</span>(s.split())           <span class="cm"># ['hello', 'world', 'python']  (splits on whitespace)</span>
+<span class="fn">print</span>(s.split(<span class="st">" "</span>))        <span class="cm"># ['hello', 'world', 'python']</span>
+
+csv = <span class="st">"a,b,c,d,e"</span>
+<span class="fn">print</span>(csv.split(<span class="st">","</span>))       <span class="cm"># ['a', 'b', 'c', 'd', 'e']</span>
+<span class="fn">print</span>(csv.split(<span class="st">","</span>, <span class="nm">2</span>))    <span class="cm"># ['a', 'b', 'c,d,e']  (max 2 splits)</span>
+
+<span class="cm"># splitlines: split on newlines</span>
+multiline = <span class="st">"line1\nline2\nline3"</span>
+<span class="fn">print</span>(multiline.splitlines())  <span class="cm"># ['line1', 'line2', 'line3']</span>
+
+<span class="cm"># ── join() ──────────────────────────────────────────────</span>
+words = [<span class="st">"hello"</span>, <span class="st">"world"</span>]
+<span class="fn">print</span>(<span class="st">" "</span>.join(words))        <span class="cm"># "hello world"</span>
+<span class="fn">print</span>(<span class="st">"-"</span>.join(words))        <span class="cm"># "hello-world"</span>
+<span class="fn">print</span>(<span class="st">""</span>.join(words))         <span class="cm"># "helloworld"</span>
+<span class="fn">print</span>(<span class="st">", "</span>.join(words))       <span class="cm"># "hello, world"</span>
+
+<span class="cm"># ── Classic Pattern: reverse words in sentence ──────────</span>
+<span class="kw">def</span> <span class="fn">reverse_words</span>(s):
+    words = s.strip().split()
+    <span class="kw">return</span> <span class="st">" "</span>.join(<span class="fn">reversed</span>(words))
+
+<span class="fn">print</span>(<span class="fn">reverse_words</span>(<span class="st">"the sky is blue"</span>))
+<span class="cm"># "blue is sky the"</span>
+
+<span class="cm"># ── Efficient string building (avoid += in loops!) ──────</span>
+<span class="cm"># WRONG (O(n²) due to new string each time):</span>
+<span class="cm"># result = ""</span>
+<span class="cm"># for c in some_list:</span>
+<span class="cm">#     result += c</span>
+
+<span class="cm"># CORRECT (O(n) — collect then join):</span>
+chars = []
+<span class="kw">for</span> c <span class="kw">in</span> <span class="st">"hello"</span>:
+    chars.append(c.upper())
+result = <span class="st">""</span>.join(chars)   <span class="cm"># "HELLO"</span></pre>
+    </div>
+
+    <div class="infobox warn">
+      <div class="ico">⚠️</div>
+      <p><strong>Never use <code>result += char</code> inside a loop!</strong> Each <code>+=</code> creates a new string object in memory — that's O(n²) total. Use a list and <code>"".join()</code> at the end instead. This is one of the most common Python performance mistakes.</p>
+    </div>
+  </div>
+
+  <!-- String Formatting -->
+  <div class="card orange-accent">
+    <div class="tag tag-basic">Concept 2.3</div>
+    <h3>Reverse a String — All Methods</h3>
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">reverse_string.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre>s = <span class="st">"hello"</span>
+
+<span class="cm"># ── Method 1: Slicing (FASTEST, Pythonic) ───────────────</span>
+reversed_s = s[::<span class="op">-</span><span class="nm">1</span>]         <span class="cm"># "olleh"</span>
+
+<span class="cm"># ── Method 2: reversed() + join ─────────────────────────</span>
+reversed_s = <span class="st">""</span>.join(<span class="fn">reversed</span>(s))
+
+<span class="cm"># ── Method 3: List conversion (useful if you need to modify) ─</span>
+chars = <span class="fn">list</span>(s)
+chars.reverse()
+reversed_s = <span class="st">""</span>.join(chars)
+
+<span class="cm"># ── Method 4: Two-pointer (manual, good to know) ────────</span>
+<span class="kw">def</span> <span class="fn">reverse_string</span>(s):
+    chars = <span class="fn">list</span>(s)
+    left, right = <span class="nm">0</span>, <span class="fn">len</span>(chars) - <span class="nm">1</span>
+    <span class="kw">while</span> left < right:
+        chars[left], chars[right] = chars[right], chars[left]
+        left += <span class="nm">1</span>; right -= <span class="nm">1</span>
+    <span class="kw">return</span> <span class="st">""</span>.join(chars)
+
+<span class="cm"># ── Reverse only vowels ─────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">reverse_vowels</span>(s):
+    vowels = <span class="fn">set</span>(<span class="st">"aeiouAEIOU"</span>)
+    chars = <span class="fn">list</span>(s)
+    left, right = <span class="nm">0</span>, <span class="fn">len</span>(s) - <span class="nm">1</span>
+    <span class="kw">while</span> left < right:
+        <span class="kw">while</span> left < right <span class="kw">and</span> chars[left] <span class="kw">not</span> <span class="kw">in</span> vowels:
+            left += <span class="nm">1</span>
+        <span class="kw">while</span> left < right <span class="kw">and</span> chars[right] <span class="kw">not</span> <span class="kw">in</span> vowels:
+            right -= <span class="nm">1</span>
+        chars[left], chars[right] = chars[right], chars[left]
+        left += <span class="nm">1</span>; right -= <span class="nm">1</span>
+    <span class="kw">return</span> <span class="st">""</span>.join(chars)
+
+<span class="fn">print</span>(<span class="fn">reverse_vowels</span>(<span class="st">"hello"</span>))   <span class="cm"># "holle"</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ DAY 3 ═══════════════════════════════════ -->
+<section id="day3" class="page chapter">
+  <div class="chapter-header">
+    <div class="chapter-num-block">Day 03</div>
+    <div class="chapter-title-area">
+      <h2>Two Pointers <em>on Strings</em></h2>
+      <p class="desc">The two-pointer pattern solves palindromes, comparisons, and subsequence problems elegantly.</p>
+    </div>
+  </div>
+  <div class="chapter-rule"></div>
+
+  <div class="card green-accent">
+    <div class="tag tag-pattern">Pattern 3.1</div>
+    <h3>Palindrome Check</h3>
+    <p>A string reads the same forwards and backwards. Two pointers from both ends, move inward, compare.</p>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">palindrome.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre><span class="cm"># ── Basic palindrome check ──────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">is_palindrome</span>(s):
+    left, right = <span class="nm">0</span>, <span class="fn">len</span>(s) - <span class="nm">1</span>
+    <span class="kw">while</span> left < right:
+        <span class="kw">if</span> s[left] != s[right]:
+            <span class="kw">return</span> <span class="bi">False</span>
+        left += <span class="nm">1</span>; right -= <span class="nm">1</span>
+    <span class="kw">return</span> <span class="bi">True</span>
+
+<span class="cm"># Pythonic one-liner</span>
+<span class="kw">def</span> <span class="fn">is_palindrome_v2</span>(s):
+    <span class="kw">return</span> s == s[::<span class="op">-</span><span class="nm">1</span>]
+
+<span class="fn">print</span>(<span class="fn">is_palindrome</span>(<span class="st">"racecar"</span>))    <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="fn">is_palindrome</span>(<span class="st">"hello"</span>))      <span class="cm"># False</span>
+
+<span class="cm"># ── Valid Palindrome (ignore spaces, punctuation, case) ─</span>
+<span class="kw">def</span> <span class="fn">valid_palindrome</span>(s):
+    <span class="cm"># filter: keep only alphanumeric, lowercase</span>
+    clean = [c.lower() <span class="kw">for</span> c <span class="kw">in</span> s <span class="kw">if</span> c.isalnum()]
+    left, right = <span class="nm">0</span>, <span class="fn">len</span>(clean) - <span class="nm">1</span>
+    <span class="kw">while</span> left < right:
+        <span class="kw">if</span> clean[left] != clean[right]:
+            <span class="kw">return</span> <span class="bi">False</span>
+        left += <span class="nm">1</span>; right -= <span class="nm">1</span>
+    <span class="kw">return</span> <span class="bi">True</span>
+
+<span class="fn">print</span>(<span class="fn">valid_palindrome</span>(<span class="st">"A man, a plan, a canal: Panama"</span>))  <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="fn">valid_palindrome</span>(<span class="st">"race a car"</span>))                    <span class="cm"># False</span>
+
+<span class="cm"># ── Valid Palindrome II: delete at most one character ────</span>
+<span class="kw">def</span> <span class="fn">valid_palindrome_ii</span>(s):
+    <span class="kw">def</span> <span class="fn">check</span>(left, right):
+        <span class="kw">while</span> left < right:
+            <span class="kw">if</span> s[left] != s[right]:
+                <span class="kw">return</span> <span class="bi">False</span>
+            left += <span class="nm">1</span>; right -= <span class="nm">1</span>
+        <span class="kw">return</span> <span class="bi">True</span>
+
+    left, right = <span class="nm">0</span>, <span class="fn">len</span>(s) - <span class="nm">1</span>
+    <span class="kw">while</span> left < right:
+        <span class="kw">if</span> s[left] != s[right]:
+            <span class="cm"># Try skipping left OR skipping right</span>
+            <span class="kw">return</span> <span class="fn">check</span>(left + <span class="nm">1</span>, right) <span class="kw">or</span> <span class="fn">check</span>(left, right - <span class="nm">1</span>)
+        left += <span class="nm">1</span>; right -= <span class="nm">1</span>
+    <span class="kw">return</span> <span class="bi">True</span>
+
+<span class="fn">print</span>(<span class="fn">valid_palindrome_ii</span>(<span class="st">"abca"</span>))   <span class="cm"># True (delete 'c')</span>
+<span class="fn">print</span>(<span class="fn">valid_palindrome_ii</span>(<span class="st">"abc"</span>))    <span class="cm"># False</span></pre>
+    </div>
+  </div>
+
+  <div class="card green-accent">
+    <div class="tag tag-pattern">Pattern 3.2</div>
+    <h3>Is Subsequence</h3>
+    <p>Check if string <code>s</code> is a subsequence of string <code>t</code>. A subsequence maintains order but doesn't need to be contiguous.</p>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">subsequence.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre><span class="cm"># ── Is Subsequence (two pointer) ────────────────────────</span>
+<span class="kw">def</span> <span class="fn">is_subsequence</span>(s, t):
+    i = j = <span class="nm">0</span>
+    <span class="kw">while</span> i < <span class="fn">len</span>(s) <span class="kw">and</span> j < <span class="fn">len</span>(t):
+        <span class="kw">if</span> s[i] == t[j]:
+            i += <span class="nm">1</span>   <span class="cm"># matched! advance s pointer</span>
+        j += <span class="nm">1</span>       <span class="cm"># always advance t pointer</span>
+    <span class="kw">return</span> i == <span class="fn">len</span>(s)   <span class="cm"># did we match all of s?</span>
+
+<span class="fn">print</span>(<span class="fn">is_subsequence</span>(<span class="st">"ace"</span>, <span class="st">"abcde"</span>))   <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="fn">is_subsequence</span>(<span class="st">"aec"</span>, <span class="st">"abcde"</span>))   <span class="cm"># False (order matters!)</span>
+
+<span class="cm"># ── Compare strings with backspace (#) ──────────────────</span>
+<span class="kw">def</span> <span class="fn">backspace_compare</span>(s, t):
+    <span class="kw">def</span> <span class="fn">process</span>(string):
+        result = []
+        <span class="kw">for</span> c <span class="kw">in</span> string:
+            <span class="kw">if</span> c == <span class="st">'#'</span>:
+                <span class="kw">if</span> result: result.pop()
+            <span class="kw">else</span>:
+                result.append(c)
+        <span class="kw">return</span> result
+    <span class="kw">return</span> <span class="fn">process</span>(s) == <span class="fn">process</span>(t)
+
+<span class="fn">print</span>(<span class="fn">backspace_compare</span>(<span class="st">"ab#c"</span>, <span class="st">"ad#c"</span>))   <span class="cm"># True  (both → "ac")</span>
+<span class="fn">print</span>(<span class="fn">backspace_compare</span>(<span class="st">"a##c"</span>, <span class="st">"#a#c"</span>))   <span class="cm"># True  (both → "c")</span>
+
+<span class="cm"># ── Longest common prefix ───────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">longest_common_prefix</span>(strs):
+    <span class="kw">if</span> <span class="kw">not</span> strs: <span class="kw">return</span> <span class="st">""</span>
+    prefix = strs[<span class="nm">0</span>]
+    <span class="kw">for</span> s <span class="kw">in</span> strs[<span class="nm">1</span>:]:
+        <span class="kw">while</span> <span class="kw">not</span> s.startswith(prefix):
+            prefix = prefix[:<span class="op">-</span><span class="nm">1</span>]       <span class="cm"># shrink prefix from right</span>
+            <span class="kw">if</span> <span class="kw">not</span> prefix: <span class="kw">return</span> <span class="st">""</span>
+    <span class="kw">return</span> prefix
+
+<span class="fn">print</span>(<span class="fn">longest_common_prefix</span>([<span class="st">"flower"</span>,<span class="st">"flow"</span>,<span class="st">"flight"</span>]))
+<span class="cm"># "fl"</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ DAY 4 ═══════════════════════════════════ -->
+<section id="day4" class="page chapter">
+  <div class="chapter-header">
+    <div class="chapter-num-block">Day 04</div>
+    <div class="chapter-title-area">
+      <h2>Sliding Window <em>on Strings</em></h2>
+      <p class="desc">The most important pattern for substring problems. Variable window driven by character frequency constraints.</p>
+    </div>
+  </div>
+  <div class="chapter-rule"></div>
+
+  <div class="card blue-accent">
+    <div class="tag tag-pattern">Pattern 4.1</div>
+    <h3>Longest Substring Without Repeating Characters</h3>
+    <p>Classic variable sliding window. Expand right, shrink left when we get a duplicate. Track with a <span class="hlb">set or dictionary</span>.</p>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">no_repeat.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre><span class="cm"># ── Longest Substring Without Repeating Chars ───────────</span>
+<span class="kw">def</span> <span class="fn">length_of_longest_substring</span>(s):
+    char_index = {}   <span class="cm"># char → last seen index</span>
+    max_len = <span class="nm">0</span>
+    left = <span class="nm">0</span>
+
+    <span class="kw">for</span> right, ch <span class="kw">in</span> <span class="fn">enumerate</span>(s):
+        <span class="kw">if</span> ch <span class="kw">in</span> char_index <span class="kw">and</span> char_index[ch] >= left:
+            <span class="cm"># duplicate found! shrink left past the duplicate</span>
+            left = char_index[ch] + <span class="nm">1</span>
+        char_index[ch] = right
+        max_len = <span class="fn">max</span>(max_len, right - left + <span class="nm">1</span>)
+
+    <span class="kw">return</span> max_len
+
+<span class="fn">print</span>(<span class="fn">length_of_longest_substring</span>(<span class="st">"abcabcbb"</span>))  <span class="cm"># 3 ("abc")</span>
+<span class="fn">print</span>(<span class="fn">length_of_longest_substring</span>(<span class="st">"bbbbb"</span>))      <span class="cm"># 1 ("b")</span>
+<span class="fn">print</span>(<span class="fn">length_of_longest_substring</span>(<span class="st">"pwwkew"</span>))     <span class="cm"># 3 ("wke")</span>
+
+<span class="cm"># ── Alternative using set (simpler but slightly slower) ─</span>
+<span class="kw">def</span> <span class="fn">longest_no_repeat_set</span>(s):
+    char_set = <span class="fn">set</span>()
+    left = max_len = <span class="nm">0</span>
+    <span class="kw">for</span> right <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(s)):
+        <span class="kw">while</span> s[right] <span class="kw">in</span> char_set:
+            char_set.remove(s[left])
+            left += <span class="nm">1</span>
+        char_set.add(s[right])
+        max_len = <span class="fn">max</span>(max_len, right - left + <span class="nm">1</span>)
+    <span class="kw">return</span> max_len</pre>
+    </div>
+  </div>
+
+  <div class="card blue-accent">
+    <div class="tag tag-pattern">Pattern 4.2</div>
+    <h3>Longest Substring with K Distinct Characters</h3>
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">k_distinct.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre><span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+
+<span class="kw">def</span> <span class="fn">longest_k_distinct</span>(s, k):
+    freq = defaultdict(<span class="fn">int</span>)
+    left = max_len = <span class="nm">0</span>
+
+    <span class="kw">for</span> right <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(s)):
+        freq[s[right]] += <span class="nm">1</span>          <span class="cm"># expand window</span>
+
+        <span class="kw">while</span> <span class="fn">len</span>(freq) > k:           <span class="cm"># too many distinct chars</span>
+            freq[s[left]] -= <span class="nm">1</span>
+            <span class="kw">if</span> freq[s[left]] == <span class="nm">0</span>:
+                <span class="kw">del</span> freq[s[left]]
+            left += <span class="nm">1</span>                  <span class="cm"># shrink window</span>
+
+        max_len = <span class="fn">max</span>(max_len, right - left + <span class="nm">1</span>)
+
+    <span class="kw">return</span> max_len
+
+<span class="fn">print</span>(<span class="fn">longest_k_distinct</span>(<span class="st">"araaci"</span>, <span class="nm">2</span>))   <span class="cm"># 4 ("araa")</span>
+<span class="fn">print</span>(<span class="fn">longest_k_distinct</span>(<span class="st">"cbbebi"</span>, <span class="nm">3</span>))   <span class="cm"># 5 ("cbbeb")</span></pre>
+    </div>
+  </div>
+
+  <div class="card blue-accent">
+    <div class="tag tag-pattern">Pattern 4.3</div>
+    <h3>Minimum Window Substring — The Hard One</h3>
+    <p>Find the smallest window in <code>s</code> that contains all characters of <code>t</code>. Use two frequency maps and a <span class="hlb">formed counter</span>.</p>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">min_window.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre><span class="kw">from</span> collections <span class="kw">import</span> Counter
+
+<span class="kw">def</span> <span class="fn">min_window</span>(s, t):
+    <span class="kw">if</span> <span class="kw">not</span> t <span class="kw">or</span> <span class="kw">not</span> s: <span class="kw">return</span> <span class="st">""</span>
+
+    need = Counter(t)        <span class="cm"># required frequency of each char</span>
+    have = {}                <span class="cm"># current window frequency</span>
+    formed = <span class="nm">0</span>              <span class="cm"># how many chars are "satisfied"</span>
+    required = <span class="fn">len</span>(need)    <span class="cm"># how many distinct chars we need</span>
+    left = <span class="nm">0</span>
+    result = <span class="st">""</span>
+    min_len = <span class="fn">float</span>(<span class="st">'inf'</span>)
+
+    <span class="kw">for</span> right <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(s)):
+        ch = s[right]
+        have[ch] = have.get(ch, <span class="nm">0</span>) + <span class="nm">1</span>
+
+        <span class="cm"># Check if this char is now fully satisfied</span>
+        <span class="kw">if</span> ch <span class="kw">in</span> need <span class="kw">and</span> have[ch] == need[ch]:
+            formed += <span class="nm">1</span>
+
+        <span class="cm"># Shrink window from left while all chars satisfied</span>
+        <span class="kw">while</span> formed == required:
+            window_size = right - left + <span class="nm">1</span>
+            <span class="kw">if</span> window_size < min_len:
+                min_len = window_size
+                result = s[left:right + <span class="nm">1</span>]
+
+            left_ch = s[left]
+            have[left_ch] -= <span class="nm">1</span>
+            <span class="kw">if</span> left_ch <span class="kw">in</span> need <span class="kw">and</span> have[left_ch] < need[left_ch]:
+                formed -= <span class="nm">1</span>
+            left += <span class="nm">1</span>
+
+    <span class="kw">return</span> result
+
+<span class="fn">print</span>(<span class="fn">min_window</span>(<span class="st">"ADOBECODEBANC"</span>, <span class="st">"ABC"</span>))   <span class="cm"># "BANC"</span>
+<span class="fn">print</span>(<span class="fn">min_window</span>(<span class="st">"a"</span>, <span class="st">"a"</span>))                 <span class="cm"># "a"</span>
+<span class="fn">print</span>(<span class="fn">min_window</span>(<span class="st">"a"</span>, <span class="st">"aa"</span>))                <span class="cm"># ""</span></pre>
+    </div>
+  </div>
+
+  <div class="card blue-accent">
+    <div class="tag tag-pattern">Pattern 4.4</div>
+    <h3>Find All Anagrams in a String</h3>
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">anagram_positions.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre><span class="kw">from</span> collections <span class="kw">import</span> Counter
+
+<span class="kw">def</span> <span class="fn">find_anagrams</span>(s, p):
+    <span class="kw">if</span> <span class="fn">len</span>(p) > <span class="fn">len</span>(s): <span class="kw">return</span> []
+
+    p_count = Counter(p)
+    window = Counter(s[:<span class="fn">len</span>(p)])
+    result = []
+    k = <span class="fn">len</span>(p)
+
+    <span class="kw">if</span> window == p_count:
+        result.append(<span class="nm">0</span>)
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="fn">len</span>(s) - k + <span class="nm">1</span>):
+        <span class="cm"># Add new char</span>
+        new_ch = s[i + k - <span class="nm">1</span>]
+        window[new_ch] += <span class="nm">1</span>
+        <span class="cm"># Remove old char</span>
+        old_ch = s[i - <span class="nm">1</span>]
+        window[old_ch] -= <span class="nm">1</span>
+        <span class="kw">if</span> window[old_ch] == <span class="nm">0</span>:
+            <span class="kw">del</span> window[old_ch]
+
+        <span class="kw">if</span> window == p_count:
+            result.append(i)
+
+    <span class="kw">return</span> result
+
+<span class="fn">print</span>(<span class="fn">find_anagrams</span>(<span class="st">"cbaebabacd"</span>, <span class="st">"abc"</span>))   <span class="cm"># [0, 6]</span>
+<span class="fn">print</span>(<span class="fn">find_anagrams</span>(<span class="st">"abab"</span>, <span class="st">"ab"</span>))           <span class="cm"># [0, 1, 2]</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ DAY 5 ═══════════════════════════════════ -->
+<section id="day5" class="page chapter">
+  <div class="chapter-header">
+    <div class="chapter-num-block">Day 05</div>
+    <div class="chapter-title-area">
+      <h2>Hashing <em>& Frequency Maps</em></h2>
+      <p class="desc">Hash maps turn O(n²) string comparison problems into clean O(n) solutions.</p>
+    </div>
+  </div>
+  <div class="chapter-rule"></div>
+
+  <div class="card gold-accent">
+    <div class="tag tag-medium">Concept 5.1</div>
+    <h3>Frequency Maps — The Foundation</h3>
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">frequency.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre><span class="kw">from</span> collections <span class="kw">import</span> Counter, defaultdict
+
+<span class="cm"># ── Three ways to build a frequency map ─────────────────</span>
+s = <span class="st">"hello world"</span>
+
+<span class="cm"># Method 1: Counter (best for most cases)</span>
+freq = Counter(s)
+<span class="fn">print</span>(freq)
+<span class="cm"># Counter({'l': 3, 'o': 2, 'h': 1, 'e': 1, ' ': 1, 'w': 1, 'r': 1, 'd': 1})</span>
+<span class="fn">print</span>(freq[<span class="st">'l'</span>])          <span class="cm"># 3</span>
+<span class="fn">print</span>(freq[<span class="st">'z'</span>])          <span class="cm"># 0  (no KeyError!)</span>
+<span class="fn">print</span>(freq.most_common(<span class="nm">3</span>)) <span class="cm"># top 3 most frequent</span>
+
+<span class="cm"># Method 2: defaultdict</span>
+freq2 = defaultdict(<span class="fn">int</span>)
+<span class="kw">for</span> c <span class="kw">in</span> s:
+    freq2[c] += <span class="nm">1</span>
+
+<span class="cm"># Method 3: Manual dict</span>
+freq3 = {}
+<span class="kw">for</span> c <span class="kw">in</span> s:
+    freq3[c] = freq3.get(c, <span class="nm">0</span>) + <span class="nm">1</span>
+
+<span class="cm"># ── First unique character ───────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">first_unique_char</span>(s):
+    freq = Counter(s)
+    <span class="kw">for</span> i, c <span class="kw">in</span> <span class="fn">enumerate</span>(s):
+        <span class="kw">if</span> freq[c] == <span class="nm">1</span>:
+            <span class="kw">return</span> i
+    <span class="kw">return</span> <span class="op">-</span><span class="nm">1</span>
+
+<span class="fn">print</span>(<span class="fn">first_unique_char</span>(<span class="st">"leetcode"</span>))   <span class="cm"># 0 ('l')</span>
+<span class="fn">print</span>(<span class="fn">first_unique_char</span>(<span class="st">"loveleetcode"</span>))  <span class="cm"># 2 ('v')</span>
+<span class="fn">print</span>(<span class="fn">first_unique_char</span>(<span class="st">"aabb"</span>))       <span class="cm"># -1 (none unique)</span></pre>
+    </div>
+  </div>
+
+  <div class="card gold-accent">
+    <div class="tag tag-medium">Concept 5.2</div>
+    <h3>Anagram Detection & Grouping</h3>
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">anagrams.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre><span class="kw">from</span> collections <span class="kw">import</span> Counter, defaultdict
+
+<span class="cm"># ── Check if two strings are anagrams ───────────────────</span>
+<span class="kw">def</span> <span class="fn">is_anagram</span>(s, t):
+    <span class="kw">if</span> <span class="fn">len</span>(s) != <span class="fn">len</span>(t): <span class="kw">return</span> <span class="bi">False</span>
+    <span class="kw">return</span> Counter(s) == Counter(t)
+
+<span class="cm"># Alternatively: sorted strings must be equal</span>
+<span class="kw">def</span> <span class="fn">is_anagram_v2</span>(s, t):
+    <span class="kw">return</span> <span class="fn">sorted</span>(s) == <span class="fn">sorted</span>(t)   <span class="cm"># O(n log n)</span>
+
+<span class="fn">print</span>(<span class="fn">is_anagram</span>(<span class="st">"anagram"</span>, <span class="st">"nagaram"</span>))   <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="fn">is_anagram</span>(<span class="st">"rat"</span>, <span class="st">"car"</span>))           <span class="cm"># False</span>
+
+<span class="cm"># ── Group Anagrams ──────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">group_anagrams</span>(strs):
+    groups = defaultdict(<span class="fn">list</span>)
+    <span class="kw">for</span> s <span class="kw">in</span> strs:
+        key = <span class="fn">tuple</span>(<span class="fn">sorted</span>(s))   <span class="cm"># canonical form: sorted chars</span>
+        groups[key].append(s)
+    <span class="kw">return</span> <span class="fn">list</span>(groups.values())
+
+words = [<span class="st">"eat"</span>,<span class="st">"tea"</span>,<span class="st">"tan"</span>,<span class="st">"ate"</span>,<span class="st">"nat"</span>,<span class="st">"bat"</span>]
+<span class="fn">print</span>(<span class="fn">group_anagrams</span>(words))
+<span class="cm"># [['eat','tea','ate'], ['tan','nat'], ['bat']]</span>
+
+<span class="cm"># ── Isomorphic Strings ──────────────────────────────────</span>
+<span class="cm"># s and t are isomorphic if chars can be mapped 1-to-1</span>
+<span class="kw">def</span> <span class="fn">is_isomorphic</span>(s, t):
+    s_to_t = {}
+    t_to_s = {}
+    <span class="kw">for</span> cs, ct <span class="kw">in</span> <span class="fn">zip</span>(s, t):
+        <span class="kw">if</span> cs <span class="kw">in</span> s_to_t:
+            <span class="kw">if</span> s_to_t[cs] != ct: <span class="kw">return</span> <span class="bi">False</span>
+        <span class="kw">else</span>:
+            <span class="kw">if</span> ct <span class="kw">in</span> t_to_s: <span class="kw">return</span> <span class="bi">False</span>
+            s_to_t[cs] = ct
+            t_to_s[ct] = cs
+    <span class="kw">return</span> <span class="bi">True</span>
+
+<span class="fn">print</span>(<span class="fn">is_isomorphic</span>(<span class="st">"egg"</span>, <span class="st">"add"</span>))    <span class="cm"># True  (e→a, g→d)</span>
+<span class="fn">print</span>(<span class="fn">is_isomorphic</span>(<span class="st">"foo"</span>, <span class="st">"bar"</span>))    <span class="cm"># False (o can't map to both a and r)</span>
+
+<span class="cm"># ── Word Pattern ────────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">word_pattern</span>(pattern, s):
+    words = s.split()
+    <span class="kw">if</span> <span class="fn">len</span>(pattern) != <span class="fn">len</span>(words): <span class="kw">return</span> <span class="bi">False</span>
+    p_to_w, w_to_p = {}, {}
+    <span class="kw">for</span> p, w <span class="kw">in</span> <span class="fn">zip</span>(pattern, words):
+        <span class="kw">if</span> p_to_w.get(p, w) != w: <span class="kw">return</span> <span class="bi">False</span>
+        <span class="kw">if</span> w_to_p.get(w, p) != p: <span class="kw">return</span> <span class="bi">False</span>
+        p_to_w[p] = w; w_to_p[w] = p
+    <span class="kw">return</span> <span class="bi">True</span>
+
+<span class="fn">print</span>(<span class="fn">word_pattern</span>(<span class="st">"abba"</span>, <span class="st">"dog cat cat dog"</span>))   <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="fn">word_pattern</span>(<span class="st">"abba"</span>, <span class="st">"dog cat cat fish"</span>))  <span class="cm"># False</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ DAY 6 ═══════════════════════════════════ -->
+<section id="day6" class="page chapter">
+  <div class="chapter-header">
+    <div class="chapter-num-block">Day 06</div>
+    <div class="chapter-title-area">
+      <h2>Dynamic Programming <em>& Advanced</em></h2>
+      <p class="desc">The hardest string problems. DP, KMP pattern matching, and string encoding — the big leagues.</p>
+    </div>
+  </div>
+  <div class="chapter-rule"></div>
+
+  <div class="card red-accent">
+    <div class="tag tag-advanced">Advanced 6.1</div>
+    <h3>Longest Common Subsequence (LCS)</h3>
+    <p>Given two strings, find the length of the longest subsequence present in both. Classic 2D DP problem.</p>
+
+    <div class="infobox note">
+      <div class="ico">📝</div>
+      <p><strong>DP Idea:</strong> Build a table where <code>dp[i][j]</code> = LCS of first i chars of s1 and first j chars of s2. If chars match, extend the diagonal. Otherwise, take the max of left or top cell.</p>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">lcs.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre><span class="cm"># ── Longest Common Subsequence ──────────────────────────</span>
+<span class="kw">def</span> <span class="fn">lcs</span>(s1, s2):
+    m, n = <span class="fn">len</span>(s1), <span class="fn">len</span>(s2)
+    <span class="cm"># dp[i][j] = LCS length of s1[:i] and s2[:j]</span>
+    dp = [[<span class="nm">0</span>] * (n + <span class="nm">1</span>) <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(m + <span class="nm">1</span>)]
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, m + <span class="nm">1</span>):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, n + <span class="nm">1</span>):
+            <span class="kw">if</span> s1[i-<span class="nm">1</span>] == s2[j-<span class="nm">1</span>]:      <span class="cm"># chars match!</span>
+                dp[i][j] = dp[i-<span class="nm">1</span>][j-<span class="nm">1</span>] + <span class="nm">1</span>
+            <span class="kw">else</span>:
+                dp[i][j] = <span class="fn">max</span>(dp[i-<span class="nm">1</span>][j], dp[i][j-<span class="nm">1</span>])
+
+    <span class="kw">return</span> dp[m][n]
+
+<span class="fn">print</span>(<span class="fn">lcs</span>(<span class="st">"abcde"</span>, <span class="st">"ace"</span>))     <span class="cm"># 3 ("ace")</span>
+<span class="fn">print</span>(<span class="fn">lcs</span>(<span class="st">"abc"</span>, <span class="st">"abc"</span>))       <span class="cm"># 3</span>
+<span class="fn">print</span>(<span class="fn">lcs</span>(<span class="st">"abc"</span>, <span class="st">"def"</span>))       <span class="cm"># 0</span></pre>
+    </div>
+  </div>
+
+  <div class="card red-accent">
+    <div class="tag tag-advanced">Advanced 6.2</div>
+    <h3>Longest Palindromic Substring</h3>
+    <p>Find the longest substring that is a palindrome. Two approaches: <span class="hl">Expand Around Center</span> O(n²) or Manacher's algorithm O(n).</p>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">longest_palindrome.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre><span class="cm"># ── Expand Around Center — O(n²) ────────────────────────</span>
+<span class="kw">def</span> <span class="fn">longest_palindrome</span>(s):
+    <span class="kw">if</span> <span class="kw">not</span> s: <span class="kw">return</span> <span class="st">""</span>
+
+    start = end = <span class="nm">0</span>
+
+    <span class="kw">def</span> <span class="fn">expand</span>(left, right):
+        <span class="kw">while</span> left >= <span class="nm">0</span> <span class="kw">and</span> right < <span class="fn">len</span>(s) <span class="kw">and</span> s[left] == s[right]:
+            left -= <span class="nm">1</span>; right += <span class="nm">1</span>
+        <span class="kw">return</span> left + <span class="nm">1</span>, right - <span class="nm">1</span>   <span class="cm"># last valid positions</span>
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(s)):
+        <span class="cm"># Odd length palindromes (center at i)</span>
+        l1, r1 = <span class="fn">expand</span>(i, i)
+        <span class="cm"># Even length palindromes (center between i and i+1)</span>
+        l2, r2 = <span class="fn">expand</span>(i, i + <span class="nm">1</span>)
+
+        <span class="kw">if</span> r1 - l1 > end - start: start, end = l1, r1
+        <span class="kw">if</span> r2 - l2 > end - start: start, end = l2, r2
+
+    <span class="kw">return</span> s[start:end + <span class="nm">1</span>]
+
+<span class="fn">print</span>(<span class="fn">longest_palindrome</span>(<span class="st">"babad"</span>))   <span class="cm"># "bab" or "aba"</span>
+<span class="fn">print</span>(<span class="fn">longest_palindrome</span>(<span class="st">"cbbd"</span>))    <span class="cm"># "bb"</span>
+<span class="fn">print</span>(<span class="fn">longest_palindrome</span>(<span class="st">"racecar"</span>)) <span class="cm"># "racecar"</span>
+
+<span class="cm"># ── Count all palindromic substrings ────────────────────</span>
+<span class="kw">def</span> <span class="fn">count_palindromes</span>(s):
+    count = <span class="nm">0</span>
+
+    <span class="kw">def</span> <span class="fn">expand_count</span>(l, r):
+        c = <span class="nm">0</span>
+        <span class="kw">while</span> l >= <span class="nm">0</span> <span class="kw">and</span> r < <span class="fn">len</span>(s) <span class="kw">and</span> s[l] == s[r]:
+            c += <span class="nm">1</span>; l -= <span class="nm">1</span>; r += <span class="nm">1</span>
+        <span class="kw">return</span> c
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(s)):
+        count += <span class="fn">expand_count</span>(i, i)      <span class="cm"># odd</span>
+        count += <span class="fn">expand_count</span>(i, i + <span class="nm">1</span>)  <span class="cm"># even</span>
+
+    <span class="kw">return</span> count
+
+<span class="fn">print</span>(<span class="fn">count_palindromes</span>(<span class="st">"abc"</span>))     <span class="cm"># 3  (a, b, c)</span>
+<span class="fn">print</span>(<span class="fn">count_palindromes</span>(<span class="st">"aaa"</span>))     <span class="cm"># 6  (a,a,a,aa,aa,aaa)</span></pre>
+    </div>
+  </div>
+
+  <div class="card red-accent">
+    <div class="tag tag-advanced">Advanced 6.3</div>
+    <h3>Edit Distance (Levenshtein)</h3>
+    <p>Minimum number of operations (insert, delete, replace) to convert one string to another. Classic DP.</p>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">edit_distance.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre><span class="kw">def</span> <span class="fn">edit_distance</span>(word1, word2):
+    m, n = <span class="fn">len</span>(word1), <span class="fn">len</span>(word2)
+    <span class="cm"># dp[i][j] = min ops to convert word1[:i] to word2[:j]</span>
+    dp = [[<span class="nm">0</span>] * (n + <span class="nm">1</span>) <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(m + <span class="nm">1</span>)]
+
+    <span class="cm"># Base cases: empty string conversions</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(m + <span class="nm">1</span>): dp[i][<span class="nm">0</span>] = i  <span class="cm"># delete all chars of word1</span>
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(n + <span class="nm">1</span>): dp[<span class="nm">0</span>][j] = j  <span class="cm"># insert all chars of word2</span>
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, m + <span class="nm">1</span>):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, n + <span class="nm">1</span>):
+            <span class="kw">if</span> word1[i-<span class="nm">1</span>] == word2[j-<span class="nm">1</span>]:    <span class="cm"># chars match: free!</span>
+                dp[i][j] = dp[i-<span class="nm">1</span>][j-<span class="nm">1</span>]
+            <span class="kw">else</span>:
+                dp[i][j] = <span class="nm">1</span> + <span class="fn">min</span>(
+                    dp[i-<span class="nm">1</span>][j],    <span class="cm"># delete from word1</span>
+                    dp[i][j-<span class="nm">1</span>],    <span class="cm"># insert into word1</span>
+                    dp[i-<span class="nm">1</span>][j-<span class="nm">1</span>]  <span class="cm"># replace</span>
+                )
+    <span class="kw">return</span> dp[m][n]
+
+<span class="fn">print</span>(<span class="fn">edit_distance</span>(<span class="st">"horse"</span>, <span class="st">"ros"</span>))    <span class="cm"># 3</span>
+<span class="fn">print</span>(<span class="fn">edit_distance</span>(<span class="st">"intention"</span>, <span class="st">"execution"</span>))  <span class="cm"># 5</span>
+<span class="fn">print</span>(<span class="fn">edit_distance</span>(<span class="st">""</span>, <span class="st">"abc"</span>))         <span class="cm"># 3</span></pre>
+    </div>
+  </div>
+
+  <div class="card red-accent">
+    <div class="tag tag-advanced">Advanced 6.4</div>
+    <h3>KMP Pattern Matching — O(n+m)</h3>
+    <p>Naive pattern search is O(n×m). KMP builds a <span class="hl">failure function</span> to skip redundant comparisons, achieving O(n+m).</p>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">kmp.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre><span class="cm"># ── KMP: Knuth-Morris-Pratt Pattern Matching ────────────</span>
+
+<span class="kw">def</span> <span class="fn">build_lps</span>(pattern):
+    <span class="st">"""Build Longest Proper Prefix-Suffix array"""</span>
+    m = <span class="fn">len</span>(pattern)
+    lps = [<span class="nm">0</span>] * m
+    length = <span class="nm">0</span>   <span class="cm"># length of previous longest prefix-suffix</span>
+    i = <span class="nm">1</span>
+
+    <span class="kw">while</span> i < m:
+        <span class="kw">if</span> pattern[i] == pattern[length]:
+            length += <span class="nm">1</span>
+            lps[i] = length
+            i += <span class="nm">1</span>
+        <span class="kw">else</span>:
+            <span class="kw">if</span> length != <span class="nm">0</span>:
+                length = lps[length - <span class="nm">1</span>]  <span class="cm"># fall back</span>
+            <span class="kw">else</span>:
+                lps[i] = <span class="nm">0</span>
+                i += <span class="nm">1</span>
+    <span class="kw">return</span> lps
+
+<span class="kw">def</span> <span class="fn">kmp_search</span>(text, pattern):
+    <span class="st">"""Returns all starting indices where pattern is found in text"""</span>
+    n, m = <span class="fn">len</span>(text), <span class="fn">len</span>(pattern)
+    <span class="kw">if</span> m == <span class="nm">0</span>: <span class="kw">return</span> []
+
+    lps = <span class="fn">build_lps</span>(pattern)
+    results = []
+    i = j = <span class="nm">0</span>
+
+    <span class="kw">while</span> i < n:
+        <span class="kw">if</span> text[i] == pattern[j]:
+            i += <span class="nm">1</span>; j += <span class="nm">1</span>
+        <span class="kw">if</span> j == m:                      <span class="cm"># full match found!</span>
+            results.append(i - j)
+            j = lps[j - <span class="nm">1</span>]             <span class="cm"># use LPS to continue</span>
+        <span class="kw">elif</span> i < n <span class="kw">and</span> text[i] != pattern[j]:
+            <span class="kw">if</span> j != <span class="nm">0</span>:
+                j = lps[j - <span class="nm">1</span>]         <span class="cm"># skip using LPS</span>
+            <span class="kw">else</span>:
+                i += <span class="nm">1</span>
+    <span class="kw">return</span> results
+
+text = <span class="st">"AABAACAADAABAABA"</span>
+pat  = <span class="st">"AABA"</span>
+<span class="fn">print</span>(<span class="fn">kmp_search</span>(text, pat))   <span class="cm"># [0, 9, 12]</span>
+
+text2 = <span class="st">"aababab"</span>
+pat2  = <span class="st">"abab"</span>
+<span class="fn">print</span>(<span class="fn">kmp_search</span>(text2, pat2)) <span class="cm"># [1, 3]</span>
+
+<span class="cm"># ── Python's built-in (use this in interviews unless asked) ─</span>
+text = <span class="st">"hello world hello"</span>
+<span class="fn">print</span>(text.find(<span class="st">"hello"</span>))    <span class="cm"># 0  (first occurrence)</span>
+<span class="fn">print</span>(text.count(<span class="st">"hello"</span>))   <span class="cm"># 2  (all occurrences)</span>
+
+<span class="cm"># Find all with loop:</span>
+start = <span class="nm">0</span>
+positions = []
+<span class="kw">while</span> (<span class="nm">idx</span> := text.find(<span class="st">"hello"</span>, start)) != <span class="op">-</span><span class="nm">1</span>:
+    positions.append(<span class="nm">idx</span>)
+    start = <span class="nm">idx</span> + <span class="nm">1</span>
+<span class="fn">print</span>(positions)   <span class="cm"># [0, 12]</span></pre>
+    </div>
+  </div>
+
+  <div class="card red-accent">
+    <div class="tag tag-advanced">Advanced 6.5</div>
+    <h3>String Encode & Decode</h3>
+    <p>Design a system to encode a list of strings to a single string and decode back. Use length-prefix encoding.</p>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">encode_decode.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre><span class="cm"># ── Encode: ["hello","world"] → "5#hello5#world" ────────</span>
+<span class="kw">def</span> <span class="fn">encode</span>(strs):
+    result = <span class="st">""</span>
+    <span class="kw">for</span> s <span class="kw">in</span> strs:
+        result += <span class="fn">str</span>(<span class="fn">len</span>(s)) + <span class="st">"#"</span> + s
+    <span class="kw">return</span> result
+
+<span class="cm"># ── Decode: "5#hello5#world" → ["hello","world"] ────────</span>
+<span class="kw">def</span> <span class="fn">decode</span>(s):
+    result = []
+    i = <span class="nm">0</span>
+    <span class="kw">while</span> i < <span class="fn">len</span>(s):
+        j = s.index(<span class="st">"#"</span>, i)        <span class="cm"># find next '#'</span>
+        length = <span class="fn">int</span>(s[i:j])        <span class="cm"># read length</span>
+        word = s[j+<span class="nm">1</span>:j+<span class="nm">1</span>+length]   <span class="cm"># extract word</span>
+        result.append(word)
+        i = j + <span class="nm">1</span> + length          <span class="cm"># advance past word</span>
+    <span class="kw">return</span> result
+
+words = [<span class="st">"hello"</span>, <span class="st">"world"</span>, <span class="st">"#special"</span>, <span class="st">""</span>]
+encoded = <span class="fn">encode</span>(words)
+<span class="fn">print</span>(encoded)                  <span class="cm"># "5#hello5#world8##special0#"</span>
+<span class="fn">print</span>(<span class="fn">decode</span>(encoded) == words)  <span class="cm"># True</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ DAY 7 ═══════════════════════════════════ -->
+<section id="day7" class="page chapter">
+  <div class="chapter-header">
+    <div class="chapter-num-block">Day 07</div>
+    <div class="chapter-title-area">
+      <h2>Practice <em>& Mastery</em></h2>
+      <p class="desc">Recognize patterns instantly. This is what separates passing interviews from failing them.</p>
+    </div>
+  </div>
+  <div class="chapter-rule"></div>
+
+  <!-- Pattern Recognition -->
+  <div class="card orange-accent">
+    <div class="tag tag-pattern">Pattern Guide</div>
+    <h3>See the Problem → Know the Technique</h3>
+
+    <div class="pattern-row">
+      <div class="pat-card">
+        <h4>🔍 Substring / window problem?</h4>
+        <p>→ Sliding window with a frequency map. Variable window for "at most k" or "smallest". Fixed window otherwise.</p>
+      </div>
+      <div class="pat-card">
+        <h4>🔄 Palindrome check?</h4>
+        <p>→ Two pointers from both ends. Or expand from center for "find longest palindromic substring".</p>
+      </div>
+      <div class="pat-card">
+        <h4>🔤 Anagram / permutation?</h4>
+        <p>→ Sort both strings and compare, or use Counter(). For "in string" → sliding window of fixed size.</p>
+      </div>
+      <div class="pat-card">
+        <h4>🔢 Frequency / count?</h4>
+        <p>→ Counter or defaultdict(int). For "only lowercase letters" use a freq array of size 26.</p>
+      </div>
+      <div class="pat-card">
+        <h4>📏 Two strings comparison?</h4>
+        <p>→ Two pointers, one on each string. Move both or one based on matching condition.</p>
+      </div>
+      <div class="pat-card">
+        <h4>✏️ Minimum edits / conversions?</h4>
+        <p>→ 2D dynamic programming. Fill table bottom-up. Choices: match (diagonal), insert, delete, replace.</p>
+      </div>
+      <div class="pat-card">
+        <h4>🔎 Pattern search in text?</h4>
+        <p>→ Python's built-in .find() or .index(). For performance-critical: KMP algorithm O(n+m).</p>
+      </div>
+      <div class="pat-card">
+        <h4>🗂️ Group/classify strings?</h4>
+        <p>→ Use a canonical key (sorted string, sorted character tuple) as hash map key to group anagrams/similar strings.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Problem Bank -->
+  <div class="card orange-accent">
+    <div class="tag tag-pattern">Problem Bank</div>
+    <h3>Must-Solve Problems (Ordered by Difficulty)</h3>
+
+    <p style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent3);margin:20px 0 10px;">EASY — BUILD CONFIDENCE FIRST</p>
+    <table class="ctable">
+      <thead><tr><th>#</th><th>Problem</th><th>Key Technique</th><th>Time</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Valid Palindrome</td><td>Two Pointers + isalnum()</td><td class="tc-g">O(n)</td></tr>
+        <tr><td>2</td><td>Reverse String</td><td>Two Pointers / Slicing</td><td class="tc-g">O(n)</td></tr>
+        <tr><td>3</td><td>Valid Anagram</td><td>Counter / Sort</td><td class="tc-g">O(n)</td></tr>
+        <tr><td>4</td><td>First Unique Character</td><td>Counter + Linear Scan</td><td class="tc-g">O(n)</td></tr>
+        <tr><td>5</td><td>Is Subsequence</td><td>Two Pointers</td><td class="tc-g">O(n)</td></tr>
+        <tr><td>6</td><td>Reverse Words in a String</td><td>Split + Reverse + Join</td><td class="tc-g">O(n)</td></tr>
+        <tr><td>7</td><td>Roman to Integer</td><td>Hash Map + Scan</td><td class="tc-g">O(n)</td></tr>
+      </tbody>
+    </table>
+
+    <p style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--gold);margin:20px 0 10px;">MEDIUM — CORE INTERVIEW LEVEL</p>
+    <table class="ctable">
+      <thead><tr><th>#</th><th>Problem</th><th>Key Technique</th><th>Time</th></tr></thead>
+      <tbody>
+        <tr><td>8</td><td>Longest Substring Without Repeating</td><td>Sliding Window + HashMap</td><td class="tc-g">O(n)</td></tr>
+        <tr><td>9</td><td>Group Anagrams</td><td>Sort Key + HashMap</td><td class="tc-y">O(n·k log k)</td></tr>
+        <tr><td>10</td><td>Longest Palindromic Substring</td><td>Expand From Center</td><td class="tc-y">O(n²)</td></tr>
+        <tr><td>11</td><td>Valid Palindrome II</td><td>Two Pointers + Recursion</td><td class="tc-g">O(n)</td></tr>
+        <tr><td>12</td><td>Find All Anagrams in String</td><td>Sliding Window + Counter</td><td class="tc-g">O(n)</td></tr>
+        <tr><td>13</td><td>Longest Substring with K Distinct</td><td>Variable Sliding Window</td><td class="tc-g">O(n)</td></tr>
+        <tr><td>14</td><td>Isomorphic Strings</td><td>Two HashMaps</td><td class="tc-g">O(n)</td></tr>
+        <tr><td>15</td><td>Decode Ways</td><td>1D DP</td><td class="tc-g">O(n)</td></tr>
+        <tr><td>16</td><td>String Compression</td><td>Two Pointers</td><td class="tc-g">O(n)</td></tr>
+      </tbody>
+    </table>
+
+    <p style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent);margin:20px 0 10px;">HARD — ADVANCED MASTERY</p>
+    <table class="ctable">
+      <thead><tr><th>#</th><th>Problem</th><th>Key Technique</th><th>Time</th></tr></thead>
+      <tbody>
+        <tr><td>17</td><td>Minimum Window Substring</td><td>Sliding Window + formed counter</td><td class="tc-g">O(n+m)</td></tr>
+        <tr><td>18</td><td>Edit Distance</td><td>2D DP</td><td class="tc-y">O(m×n)</td></tr>
+        <tr><td>19</td><td>Longest Common Subsequence</td><td>2D DP</td><td class="tc-y">O(m×n)</td></tr>
+        <tr><td>20</td><td>Wildcard Matching</td><td>2D DP</td><td class="tc-y">O(m×n)</td></tr>
+        <tr><td>21</td><td>Regular Expression Matching</td><td>2D DP / Recursion</td><td class="tc-y">O(m×n)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Python Power Tips -->
+  <div class="card green-accent">
+    <div class="tag tag-basic">Python Tricks</div>
+    <h3>String Interview Cheat Sheet</h3>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div>
+        <div class="code-filename">cheatsheet.py</div>
+        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+      </div>
+      <pre><span class="kw">from</span> collections <span class="kw">import</span> Counter, defaultdict
+<span class="kw">import</span> re
+
+s = <span class="st">"Hello World 123"</span>
+
+<span class="cm"># ── ONE-LINERS YOU MUST KNOW ─────────────────────────────</span>
+<span class="fn">print</span>(s[::<span class="op">-</span><span class="nm">1</span>])              <span class="cm"># reverse string</span>
+<span class="fn">print</span>(s.lower() == s[::<span class="op">-</span><span class="nm">1</span>].lower())  <span class="cm"># palindrome check</span>
+<span class="fn">print</span>(<span class="fn">sorted</span>(s) == <span class="fn">sorted</span>(<span class="st">"elloH dlroW 321"</span>))  <span class="cm"># anagram check</span>
+
+<span class="cm"># ── CHAR CHECKS ─────────────────────────────────────────</span>
+<span class="st">'a'</span>.isalpha()    <span class="cm"># True  — letter</span>
+<span class="st">'1'</span>.isdigit()    <span class="cm"># True  — digit</span>
+<span class="st">'a1'</span>.isalnum()   <span class="cm"># True  — letter or digit</span>
+<span class="st">' '</span>.isspace()    <span class="cm"># True  — whitespace</span>
+<span class="st">'a'</span>.islower()    <span class="cm"># True</span>
+<span class="st">'A'</span>.isupper()    <span class="cm"># True</span>
+
+<span class="cm"># ── FREQUENCY MAP IN ONE LINE ────────────────────────────</span>
+freq = Counter(<span class="st">"mississippi"</span>)    <span class="cm"># Counter({'s':4,'i':4,'p':2,'m':1})</span>
+most_common = freq.most_common(<span class="nm">1</span>)[<span class="nm">0</span>][<span class="nm">0</span>]  <span class="cm"># 's' (or 'i')</span>
+
+<span class="cm"># ── SPLIT MULTIPLE SPACES ────────────────────────────────</span>
+<span class="st">"  a   b  c  "</span>.split()   <span class="cm"># ['a', 'b', 'c'] — handles all whitespace</span>
+
+<span class="cm"># ── CHECK ALL / ANY ─────────────────────────────────────</span>
+<span class="fn">all</span>(c.isalpha() <span class="kw">for</span> c <span class="kw">in</span> <span class="st">"hello"</span>)    <span class="cm"># True</span>
+<span class="fn">any</span>(c.isdigit() <span class="kw">for</span> c <span class="kw">in</span> <span class="st">"abc3"</span>)    <span class="cm"># True</span>
+
+<span class="cm"># ── STRING TO INT / INT TO STRING ───────────────────────</span>
+n = <span class="fn">int</span>(<span class="st">"42"</span>)     <span class="cm"># 42</span>
+s = <span class="fn">str</span>(<span class="nm">42</span>)       <span class="cm"># "42"</span>
+
+<span class="cm"># ── FORMAT STRINGS ──────────────────────────────────────</span>
+name = <span class="st">"Alice"</span>; score = <span class="nm">95</span>
+<span class="fn">print</span>(<span class="st">f"{name} scored {score}"</span>)   <span class="cm"># f-strings (modern, use this)</span>
+<span class="fn">print</span>(<span class="st">"{} scored {}"</span>.<span class="fn">format</span>(name, score))  <span class="cm"># .format()</span>
+
+<span class="cm"># ── REGEX FOR CLEAN INPUTS ───────────────────────────────</span>
+clean = re.sub(<span class="st">r'[^a-zA-Z0-9]'</span>, <span class="st">''</span>, <span class="st">"A man, a plan!"</span>)
+<span class="cm"># "Amanaplan"</span>
+
+<span class="cm"># ── EDGE CASES CHECKLIST ─────────────────────────────────</span>
+<span class="cm"># • Empty string: if not s: return ...</span>
+<span class="cm"># • Single char: is always a palindrome</span>
+<span class="cm"># • All same chars: "aaaa"</span>
+<span class="cm"># • Spaces and punctuation in palindrome problems</span>
+<span class="cm"># • Case sensitivity: .lower() before comparing</span>
+<span class="cm"># • Unicode characters (rare in interviews)</span>
+<span class="cm"># • Very long strings (check for O(n²) risk)</span></pre>
+    </div>
+
+    <table class="ctable" style="margin-top:20px;">
+      <thead><tr><th>Operation</th><th>Time</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Access char s[i]</td><td class="tc-g">O(1)</td><td>Direct index</td></tr>
+        <tr><td>Slicing s[i:j]</td><td class="tc-y">O(k)</td><td>k = length of slice</td></tr>
+        <tr><td>Concatenation s + t</td><td class="tc-y">O(n+m)</td><td>Creates new string</td></tr>
+        <tr><td>s += char in loop</td><td class="tc-r">O(n²)</td><td>⚠️ Never do this! Use list + join</td></tr>
+        <tr><td>"".join(list)</td><td class="tc-g">O(n)</td><td>Correct way to build strings</td></tr>
+        <tr><td>s.find(sub)</td><td class="tc-y">O(n·m)</td><td>Naive search</td></tr>
+        <tr><td>s in t</td><td class="tc-y">O(n·m)</td><td>Same as .find()</td></tr>
+        <tr><td>sorted(s)</td><td class="tc-y">O(n log n)</td><td>Returns a list</td></tr>
+        <tr><td>Counter(s)</td><td class="tc-g">O(n)</td><td>Character frequency in one pass</td></tr>
+        <tr><td>s.split()</td><td class="tc-g">O(n)</td><td>O(n) time and space</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="page">
+    <span class="big">"Strings are just arrays of characters — everything you learned about arrays applies here."</span>
+    <p>Finish this guide. Then solve 3–5 LeetCode string problems daily for 2 weeks.</p>
+    <p style="margin-top:20px;color:rgba(255,255,255,0.15);">DSA Mastery Series · Volume II · Strings · Python 3 · All code tested</p>
+  </div>
+</footer>
+
+<script>
+  function copyCode(btn) {
+    const pre = btn.closest('.code-wrap').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'COPIED!';
+      btn.style.color = '#28c840';
+      btn.style.borderColor = '#28c840';
+      setTimeout(() => {
+        btn.textContent = 'COPY';
+        btn.style.color = '';
+        btn.style.borderColor = '';
+      }, 2000);
+    });
+  }
+
+  // Active nav highlighting
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.snav a');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.card, .day-tile').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease, box-shadow 0.3s, border-color 0.3s';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>

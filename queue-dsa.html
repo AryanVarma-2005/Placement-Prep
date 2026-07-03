@@ -1,0 +1,3508 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Queue Mastery — Complete DSA Course</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Literata:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CSS VARIABLES & THEME
+   ============================================================ */
+:root {
+  --bg: #0a0a0f;
+  --bg2: #111118;
+  --bg3: #1a1a25;
+  --bg4: #22222f;
+  --border: #2a2a3a;
+  --accent: #6c63ff;
+  --accent2: #ff6584;
+  --accent3: #43e97b;
+  --accent4: #f093fb;
+  --text: #e8e8f0;
+  --text2: #a0a0b8;
+  --text3: #6a6a85;
+  --code-bg: #0d0d18;
+  --sidebar-w: 280px;
+  --radius: 12px;
+  --shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+[data-theme="light"] {
+  --bg: #f4f4f8;
+  --bg2: #ffffff;
+  --bg3: #eeeef5;
+  --bg4: #e0e0ec;
+  --border: #d0d0e0;
+  --text: #1a1a2e;
+  --text2: #4a4a6a;
+  --text3: #8a8aaa;
+  --code-bg: #1a1a2e;
+  --shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Literata', Georgia, serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+::selection { background: var(--accent); color: #fff; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.layout { display: flex; min-height: 100vh; }
+
+/* SIDEBAR */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s;
+}
+.sidebar-logo {
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+.sidebar-logo .subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--accent3);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+.sidebar-logo .logo-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  display: block;
+}
+.sidebar-nav { padding: 12px 0; flex: 1; }
+.nav-section { margin-bottom: 4px; }
+.nav-section-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding: 8px 20px 4px;
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text2);
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.nav-link:hover { color: var(--text); background: var(--bg3); border-left-color: var(--accent); }
+.nav-link.active { color: var(--accent); border-left-color: var(--accent); background: var(--bg3); }
+.nav-link .nav-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text3);
+  min-width: 20px;
+}
+.progress-bar-wrap {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+}
+.progress-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text3);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.progress-bar {
+  height: 4px;
+  background: var(--bg4);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent4));
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.5s;
+}
+
+/* MAIN CONTENT */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  max-width: 900px;
+  padding: 0 40px 80px;
+}
+
+/* TOPBAR */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 -40px;
+  backdrop-filter: blur(10px);
+}
+.breadcrumb {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text3);
+}
+.topbar-actions { display: flex; gap: 10px; align-items: center; }
+.theme-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.theme-btn:hover { background: var(--bg4); border-color: var(--accent); }
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+/* ============================================================
+   HERO SECTION
+   ============================================================ */
+.hero {
+  padding: 60px 0 50px;
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -100px; left: -200px;
+  width: 600px; height: 400px;
+  background: radial-gradient(ellipse, rgba(108,99,255,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-tag {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent3);
+  background: rgba(67,233,123,0.1);
+  border: 1px solid rgba(67,233,123,0.3);
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+.hero h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -2px;
+  margin-bottom: 16px;
+}
+.hero h2 .highlight {
+  background: linear-gradient(135deg, var(--accent), var(--accent4));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-desc {
+  font-size: 1.05rem;
+  color: var(--text2);
+  max-width: 600px;
+  margin-bottom: 32px;
+}
+.hero-stats {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  color: var(--text3);
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   SECTIONS
+   ============================================================ */
+.section {
+  margin-bottom: 64px;
+  scroll-margin-top: 80px;
+}
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.section-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--accent);
+  background: rgba(108,99,255,0.1);
+  border: 1px solid rgba(108,99,255,0.3);
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-top: 6px;
+  white-space: nowrap;
+}
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.2;
+}
+.section-desc {
+  color: var(--text2);
+  margin-top: 6px;
+  font-size: 0.95rem;
+}
+
+/* ============================================================
+   CONTENT CARDS
+   ============================================================ */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-title .tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-weight: 400;
+}
+.tag-concept { background: rgba(108,99,255,0.15); color: var(--accent); }
+.tag-analogy { background: rgba(255,101,132,0.15); color: var(--accent2); }
+.tag-code { background: rgba(67,233,123,0.12); color: var(--accent3); }
+.tag-tip { background: rgba(240,147,251,0.12); color: var(--accent4); }
+.tag-warn { background: rgba(255,165,0,0.15); color: #ffa500; }
+.tag-interview { background: rgba(255,215,0,0.15); color: #ffd700; }
+
+/* CALLOUT BOXES */
+.callout {
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  margin: 16px 0;
+  border-left: 4px solid;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.callout-icon { font-size: 1.2rem; margin-top: 2px; flex-shrink: 0; }
+.callout-body { flex: 1; }
+.callout-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.callout.info { background: rgba(108,99,255,0.08); border-color: var(--accent); }
+.callout.success { background: rgba(67,233,123,0.08); border-color: var(--accent3); }
+.callout.warning { background: rgba(255,165,0,0.08); border-color: #ffa500; }
+.callout.tip { background: rgba(240,147,251,0.08); border-color: var(--accent4); }
+.callout.interview { background: rgba(255,215,0,0.08); border-color: #ffd700; }
+.callout.danger { background: rgba(255,101,132,0.08); border-color: var(--accent2); }
+
+/* ============================================================
+   CODE BLOCKS
+   ============================================================ */
+.code-block {
+  position: relative;
+  margin: 16px 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+}
+.code-lang {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent3);
+}
+.copy-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text3);
+  padding: 3px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  transition: all 0.2s;
+}
+.copy-btn:hover { color: var(--text); border-color: var(--accent); }
+pre {
+  background: var(--code-bg);
+  padding: 20px;
+  overflow-x: auto;
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.83rem;
+  line-height: 1.7;
+}
+code { font-family: 'JetBrains Mono', monospace; }
+.inline-code {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82em;
+  color: var(--accent3);
+}
+
+/* SYNTAX HIGHLIGHT */
+.kw { color: #c792ea; }
+.fn { color: #82aaff; }
+.str { color: #c3e88d; }
+.num { color: #f78c6c; }
+.cm { color: #546e7a; font-style: italic; }
+.cls { color: #ffcb6b; }
+.op { color: #89ddff; }
+.self { color: #f78c6c; }
+.bl { color: #ff5370; }
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+.table-wrap { overflow-x: auto; margin: 16px 0; border-radius: var(--radius); border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; background: var(--bg2); }
+th {
+  background: var(--bg3);
+  padding: 12px 16px;
+  text-align: left;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.88rem;
+  vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg3); }
+.good { color: var(--accent3); font-weight: 600; }
+.bad { color: var(--accent2); font-weight: 600; }
+.ok { color: #ffa500; font-weight: 600; }
+
+/* ============================================================
+   VISUALIZATIONS
+   ============================================================ */
+.viz-container {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin: 20px 0;
+}
+.viz-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text2);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.viz-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.viz-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+.viz-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+.viz-btn.danger { border-color: var(--accent2); }
+.viz-btn.danger:hover { background: var(--accent2); }
+.viz-input {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  width: 80px;
+  outline: none;
+}
+.viz-input:focus { border-color: var(--accent); }
+
+/* Queue Visual */
+.queue-visual {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  min-height: 70px;
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 12px 16px;
+  overflow-x: auto;
+  position: relative;
+  border: 1px dashed var(--border);
+}
+.queue-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--text3);
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.queue-cell {
+  min-width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--accent);
+  background: rgba(108,99,255,0.1);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  border-radius: 8px;
+  margin: 0 3px;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.queue-cell.front { border-color: var(--accent3); background: rgba(67,233,123,0.12); }
+.queue-cell.rear { border-color: var(--accent2); background: rgba(255,101,132,0.12); }
+.queue-cell.entering {
+  animation: cellEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.queue-cell.leaving {
+  animation: cellLeave 0.4s ease-in forwards;
+}
+@keyframes cellEnter {
+  from { opacity: 0; transform: translateY(-30px) scale(0.5); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes cellLeave {
+  to { opacity: 0; transform: translateY(30px) scale(0.5); }
+}
+.queue-arrow {
+  font-size: 1.2rem;
+  color: var(--text3);
+  margin: 0 2px;
+}
+.queue-endpoints {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+.endpoint-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.endpoint-label.front-l { color: var(--accent3); }
+.endpoint-label.rear-l { color: var(--accent2); }
+.viz-log {
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: var(--bg);
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--text2);
+  min-height: 36px;
+  border: 1px solid var(--border);
+}
+.viz-log .log-ok { color: var(--accent3); }
+.viz-log .log-err { color: var(--accent2); }
+.viz-log .log-info { color: var(--accent); }
+
+/* ============================================================
+   COLLAPSIBLE DEEP DIVE
+   ============================================================ */
+.deep-dive {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin: 16px 0;
+  overflow: hidden;
+}
+.deep-dive-header {
+  padding: 14px 20px;
+  background: var(--bg3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  user-select: none;
+  transition: background 0.2s;
+}
+.deep-dive-header:hover { background: var(--bg4); }
+.deep-dive-arrow {
+  transition: transform 0.3s;
+  color: var(--text3);
+}
+.deep-dive.open .deep-dive-arrow { transform: rotate(180deg); }
+.deep-dive-body {
+  display: none;
+  padding: 20px;
+  border-top: 1px solid var(--border);
+}
+.deep-dive.open .deep-dive-body { display: block; }
+
+/* ============================================================
+   QUIZ
+   ============================================================ */
+.quiz {
+  background: linear-gradient(135deg, rgba(108,99,255,0.06), rgba(240,147,251,0.06));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin: 24px 0;
+}
+.quiz-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.quiz-q {
+  margin-bottom: 16px;
+  font-size: 0.92rem;
+  color: var(--text);
+  font-style: italic;
+}
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.83rem;
+  font-weight: 600;
+  text-align: left;
+  color: var(--text2);
+  transition: all 0.2s;
+}
+.quiz-opt:hover { border-color: var(--accent); color: var(--text); }
+.quiz-opt.correct { border-color: var(--accent3); background: rgba(67,233,123,0.12); color: var(--accent3); }
+.quiz-opt.wrong { border-color: var(--accent2); background: rgba(255,101,132,0.12); color: var(--accent2); }
+.quiz-feedback {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.ok { background: rgba(67,233,123,0.1); color: var(--accent3); border-left: 3px solid var(--accent3); }
+.quiz-feedback.no { background: rgba(255,101,132,0.1); color: var(--accent2); border-left: 3px solid var(--accent2); }
+
+/* ============================================================
+   ROADMAP
+   ============================================================ */
+.roadmap {
+  position: relative;
+  padding: 10px 0;
+}
+.roadmap::before {
+  content: '';
+  position: absolute;
+  left: 24px;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--accent), var(--accent4), var(--accent3));
+}
+.roadmap-day {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 24px;
+  position: relative;
+}
+.roadmap-dot {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--bg2);
+  border: 2px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  z-index: 1;
+}
+.roadmap-content {
+  flex: 1;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-top: 8px;
+}
+.roadmap-day-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.roadmap-day-title .badge {
+  font-size: 0.62rem;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.badge-easy { background: rgba(67,233,123,0.15); color: var(--accent3); }
+.badge-med { background: rgba(255,165,0,0.15); color: #ffa500; }
+.badge-hard { background: rgba(255,101,132,0.15); color: var(--accent2); }
+.roadmap-items {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.roadmap-items li {
+  font-size: 0.85rem;
+  color: var(--text2);
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.roadmap-items li::before { content: '›'; color: var(--accent); font-weight: 700; }
+
+/* ============================================================
+   PROBLEM CARDS
+   ============================================================ */
+.problem-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.problem-header {
+  padding: 16px 20px;
+  background: var(--bg3);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.problem-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  flex: 1;
+}
+.diff-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.diff-easy { background: rgba(67,233,123,0.2); color: var(--accent3); }
+.diff-med { background: rgba(255,165,0,0.2); color: #ffa500; }
+.diff-hard { background: rgba(255,101,132,0.2); color: var(--accent2); }
+.problem-body { padding: 20px; }
+.problem-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0;
+}
+.ptab {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  color: var(--text3);
+  transition: all 0.2s;
+  margin-bottom: -1px;
+}
+.ptab:hover { color: var(--text); }
+.ptab.active { border-bottom-color: var(--accent); color: var(--accent); }
+.ptab-content { display: none; }
+.ptab-content.active { display: block; }
+
+/* ============================================================
+   CHEAT SHEET
+   ============================================================ */
+.cheat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin: 16px 0;
+}
+.cheat-item {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+.cheat-item-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: var(--accent);
+}
+.cheat-item p, .cheat-item li {
+  font-size: 0.82rem;
+  color: var(--text2);
+  line-height: 1.6;
+}
+.cheat-item ul { list-style: none; }
+.cheat-item ul li::before { content: '• '; color: var(--accent3); }
+
+/* ============================================================
+   CIRCULAR QUEUE VIZ
+   ============================================================ */
+.circ-canvas-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0;
+}
+canvas { max-width: 100%; }
+
+/* ============================================================
+   BFS VIZ
+   ============================================================ */
+.bfs-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+  max-width: 340px;
+  margin: 0 auto 16px;
+}
+.bfs-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  transition: all 0.4s;
+}
+.bfs-cell.wall { background: var(--bg4); border-color: var(--bg4); }
+.bfs-cell.start { background: rgba(67,233,123,0.3); border-color: var(--accent3); color: var(--accent3); }
+.bfs-cell.end { background: rgba(255,101,132,0.3); border-color: var(--accent2); color: var(--accent2); }
+.bfs-cell.visited { background: rgba(108,99,255,0.2); border-color: var(--accent); }
+.bfs-cell.path { background: rgba(255,215,0,0.3); border-color: #ffd700; }
+.bfs-cell.current { background: rgba(240,147,251,0.3); border-color: var(--accent4); }
+
+/* ============================================================
+   COMPLEXITY BADGES
+   ============================================================ */
+.complexity-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+.complexity-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 16px;
+  gap: 4px;
+  min-width: 90px;
+}
+.complexity-badge .comp-op {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--text3);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.complexity-badge .comp-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.c-o1 .comp-val { color: var(--accent3); }
+.c-on .comp-val { color: #ffa500; }
+.c-ologn .comp-val { color: var(--accent); }
+
+/* ============================================================
+   SLIDING WINDOW VIZ
+   ============================================================ */
+.sw-array {
+  display: flex;
+  gap: 4px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+.sw-cell {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg3);
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+.sw-cell.in-window { background: rgba(108,99,255,0.15); border-color: var(--accent); }
+.sw-cell.is-max { background: rgba(67,233,123,0.2); border-color: var(--accent3); color: var(--accent3); }
+
+/* ============================================================
+   PATTERN CARDS
+   ============================================================ */
+.pattern-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  margin: 16px 0;
+}
+.pattern-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  transition: all 0.2s;
+  cursor: default;
+}
+.pattern-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.pattern-icon { font-size: 1.8rem; margin-bottom: 10px; }
+.pattern-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.pattern-desc { font-size: 0.78rem; color: var(--text2); }
+
+/* ============================================================
+   MOBILE RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  :root { --sidebar-w: 0px; }
+  .sidebar {
+    transform: translateX(-280px);
+    width: 280px;
+  }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; padding: 0 20px 60px; }
+  .topbar { padding: 14px 20px; margin: 0 -20px; }
+  .hamburger { display: block; }
+  .hero h2 { font-size: 2rem; letter-spacing: -1px; }
+  .hero-stats { gap: 18px; }
+  .cheat-grid { grid-template-columns: 1fr; }
+  .pattern-grid { grid-template-columns: 1fr 1fr; }
+  .bfs-grid { grid-template-columns: repeat(6, 1fr); }
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 99;
+  }
+  .sidebar-overlay.show { display: block; }
+}
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+.mb-16 { margin-bottom: 16px; }
+.flex-gap { display: flex; gap: 12px; flex-wrap: wrap; }
+p { margin-bottom: 12px; }
+p:last-child { margin-bottom: 0; }
+strong { color: var(--text); }
+ul, ol { padding-left: 20px; margin-bottom: 12px; }
+li { margin-bottom: 4px; font-size: 0.92rem; }
+
+/* Scroll highlight animation */
+.section:target .section-title { color: var(--accent); }
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 40px 0;
+  border-top: 1px solid var(--border);
+  margin-top: 60px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text3);
+}
+
+/* DEQUE VIZ */
+.deque-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 20px;
+  background: var(--bg);
+  border-radius: 10px;
+  border: 1px dashed var(--border);
+  min-height: 90px;
+  flex-wrap: wrap;
+}
+.deque-cell {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--accent4);
+  background: rgba(240,147,251,0.1);
+  border-radius: 8px;
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  transition: all 0.3s;
+}
+.deque-arrows {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--accent4);
+}
+
+/* Priority Queue VIZ */
+.pq-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--bg3);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  border: 1px solid var(--border);
+  transition: all 0.3s;
+}
+.pq-priority {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.pq-p1 { background: rgba(255,215,0,0.2); color: #ffd700; border: 1px solid #ffd700; }
+.pq-p2 { background: rgba(192,192,192,0.2); color: #c0c0c0; border: 1px solid #c0c0c0; }
+.pq-p3 { background: rgba(205,127,50,0.2); color: #cd7f32; border: 1px solid #cd7f32; }
+
+/* Monotonic queue viz */
+.mono-queue {
+  display: flex;
+  gap: 4px;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: 8px;
+  border: 1px dashed var(--border);
+  min-height: 60px;
+  align-items: center;
+}
+.mono-cell {
+  padding: 6px 14px;
+  background: rgba(108,99,255,0.15);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+/* Interview tip box */
+.interview-box {
+  background: linear-gradient(135deg, rgba(255,215,0,0.06), rgba(255,165,0,0.06));
+  border: 1px solid rgba(255,215,0,0.3);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin: 20px 0;
+}
+.interview-box-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #ffd700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.interview-box ul { padding-left: 16px; }
+.interview-box li { font-size: 0.88rem; color: var(--text2); margin-bottom: 6px; }
+
+/* dry-run boxes */
+.dry-run {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 12px 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  line-height: 1.8;
+}
+.dry-step { display: flex; gap: 12px; margin-bottom: 4px; align-items: flex-start; }
+.dry-step-num { color: var(--text3); min-width: 30px; }
+.dry-step-action { color: var(--text); }
+.dry-step-state { color: var(--accent3); margin-left: auto; white-space: nowrap; }
+
+/* animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.section { animation: fadeInUp 0.5s ease both; }
+</style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <span class="logo-icon">⚡</span>
+    <h1>Queue Mastery</h1>
+    <div class="subtitle">Complete DSA Course</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-title">Getting Started</div>
+      <a class="nav-link active" onclick="scrollTo('s1')"><span class="nav-num">01</span> Introduction</a>
+      <a class="nav-link" onclick="scrollTo('s2')"><span class="nav-num">02</span> Queue Basics</a>
+      <a class="nav-link" onclick="scrollTo('s3')"><span class="nav-num">03</span> Implementation</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Core Concepts</div>
+      <a class="nav-link" onclick="scrollTo('s4')"><span class="nav-num">04</span> Circular Queue</a>
+      <a class="nav-link" onclick="scrollTo('s5')"><span class="nav-num">05</span> Priority Queue</a>
+      <a class="nav-link" onclick="scrollTo('s6')"><span class="nav-num">06</span> Deque</a>
+      <a class="nav-link" onclick="scrollTo('s7')"><span class="nav-num">07</span> Monotonic Queue</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Advanced</div>
+      <a class="nav-link" onclick="scrollTo('s8')"><span class="nav-num">08</span> Queue Patterns</a>
+      <a class="nav-link" onclick="scrollTo('s9')"><span class="nav-num">09</span> BFS & Graphs</a>
+      <a class="nav-link" onclick="scrollTo('s10')"><span class="nav-num">10</span> Advanced Topics</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Interview Prep</div>
+      <a class="nav-link" onclick="scrollTo('s11')"><span class="nav-num">11</span> Complexity</a>
+      <a class="nav-link" onclick="scrollTo('s12')"><span class="nav-num">12</span> Problems</a>
+      <a class="nav-link" onclick="scrollTo('s13')"><span class="nav-num">13</span> Cheat Sheet</a>
+      <a class="nav-link" onclick="scrollTo('s14')"><span class="nav-num">14</span> Roadmap</a>
+    </div>
+  </nav>
+  <div class="progress-bar-wrap">
+    <div class="progress-label">Your Progress</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <button class="hamburger" onclick="toggleSidebar()">☰</button>
+      <div class="breadcrumb">queue-mastery / complete-course</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="theme-btn" onclick="toggleTheme()">🌓 Theme</button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">🎯 Interview-Ready in 7 Days</div>
+    <h2>Master <span class="highlight">Queue</span><br>Data Structure</h2>
+    <p class="hero-desc">From absolute beginner to solving hard LeetCode problems. Every concept explained with visuals, analogies, and step-by-step dry runs. No DSA background needed.</p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">14</span><span class="stat-label">Sections</span></div>
+      <div class="stat"><span class="stat-num">9+</span><span class="stat-label">Problems</span></div>
+      <div class="stat"><span class="stat-num">20+</span><span class="stat-label">Code Examples</span></div>
+      <div class="stat"><span class="stat-num">7</span><span class="stat-label">Day Plan</span></div>
+    </div>
+  </div>
+
+  <!-- ===========================
+       SECTION 1: INTRODUCTION
+       =========================== -->
+  <section class="section" id="s1">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <div>
+        <div class="section-title">Introduction to Queues</div>
+        <div class="section-desc">What is a queue, why it matters, and where you see it every day</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-concept">Concept</span> What is a Queue?</div>
+      <p>A <strong>queue</strong> is a linear data structure that follows the <strong>FIFO</strong> principle — <strong>First In, First Out</strong>. Think of it as a line of people waiting: the first person to join the line is the first person to be served.</p>
+      <p>Just like in real life, a queue has two ends:</p>
+      <ul>
+        <li><strong>Front (Head)</strong> — where elements leave the queue (DEQUEUE)</li>
+        <li><strong>Rear (Tail)</strong> — where new elements join (ENQUEUE)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-analogy">Analogy</span> Real-World Examples</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:8px;">
+        <div style="background:var(--bg3);border-radius:8px;padding:14px;border:1px solid var(--border);">
+          <div style="font-size:1.8rem;margin-bottom:6px;">🎟️</div>
+          <div style="font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:700;margin-bottom:4px;">Ticket Counter</div>
+          <div style="font-size:0.78rem;color:var(--text2);">People wait in a line. First person gets served first.</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:14px;border:1px solid var(--border);">
+          <div style="font-size:1.8rem;margin-bottom:6px;">🖨️</div>
+          <div style="font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:700;margin-bottom:4px;">Printer Queue</div>
+          <div style="font-size:0.78rem;color:var(--text2);">Documents print in order they were submitted.</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:14px;border:1px solid var(--border);">
+          <div style="font-size:1.8rem;margin-bottom:6px;">💻</div>
+          <div style="font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:700;margin-bottom:4px;">CPU Scheduling</div>
+          <div style="font-size:0.78rem;color:var(--text2);">OS processes tasks in FIFO order using a queue.</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:14px;border:1px solid var(--border);">
+          <div style="font-size:1.8rem;margin-bottom:6px;">🍔</div>
+          <div style="font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:700;margin-bottom:4px;">Food Delivery</div>
+          <div style="font-size:0.78rem;color:var(--text2);">Orders placed first are dispatched first.</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:14px;border:1px solid var(--border);">
+          <div style="font-size:1.8rem;margin-bottom:6px;">🌐</div>
+          <div style="font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:700;margin-bottom:4px;">BFS Traversal</div>
+          <div style="font-size:0.78rem;color:var(--text2);">Explores graph level by level using a queue.</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:14px;border:1px solid var(--border);">
+          <div style="font-size:1.8rem;margin-bottom:6px;">📨</div>
+          <div style="font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:700;margin-bottom:4px;">Message Queue</div>
+          <div style="font-size:0.78rem;color:var(--text2);">Kafka, RabbitMQ: messages processed in order.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-concept">Comparison</span> Queue vs Stack vs Array</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Feature</th><th>Queue</th><th>Stack</th><th>Array</th></tr>
+          <tr><td>Order</td><td class="good">FIFO</td><td>LIFO</td><td>Random Access</td></tr>
+          <tr><td>Insert</td><td>Rear only</td><td>Top only</td><td>Any index</td></tr>
+          <tr><td>Remove</td><td>Front only</td><td>Top only</td><td>Any index</td></tr>
+          <tr><td>Access</td><td class="bad">No random</td><td class="bad">No random</td><td class="good">O(1) random</td></tr>
+          <tr><td>Use Case</td><td>BFS, scheduling</td><td>DFS, undo/redo</td><td>Store, sort</td></tr>
+          <tr><td>Analogy</td><td>Queue line</td><td>Stack of plates</td><td>Numbered boxes</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-icon">🧠</div>
+      <div class="callout-body">
+        <div class="callout-title">Memory Trick</div>
+        Think of <strong>FIFO</strong> as: "First in line, first to dine." The person who joins the queue first eats first. Stack is the opposite — LIFO — like stacking plates, the last plate placed is the first removed.
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-title">⚡ Quick Check — Section 1</div>
+      <div class="quiz-q">Which principle does a Queue follow?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="checkQuiz(this,'wrong','q1')">LIFO — Last In First Out</button>
+        <button class="quiz-opt" onclick="checkQuiz(this,'correct','q1')">FIFO — First In First Out</button>
+        <button class="quiz-opt" onclick="checkQuiz(this,'wrong','q1')">Random Access</button>
+        <button class="quiz-opt" onclick="checkQuiz(this,'wrong','q1')">FILO — First In Last Out</button>
+      </div>
+      <div class="quiz-feedback" id="q1">✅ Correct! Queue = FIFO. The first element inserted is the first one removed — just like a real-world queue line.</div>
+    </div>
+  </section>
+
+  <!-- ===========================
+       SECTION 2: QUEUE BASICS
+       =========================== -->
+  <section class="section" id="s2">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <div>
+        <div class="section-title">Queue Basics & Operations</div>
+        <div class="section-desc">Interactive visualization of all queue operations with step-by-step explanations</div>
+      </div>
+    </div>
+
+    <!-- INTERACTIVE VISUALIZATION -->
+    <div class="viz-container">
+      <div class="viz-title">🎮 Interactive Queue Visualizer</div>
+      <div class="viz-controls">
+        <input class="viz-input" id="enqInput" type="number" placeholder="Value" value="42">
+        <button class="viz-btn" onclick="enqueueViz()">➕ Enqueue</button>
+        <button class="viz-btn danger" onclick="dequeueViz()">➖ Dequeue</button>
+        <button class="viz-btn" onclick="peekViz()">👁 Peek Front</button>
+        <button class="viz-btn" onclick="clearViz()">🗑 Clear</button>
+      </div>
+      <div class="queue-label">← FRONT (exits here) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REAR (enters here) →</div>
+      <div class="queue-visual" id="queueViz">
+        <span style="color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:0.8rem;">Queue is empty. Enqueue something!</span>
+      </div>
+      <div class="queue-endpoints">
+        <span class="endpoint-label front-l">▲ FRONT</span>
+        <span class="endpoint-label rear-l">▲ REAR</span>
+      </div>
+      <div class="viz-log" id="vizLog"><span class="log-info">Ready. Try enqueue → dequeue!</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-concept">Operations</span> The 6 Core Queue Operations</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Operation</th><th>Description</th><th>Time</th><th>What It Returns</th></tr>
+          <tr><td><code>enqueue(x)</code></td><td>Add element to rear</td><td class="good">O(1)</td><td>None</td></tr>
+          <tr><td><code>dequeue()</code></td><td>Remove element from front</td><td class="good">O(1)</td><td>Removed element</td></tr>
+          <tr><td><code>front()</code></td><td>View front element without removing</td><td class="good">O(1)</td><td>Front element</td></tr>
+          <tr><td><code>rear()</code></td><td>View rear element without removing</td><td class="good">O(1)</td><td>Rear element</td></tr>
+          <tr><td><code>isEmpty()</code></td><td>Check if queue has no elements</td><td class="good">O(1)</td><td>True / False</td></tr>
+          <tr><td><code>size()</code></td><td>Number of elements in queue</td><td class="good">O(1)</td><td>Integer</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-concept">Dry Run</span> Step-by-Step Queue Operations</div>
+      <p>Let's trace through these operations: <code>enqueue(10) → enqueue(20) → enqueue(30) → dequeue() → front()</code></p>
+      <div class="dry-run">
+        <div class="dry-step"><span class="dry-step-num">1.</span><span class="dry-step-action">enqueue(10)</span><span class="dry-step-state">Queue: [10] | Front=10, Rear=10</span></div>
+        <div class="dry-step"><span class="dry-step-num">2.</span><span class="dry-step-action">enqueue(20)</span><span class="dry-step-state">Queue: [10,20] | Front=10, Rear=20</span></div>
+        <div class="dry-step"><span class="dry-step-num">3.</span><span class="dry-step-action">enqueue(30)</span><span class="dry-step-state">Queue: [10,20,30] | Front=10, Rear=30</span></div>
+        <div class="dry-step"><span class="dry-step-num">4.</span><span class="dry-step-action">dequeue() → returns 10</span><span class="dry-step-state">Queue: [20,30] | Front=20, Rear=30</span></div>
+        <div class="dry-step"><span class="dry-step-num">5.</span><span class="dry-step-action">front() → returns 20</span><span class="dry-step-state">Queue: [20,30] | No change</span></div>
+        <div class="dry-step"><span class="dry-step-num">6.</span><span class="dry-step-action">size() → returns 2</span><span class="dry-step-state">Queue: [20,30] | 2 elements</span></div>
+      </div>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body">
+        <div class="callout-title">Common Mistakes</div>
+        <ul style="margin:0;padding-left:16px;">
+          <li>Calling <code>dequeue()</code> on an empty queue → causes <strong>Queue Underflow</strong> error</li>
+          <li>Confusing front (exit) with rear (entry) — remember: rear = restaurant back door (enter), front = exit door</li>
+          <li>Not checking <code>isEmpty()</code> before dequeue in interviews</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===========================
+       SECTION 3: IMPLEMENTATION
+       =========================== -->
+  <section class="section" id="s3">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <div>
+        <div class="section-title">Queue Implementation in Python</div>
+        <div class="section-desc">4 ways to implement a queue — from beginner to production-ready</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-code">Method 1</span> Using Python List</div>
+      <p>The simplest way — use Python's built-in list. <strong>However, dequeue is slow!</strong> <code>list.pop(0)</code> is O(n) because all elements shift left.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="cm"># Queue using Python List</span>
+<span class="cm"># Simple but dequeue is O(n) — not ideal for large queues</span>
+
+queue = []  <span class="cm"># Initialize empty queue</span>
+
+<span class="cm"># ENQUEUE: Add to rear (end of list)</span>
+queue.append(<span class="num">10</span>)  <span class="cm"># Queue: [10]</span>
+queue.append(<span class="num">20</span>)  <span class="cm"># Queue: [10, 20]</span>
+queue.append(<span class="num">30</span>)  <span class="cm"># Queue: [10, 20, 30]</span>
+
+<span class="kw">print</span>(<span class="str">"Queue:"</span>, queue)  <span class="cm"># [10, 20, 30]</span>
+
+<span class="cm"># DEQUEUE: Remove from front (index 0)</span>
+<span class="cm"># ❌ This is O(n) — all elements shift left!</span>
+front = queue.pop(<span class="num">0</span>)
+<span class="kw">print</span>(<span class="str">"Dequeued:"</span>, front)  <span class="cm"># 10</span>
+<span class="kw">print</span>(<span class="str">"Queue:"</span>, queue)     <span class="cm"># [20, 30]</span>
+
+<span class="cm"># PEEK: View front without removing</span>
+<span class="kw">if</span> queue:
+    <span class="kw">print</span>(<span class="str">"Front:"</span>, queue[<span class="num">0</span>])  <span class="cm"># 20</span>
+
+<span class="cm"># IS EMPTY</span>
+<span class="kw">print</span>(<span class="str">"Empty?"</span>, <span class="kw">len</span>(queue) == <span class="num">0</span>)  <span class="cm"># False</span>
+
+<span class="cm"># SIZE</span>
+<span class="kw">print</span>(<span class="str">"Size:"</span>, <span class="kw">len</span>(queue))  <span class="cm"># 2</span></pre>
+      </div>
+      <div class="callout danger">
+        <div class="callout-icon">🚨</div>
+        <div class="callout-body"><div class="callout-title">Why list is bad for queues</div><code>pop(0)</code> is <strong>O(n)</strong> — Python has to shift every remaining element one position to the left. For a queue of 1 million items, that's 999,999 shifts every dequeue!</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-code">Method 2</span> Using collections.deque ✅ Recommended</div>
+      <p><code>collections.deque</code> is a <strong>doubly linked list</strong> under the hood. Both <code>append()</code> (enqueue) and <code>popleft()</code> (dequeue) are <strong>O(1)</strong>. This is what you should use in interviews!</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="cm"># Initialize queue</span>
+queue = deque()
+
+<span class="cm"># ENQUEUE: O(1) — append to right</span>
+queue.append(<span class="num">10</span>)  <span class="cm"># deque([10])</span>
+queue.append(<span class="num">20</span>)  <span class="cm"># deque([10, 20])</span>
+queue.append(<span class="num">30</span>)  <span class="cm"># deque([10, 20, 30])</span>
+
+<span class="kw">print</span>(queue)  <span class="cm"># deque([10, 20, 30])</span>
+
+<span class="cm"># DEQUEUE: O(1) — popleft removes from left</span>
+front = queue.popleft()  <span class="cm"># Returns 10</span>
+<span class="kw">print</span>(<span class="str">"Dequeued:"</span>, front)   <span class="cm"># 10</span>
+<span class="kw">print</span>(queue)              <span class="cm"># deque([20, 30])</span>
+
+<span class="cm"># PEEK at front (no removal)</span>
+<span class="kw">print</span>(<span class="str">"Front:"</span>, queue[<span class="num">0</span>])  <span class="cm"># 20</span>
+
+<span class="cm"># PEEK at rear</span>
+<span class="kw">print</span>(<span class="str">"Rear:"</span>, queue[<span class="num">-1</span>])  <span class="cm"># 30</span>
+
+<span class="cm"># IS EMPTY</span>
+<span class="kw">print</span>(<span class="str">"Empty?"</span>, <span class="kw">len</span>(queue) == <span class="num">0</span>)  <span class="cm"># False</span>
+
+<span class="cm"># SIZE</span>
+<span class="kw">print</span>(<span class="str">"Size:"</span>, <span class="kw">len</span>(queue))  <span class="cm"># 2</span>
+
+<span class="cm"># Initialize with elements directly</span>
+q2 = deque([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>])
+<span class="kw">print</span>(q2)  <span class="cm"># deque([1, 2, 3, 4, 5])</span></pre>
+      </div>
+      <div class="complexity-row">
+        <div class="complexity-badge c-o1"><span class="comp-op">Enqueue</span><span class="comp-val">O(1)</span></div>
+        <div class="complexity-badge c-o1"><span class="comp-op">Dequeue</span><span class="comp-val">O(1)</span></div>
+        <div class="complexity-badge c-o1"><span class="comp-op">Peek</span><span class="comp-val">O(1)</span></div>
+        <div class="complexity-badge c-on"><span class="comp-op">Space</span><span class="comp-val">O(n)</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-code">Method 3</span> Using queue.Queue (Thread-Safe)</div>
+      <p>Python's <code>queue.Queue</code> is designed for <strong>multithreading</strong>. It's thread-safe, meaning multiple threads can safely enqueue/dequeue simultaneously without data corruption.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">import</span> queue
+
+<span class="cm"># Create a FIFO Queue (maxsize=0 means unlimited)</span>
+q = queue.Queue(maxsize=<span class="num">5</span>)  <span class="cm"># Max 5 elements</span>
+
+<span class="cm"># Enqueue: put()</span>
+q.put(<span class="num">10</span>)
+q.put(<span class="num">20</span>)
+q.put(<span class="num">30</span>)
+
+<span class="kw">print</span>(<span class="str">"Size:"</span>, q.qsize())      <span class="cm"># 3</span>
+<span class="kw">print</span>(<span class="str">"Empty?"</span>, q.empty())     <span class="cm"># False</span>
+<span class="kw">print</span>(<span class="str">"Full?"</span>, q.full())       <span class="cm"># False (max is 5)</span>
+
+<span class="cm"># Dequeue: get()</span>
+val = q.get()
+<span class="kw">print</span>(<span class="str">"Got:"</span>, val)  <span class="cm"># 10 (FIFO order)</span>
+
+<span class="cm"># block=False → raises Empty exception if queue empty</span>
+<span class="cm"># block=True (default) → waits until item available</span>
+<span class="kw">try</span>:
+    q.get(block=<span class="bl">False</span>)  <span class="cm"># Don't wait</span>
+<span class="kw">except</span> queue.Empty:
+    <span class="kw">print</span>(<span class="str">"Queue was empty!"</span>)
+
+<span class="cm"># Also available: LifoQueue (Stack), PriorityQueue</span>
+pq = queue.PriorityQueue()
+pq.put((<span class="num">3</span>, <span class="str">"low priority"</span>))
+pq.put((<span class="num">1</span>, <span class="str">"high priority"</span>))
+pq.put((<span class="num">2</span>, <span class="str">"medium priority"</span>))
+<span class="kw">print</span>(pq.get())  <span class="cm"># (1, 'high priority')</span></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-code">Method 4</span> Custom Queue Class (Interview Favorite)</div>
+      <p>Building your own Queue class from scratch — this tests your understanding deeply. Interviewers love this!</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">class</span> <span class="cls">Queue</span>:
+    <span class="str">"""Custom Queue implementation using deque internally."""</span>
+    
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>):
+        <span class="cm"># Use deque for O(1) operations on both ends</span>
+        <span class="self">self</span>._data = deque()
+    
+    <span class="kw">def</span> <span class="fn">enqueue</span>(<span class="self">self</span>, val):
+        <span class="cm"># Add to the REAR of the queue</span>
+        <span class="self">self</span>._data.append(val)
+    
+    <span class="kw">def</span> <span class="fn">dequeue</span>(<span class="self">self</span>):
+        <span class="cm"># Remove from the FRONT of the queue</span>
+        <span class="kw">if</span> <span class="self">self</span>.is_empty():
+            <span class="kw">raise</span> IndexError(<span class="str">"Dequeue from empty queue"</span>)
+        <span class="kw">return</span> <span class="self">self</span>._data.popleft()
+    
+    <span class="kw">def</span> <span class="fn">front</span>(<span class="self">self</span>):
+        <span class="cm"># Peek at front WITHOUT removing</span>
+        <span class="kw">if</span> <span class="self">self</span>.is_empty():
+            <span class="kw">raise</span> IndexError(<span class="str">"Peek from empty queue"</span>)
+        <span class="kw">return</span> <span class="self">self</span>._data[<span class="num">0</span>]
+    
+    <span class="kw">def</span> <span class="fn">rear</span>(<span class="self">self</span>):
+        <span class="cm"># Peek at rear WITHOUT removing</span>
+        <span class="kw">if</span> <span class="self">self</span>.is_empty():
+            <span class="kw">raise</span> IndexError(<span class="str">"Rear from empty queue"</span>)
+        <span class="kw">return</span> <span class="self">self</span>._data[<span class="num">-1</span>]
+    
+    <span class="kw">def</span> <span class="fn">is_empty</span>(<span class="self">self</span>):
+        <span class="kw">return</span> <span class="kw">len</span>(<span class="self">self</span>._data) == <span class="num">0</span>
+    
+    <span class="kw">def</span> <span class="fn">size</span>(<span class="self">self</span>):
+        <span class="kw">return</span> <span class="kw">len</span>(<span class="self">self</span>._data)
+    
+    <span class="kw">def</span> <span class="fn">__repr__</span>(<span class="self">self</span>):
+        <span class="kw">return</span> <span class="str">f"Queue({list(self._data)})"</span>
+
+
+<span class="cm"># === Testing Our Custom Queue ===</span>
+q = <span class="cls">Queue</span>()
+
+q.enqueue(<span class="num">5</span>)
+q.enqueue(<span class="num">10</span>)
+q.enqueue(<span class="num">15</span>)
+<span class="kw">print</span>(q)                  <span class="cm"># Queue([5, 10, 15])</span>
+<span class="kw">print</span>(q.front())          <span class="cm"># 5</span>
+<span class="kw">print</span>(q.dequeue())        <span class="cm"># 5</span>
+<span class="kw">print</span>(q)                  <span class="cm"># Queue([10, 15])</span>
+<span class="kw">print</span>(q.size())           <span class="cm"># 2</span>
+<span class="kw">print</span>(q.is_empty())       <span class="cm"># False</span></pre>
+      </div>
+    </div>
+
+    <div class="interview-box">
+      <div class="interview-box-title">🎯 Interview Insight</div>
+      <ul>
+        <li>Always use <code>collections.deque</code> in interviews unless asked for a specific implementation</li>
+        <li>If asked "implement a queue without built-ins," build the class above</li>
+        <li>Mention O(1) enqueue/dequeue as your selling point over list-based queue</li>
+        <li>Thread-safe? Use <code>queue.Queue</code> — mention this shows system design awareness</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===========================
+       SECTION 4: CIRCULAR QUEUE
+       =========================== -->
+  <section class="section" id="s4">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <div>
+        <div class="section-title">Circular Queue</div>
+        <div class="section-desc">Fix the wasted space problem of linear queues</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-concept">Problem</span> Why Normal Queues Waste Space</div>
+      <p>Imagine a fixed-size array queue of size 5. After many enqueue/dequeue operations:</p>
+      <div class="dry-run">
+        <div class="dry-step"><span class="dry-step-num">Start:</span><span class="dry-step-action">[ _ , _ , _ , _ , _ ]  front=0, rear=-1</span></div>
+        <div class="dry-step"><span class="dry-step-num">After 5 enqueues:</span><span class="dry-step-action">[ A , B , C , D , E ]  front=0, rear=4</span></div>
+        <div class="dry-step"><span class="dry-step-num">Dequeue A,B,C:</span><span class="dry-step-action">[ _ , _ , _ , D , E ]  front=3, rear=4</span></div>
+        <div class="dry-step"><span class="dry-step-num">Try enqueue F:</span><span class="dry-step-action">rear=5 → OUT OF BOUNDS! ❌ "FULL" but 3 spaces wasted!</span></div>
+      </div>
+      <p class="mt-16">The left slots are <strong>forever lost</strong> in a linear queue. <strong>Circular Queue</strong> fixes this by wrapping rear back to index 0!</p>
+    </div>
+
+    <div class="viz-container">
+      <div class="viz-title">🔄 Circular Queue Visualizer</div>
+      <div class="viz-controls">
+        <input class="viz-input" id="cqInput" type="number" placeholder="Val" value="1">
+        <button class="viz-btn" onclick="cqEnqueue()">Enqueue</button>
+        <button class="viz-btn danger" onclick="cqDequeue()">Dequeue</button>
+        <button class="viz-btn" onclick="cqReset()">Reset</button>
+      </div>
+      <div class="circ-canvas-wrap">
+        <canvas id="circCanvas" width="300" height="300"></canvas>
+      </div>
+      <div class="viz-log" id="cqLog"><span class="log-info">Circular Queue (size=6). Try enqueue/dequeue!</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-code">Implementation</span> Circular Queue in Python</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">class</span> <span class="cls">CircularQueue</span>:
+    <span class="str">"""Fixed-size Circular Queue using array."""</span>
+    
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>, capacity):
+        <span class="self">self</span>.capacity = capacity
+        <span class="self">self</span>.queue = [<span class="bl">None</span>] * capacity  <span class="cm"># Fixed array</span>
+        <span class="self">self</span>.front = <span class="num">0</span>       <span class="cm"># Points to front element</span>
+        <span class="self">self</span>.rear = <span class="num">-1</span>      <span class="cm"># Points to last element</span>
+        <span class="self">self</span>._size = <span class="num">0</span>      <span class="cm"># Current number of elements</span>
+    
+    <span class="kw">def</span> <span class="fn">is_empty</span>(<span class="self">self</span>):
+        <span class="kw">return</span> <span class="self">self</span>._size == <span class="num">0</span>
+    
+    <span class="kw">def</span> <span class="fn">is_full</span>(<span class="self">self</span>):
+        <span class="kw">return</span> <span class="self">self</span>._size == <span class="self">self</span>.capacity
+    
+    <span class="kw">def</span> <span class="fn">enqueue</span>(<span class="self">self</span>, val):
+        <span class="kw">if</span> <span class="self">self</span>.is_full():
+            <span class="kw">raise</span> OverflowError(<span class="str">"Queue is full!"</span>)
+        <span class="cm"># KEY: (rear + 1) % capacity wraps around!</span>
+        <span class="self">self</span>.rear = (<span class="self">self</span>.rear + <span class="num">1</span>) % <span class="self">self</span>.capacity
+        <span class="self">self</span>.queue[<span class="self">self</span>.rear] = val
+        <span class="self">self</span>._size += <span class="num">1</span>
+    
+    <span class="kw">def</span> <span class="fn">dequeue</span>(<span class="self">self</span>):
+        <span class="kw">if</span> <span class="self">self</span>.is_empty():
+            <span class="kw">raise</span> IndexError(<span class="str">"Queue is empty!"</span>)
+        val = <span class="self">self</span>.queue[<span class="self">self</span>.front]
+        <span class="self">self</span>.queue[<span class="self">self</span>.front] = <span class="bl">None</span>  <span class="cm"># Clear slot</span>
+        <span class="cm"># KEY: (front + 1) % capacity wraps around!</span>
+        <span class="self">self</span>.front = (<span class="self">self</span>.front + <span class="num">1</span>) % <span class="self">self</span>.capacity
+        <span class="self">self</span>._size -= <span class="num">1</span>
+        <span class="kw">return</span> val
+    
+    <span class="kw">def</span> <span class="fn">peek</span>(<span class="self">self</span>):
+        <span class="kw">if</span> <span class="self">self</span>.is_empty():
+            <span class="kw">raise</span> IndexError(<span class="str">"Queue is empty!"</span>)
+        <span class="kw">return</span> <span class="self">self</span>.queue[<span class="self">self</span>.front]
+    
+    <span class="kw">def</span> <span class="fn">__repr__</span>(<span class="self">self</span>):
+        result = []
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="self">self</span>._size):
+            idx = (<span class="self">self</span>.front + i) % <span class="self">self</span>.capacity
+            result.append(<span class="self">self</span>.queue[idx])
+        <span class="kw">return</span> <span class="str">f"CircularQueue({result})"</span>
+
+<span class="cm"># Demo</span>
+cq = <span class="cls">CircularQueue</span>(<span class="num">5</span>)
+cq.enqueue(<span class="num">10</span>); cq.enqueue(<span class="num">20</span>); cq.enqueue(<span class="num">30</span>)
+<span class="kw">print</span>(cq)          <span class="cm"># CircularQueue([10, 20, 30])</span>
+cq.dequeue()        <span class="cm"># Removes 10, front moves to index 1</span>
+cq.enqueue(<span class="num">40</span>)     <span class="cm"># rear wraps: fills index 0 again!</span>
+cq.enqueue(<span class="num">50</span>)
+<span class="kw">print</span>(cq)          <span class="cm"># CircularQueue([20, 30, 40, 50])</span>
+<span class="kw">print</span>(cq.is_full()) <span class="cm"># False (capacity 5, have 4)</span></pre>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body">
+        <div class="callout-title">The Modulo Magic</div>
+        The key formula is <code>(index + 1) % capacity</code>. When rear reaches the last index (e.g., 4 in a size-5 queue), adding 1 gives 5, and <code>5 % 5 = 0</code> — it wraps back to the start! This is how we "connect" the end to the beginning.
+      </div>
+    </div>
+  </section>
+
+  <!-- ===========================
+       SECTION 5: PRIORITY QUEUE
+       =========================== -->
+  <section class="section" id="s5">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <div>
+        <div class="section-title">Priority Queue</div>
+        <div class="section-desc">Not first-come-first-served — highest priority goes first</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-concept">Concept</span> What is a Priority Queue?</div>
+      <p>A Priority Queue is like a hospital emergency room — patients are NOT served in order of arrival. The most critically ill patient is treated first, regardless of when they arrived.</p>
+      <p>Elements have a <strong>priority</strong>, and the element with the <strong>highest priority</strong> is served first. In Python, <code>heapq</code> implements a <strong>min-heap</strong> (lowest number = highest priority).</p>
+      <div style="margin:16px 0;">
+        <div class="pq-item" style="border-color:#ffd700;">
+          <div class="pq-priority pq-p1">1</div>
+          <div><strong>Emergency Surgery</strong> <span style="color:var(--text3);font-size:0.8rem;">— Highest priority, served FIRST</span></div>
+        </div>
+        <div class="pq-item" style="border-color:#c0c0c0;">
+          <div class="pq-priority pq-p2">2</div>
+          <div><strong>Broken Arm</strong> <span style="color:var(--text3);font-size:0.8rem;">— Medium priority</span></div>
+        </div>
+        <div class="pq-item">
+          <div class="pq-priority pq-p3">3</div>
+          <div><strong>Mild Fever</strong> <span style="color:var(--text3);font-size:0.8rem;">— Low priority, waits longest</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-code">Python heapq</span> Min-Heap Priority Queue</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">import</span> heapq
+
+<span class="cm"># Python's heapq is a MIN-HEAP</span>
+<span class="cm"># Smallest element is always at the root (index 0)</span>
+
+heap = []
+
+<span class="cm"># Push elements — heapq maintains heap property</span>
+heapq.heappush(heap, <span class="num">30</span>)
+heapq.heappush(heap, <span class="num">10</span>)
+heapq.heappush(heap, <span class="num">50</span>)
+heapq.heappush(heap, <span class="num">5</span>)
+heapq.heappush(heap, <span class="num">20</span>)
+
+<span class="kw">print</span>(heap)         <span class="cm"># [5, 10, 50, 30, 20] — heap internally</span>
+<span class="kw">print</span>(heap[<span class="num">0</span>])      <span class="cm"># 5 — always the minimum</span>
+
+<span class="cm"># Pop min element — O(log n)</span>
+<span class="kw">print</span>(heapq.heappop(heap))  <span class="cm"># 5</span>
+<span class="kw">print</span>(heapq.heappop(heap))  <span class="cm"># 10</span>
+<span class="kw">print</span>(heapq.heappop(heap))  <span class="cm"># 20</span>
+
+<span class="cm"># For MAX-HEAP: negate the values!</span>
+max_heap = []
+<span class="kw">for</span> val <span class="kw">in</span> [<span class="num">30</span>, <span class="num">10</span>, <span class="num">50</span>, <span class="num">5</span>]:
+    heapq.heappush(max_heap, -val)  <span class="cm"># Negate!</span>
+
+max_val = -heapq.heappop(max_heap)  <span class="cm"># Negate back</span>
+<span class="kw">print</span>(<span class="str">"Max:"</span>, max_val)  <span class="cm"># 50</span>
+
+<span class="cm"># Priority Queue with custom objects: (priority, data)</span>
+tasks = []
+heapq.heappush(tasks, (<span class="num">3</span>, <span class="str">"Write report"</span>))
+heapq.heappush(tasks, (<span class="num">1</span>, <span class="str">"Fix critical bug"</span>))
+heapq.heappush(tasks, (<span class="num">2</span>, <span class="str">"Code review"</span>))
+
+<span class="kw">while</span> tasks:
+    priority, task = heapq.heappop(tasks)
+    <span class="kw">print</span>(<span class="str">f"[P{priority}] {task}"</span>)
+<span class="cm"># [P1] Fix critical bug</span>
+<span class="cm"># [P2] Code review</span>
+<span class="cm"># [P3] Write report</span>
+
+<span class="cm"># heapify: Convert list to heap in O(n)</span>
+nums = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>, <span class="num">9</span>]
+heapq.heapify(nums)
+<span class="kw">print</span>(nums[<span class="num">0</span>])  <span class="cm"># 1 — min is at top</span></pre>
+      </div>
+      <div class="complexity-row">
+        <div class="complexity-badge c-ologn"><span class="comp-op">Push</span><span class="comp-val">O(log n)</span></div>
+        <div class="complexity-badge c-ologn"><span class="comp-op">Pop</span><span class="comp-val">O(log n)</span></div>
+        <div class="complexity-badge c-o1"><span class="comp-op">Peek Min</span><span class="comp-val">O(1)</span></div>
+        <div class="complexity-badge c-on"><span class="comp-op">Heapify</span><span class="comp-val">O(n)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===========================
+       SECTION 6: DEQUE
+       =========================== -->
+  <section class="section" id="s6">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <div>
+        <div class="section-title">Deque — Double Ended Queue</div>
+        <div class="section-desc">Insert and delete from BOTH ends in O(1)</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-concept">Concept</span> What is a Deque?</div>
+      <p>A <strong>Deque</strong> (Double-Ended Queue) allows insertion and deletion from <strong>both the front and the rear</strong>. It's like a queue, but with superpowers!</p>
+      <p>Think of a train where passengers can board and exit from <strong>both ends</strong> of each car.</p>
+    </div>
+
+    <div class="viz-container">
+      <div class="viz-title">🔀 Deque Visualizer</div>
+      <div class="viz-controls">
+        <input class="viz-input" id="dqInput" type="number" placeholder="Val" value="7">
+        <button class="viz-btn" onclick="dqOp('appendleft')">← Append Left</button>
+        <button class="viz-btn" onclick="dqOp('append')">Append Right →</button>
+        <button class="viz-btn danger" onclick="dqOp('popleft')">← Pop Left</button>
+        <button class="viz-btn danger" onclick="dqOp('pop')">Pop Right →</button>
+      </div>
+      <div class="deque-arrows"><span>← appendleft / popleft</span><span>append / pop →</span></div>
+      <div class="deque-visual" id="dequeViz"><span style="color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:0.8rem;">Empty. Add elements!</span></div>
+      <div class="viz-log" id="dqLog"><span class="log-info">Deque is ready. Try operations!</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-code">All Operations</span> Deque in Python</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+d = deque()
+
+<span class="cm"># === Insert Operations ===</span>
+d.append(<span class="num">10</span>)        <span class="cm"># Add to RIGHT: deque([10])</span>
+d.append(<span class="num">20</span>)        <span class="cm"># Add to RIGHT: deque([10, 20])</span>
+d.appendleft(<span class="num">5</span>)     <span class="cm"># Add to LEFT:  deque([5, 10, 20])</span>
+d.appendleft(<span class="num">1</span>)     <span class="cm"># Add to LEFT:  deque([1, 5, 10, 20])</span>
+<span class="kw">print</span>(d)             <span class="cm"># deque([1, 5, 10, 20])</span>
+
+<span class="cm"># === Remove Operations ===</span>
+right = d.pop()      <span class="cm"># Remove from RIGHT → 20</span>
+left = d.popleft()   <span class="cm"># Remove from LEFT  → 1</span>
+<span class="kw">print</span>(d)             <span class="cm"># deque([5, 10])</span>
+
+<span class="cm"># === Access ===</span>
+<span class="kw">print</span>(d[<span class="num">0</span>])          <span class="cm"># Front: 5</span>
+<span class="kw">print</span>(d[<span class="num">-1</span>])         <span class="cm"># Rear: 10</span>
+
+<span class="cm"># === Rotate ===</span>
+d = deque([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>])
+d.rotate(<span class="num">2</span>)          <span class="cm"># Rotate right by 2: deque([4, 5, 1, 2, 3])</span>
+<span class="kw">print</span>(d)
+d.rotate(<span class="num">-2</span>)         <span class="cm"># Rotate left by 2:  deque([1, 2, 3, 4, 5])</span>
+<span class="kw">print</span>(d)
+
+<span class="cm"># === Max size (sliding window use case) ===</span>
+d = deque(maxlen=<span class="num">3</span>)  <span class="cm"># Auto-removes from left when full</span>
+d.append(<span class="num">1</span>); d.append(<span class="num">2</span>); d.append(<span class="num">3</span>)
+<span class="kw">print</span>(d)  <span class="cm"># deque([1, 2, 3], maxlen=3)</span>
+d.append(<span class="num">4</span>)          <span class="cm"># 1 is auto-removed!</span>
+<span class="kw">print</span>(d)  <span class="cm"># deque([2, 3, 4], maxlen=3)</span></pre>
+      </div>
+      <div class="table-wrap" style="margin-top:16px;">
+        <table>
+          <tr><th>Operation</th><th>Method</th><th>Time</th></tr>
+          <tr><td>Add to right</td><td><code>append(x)</code></td><td class="good">O(1)</td></tr>
+          <tr><td>Add to left</td><td><code>appendleft(x)</code></td><td class="good">O(1)</td></tr>
+          <tr><td>Remove right</td><td><code>pop()</code></td><td class="good">O(1)</td></tr>
+          <tr><td>Remove left</td><td><code>popleft()</code></td><td class="good">O(1)</td></tr>
+          <tr><td>Access by index</td><td><code>d[i]</code></td><td class="ok">O(n)</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===========================
+       SECTION 7: MONOTONIC QUEUE
+       =========================== -->
+  <section class="section" id="s7">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <div>
+        <div class="section-title">Monotonic Queue</div>
+        <div class="section-desc">The secret weapon for sliding window maximum/minimum problems</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-concept">Concept</span> What is a Monotonic Queue?</div>
+      <p>A Monotonic Queue maintains its elements in either strictly <strong>increasing</strong> or <strong>decreasing</strong> order. When a new element is added, smaller (or larger) existing elements are removed.</p>
+      <div class="callout info">
+        <div class="callout-icon">🎯</div>
+        <div class="callout-body"><div class="callout-title">The Key Insight</div>If we have a window and we're sliding it, old elements that will never be the maximum again are USELESS. The monotonic queue efficiently discards them! This turns O(n·k) to O(n).</div>
+      </div>
+    </div>
+
+    <div class="viz-container">
+      <div class="viz-title">📊 Sliding Window Maximum — Interactive</div>
+      <p style="color:var(--text2);font-size:0.85rem;margin-bottom:16px;">Array: [1, 3, -1, -3, 5, 3, 6, 7] | Window size k=3</p>
+      <div class="sw-array" id="swArray"></div>
+      <div class="viz-controls" style="margin-top:12px;">
+        <button class="viz-btn" onclick="swNext()">Next Step →</button>
+        <button class="viz-btn" onclick="swReset()">Reset</button>
+      </div>
+      <div style="margin-top:12px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--text3);margin-bottom:6px;">MONOTONIC DEQUE (stores indices, maintains decreasing order of values):</div>
+        <div class="mono-queue" id="monoQueue"></div>
+      </div>
+      <div class="viz-log" id="swLog"><span class="log-info">Press "Next Step" to begin sliding window.</span></div>
+      <div id="swResult" style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--accent3);"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-code">Implementation</span> Sliding Window Maximum</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">maxSlidingWindow</span>(nums, k):
+    <span class="str">"""
+    Find max in every window of size k.
+    Time: O(n) — each element pushed/popped at most once
+    Space: O(k) — deque stores at most k indices
+    """</span>
+    <span class="kw">if</span> <span class="kw">not</span> nums <span class="kw">or</span> k == <span class="num">0</span>:
+        <span class="kw">return</span> []
+    
+    dq = deque()  <span class="cm"># Stores INDICES, not values</span>
+    result = []
+    
+    <span class="kw">for</span> i, num <span class="kw">in</span> <span class="kw">enumerate</span>(nums):
+        
+        <span class="cm"># Step 1: Remove indices outside current window</span>
+        <span class="cm"># Window is [i-k+1, i], so any index < i-k+1 is out</span>
+        <span class="kw">while</span> dq <span class="kw">and</span> dq[<span class="num">0</span>] < i - k + <span class="num">1</span>:
+            dq.popleft()
+        
+        <span class="cm"># Step 2: Remove smaller elements from right</span>
+        <span class="cm"># They can NEVER be the max while current num exists</span>
+        <span class="kw">while</span> dq <span class="kw">and</span> nums[dq[<span class="num">-1</span>]] < num:
+            dq.pop()
+        
+        <span class="cm"># Step 3: Add current index</span>
+        dq.append(i)
+        
+        <span class="cm"># Step 4: Window is full — record max</span>
+        <span class="cm"># Front of deque always has index of MAXIMUM</span>
+        <span class="kw">if</span> i >= k - <span class="num">1</span>:
+            result.append(nums[dq[<span class="num">0</span>]])
+    
+    <span class="kw">return</span> result
+
+<span class="cm"># Dry Run</span>
+nums = [<span class="num">1</span>, <span class="num">3</span>, <span class="num">-1</span>, <span class="num">-3</span>, <span class="num">5</span>, <span class="num">3</span>, <span class="num">6</span>, <span class="num">7</span>]
+k = <span class="num">3</span>
+<span class="kw">print</span>(maxSlidingWindow(nums, k))
+<span class="cm"># Output: [3, 3, 5, 5, 6, 7]</span>
+<span class="cm"># Window [1,3,-1]→3, [3,-1,-3]→3, [-1,-3,5]→5...</span></pre>
+      </div>
+    </div>
+
+    <div class="interview-box">
+      <div class="interview-box-title">🎯 Pattern Recognition: When to Use Monotonic Queue</div>
+      <ul>
+        <li>Problem says "find max/min in every window of size k" → Monotonic Queue</li>
+        <li>Problem has "sliding window" + needs range max/min → Monotonic Deque</li>
+        <li>Any problem where you need to efficiently get max/min as a range slides → think monotonic</li>
+        <li>LeetCode patterns: 239, 862, 1438, 1696</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===========================
+       SECTION 8: QUEUE PATTERNS
+       =========================== -->
+  <section class="section" id="s8">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <div>
+        <div class="section-title">Queue Patterns for Interviews</div>
+        <div class="section-desc">Recognize these patterns and you'll solve 80% of queue problems</div>
+      </div>
+    </div>
+
+    <div class="pattern-grid">
+      <div class="pattern-card">
+        <div class="pattern-icon">🌊</div>
+        <div class="pattern-name">BFS Pattern</div>
+        <div class="pattern-desc">Level-by-level traversal of trees and graphs. Use queue to process nodes.</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-icon">🎯</div>
+        <div class="pattern-name">Multi-Source BFS</div>
+        <div class="pattern-desc">Start BFS from multiple nodes simultaneously. Initialize queue with all sources.</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-icon">🪟</div>
+        <div class="pattern-name">Sliding Window</div>
+        <div class="pattern-desc">Monotonic deque for O(n) window max/min. Remove out-of-window indices.</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-icon">📦</div>
+        <div class="pattern-name">Producer-Consumer</div>
+        <div class="pattern-desc">Queue buffers between producers and consumers. Thread-safe queue.Queue.</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-icon">📅</div>
+        <div class="pattern-name">Scheduling</div>
+        <div class="pattern-desc">Priority queue for task scheduling. Process by urgency, not arrival.</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-icon">🎮</div>
+        <div class="pattern-name">Simulation</div>
+        <div class="pattern-desc">Simulate real-world processes: service queues, event handling, game states.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-concept">Pattern</span> BFS Level Order Traversal Template</div>
+      <p>This template solves <strong>hundreds</strong> of interview problems. Memorize it!</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — BFS Template</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">bfs_template</span>(start):
+    <span class="str">"""Universal BFS Template — works for trees, graphs, grids."""</span>
+    queue = deque([start])
+    visited = {start}      <span class="cm"># Prevent revisiting</span>
+    level = <span class="num">0</span>
+    
+    <span class="kw">while</span> queue:
+        <span class="cm"># Process entire level at once</span>
+        level_size = <span class="kw">len</span>(queue)  <span class="cm"># Nodes at current level</span>
+        
+        <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(level_size):
+            node = queue.popleft()
+            
+            <span class="cm"># ✅ PROCESS node here</span>
+            
+            <span class="cm"># Add unvisited neighbors</span>
+            <span class="kw">for</span> neighbor <span class="kw">in</span> get_neighbors(node):
+                <span class="kw">if</span> neighbor <span class="kw">not in</span> visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+        
+        level += <span class="num">1</span>  <span class="cm"># Move to next level</span>
+    
+    <span class="kw">return</span> level
+
+
+<span class="cm"># ===== GRID BFS TEMPLATE =====</span>
+<span class="kw">def</span> <span class="fn">grid_bfs</span>(grid, start_r, start_c, target_r, target_c):
+    <span class="str">"""BFS on a 2D grid to find shortest path."""</span>
+    rows, cols = <span class="kw">len</span>(grid), <span class="kw">len</span>(grid[<span class="num">0</span>])
+    queue = deque([(start_r, start_c, <span class="num">0</span>)])  <span class="cm"># (row, col, distance)</span>
+    visited = {(start_r, start_c)}
+    directions = [(<span class="num">0</span>,<span class="num">1</span>), (<span class="num">0</span>,<span class="num">-1</span>), (<span class="num">1</span>,<span class="num">0</span>), (<span class="num">-1</span>,<span class="num">0</span>)]  <span class="cm"># Right, Left, Down, Up</span>
+    
+    <span class="kw">while</span> queue:
+        r, c, dist = queue.popleft()
+        
+        <span class="kw">if</span> r == target_r <span class="kw">and</span> c == target_c:
+            <span class="kw">return</span> dist  <span class="cm"># Found! Return shortest distance</span>
+        
+        <span class="kw">for</span> dr, dc <span class="kw">in</span> directions:
+            nr, nc = r + dr, c + dc
+            <span class="cm"># Check bounds + not wall + not visited</span>
+            <span class="kw">if</span> (<span class="num">0</span> <= nr < rows <span class="kw">and</span> <span class="num">0</span> <= nc < cols <span class="kw">and</span>
+                grid[nr][nc] != <span class="num">1</span> <span class="kw">and</span> (nr, nc) <span class="kw">not in</span> visited):
+                visited.add((nr, nc))
+                queue.append((nr, nc, dist + <span class="num">1</span>))
+    
+    <span class="kw">return</span> -<span class="num">1</span>  <span class="cm"># No path found</span></pre>
+      </div>
+    </div>
+
+    <div class="callout interview">
+      <div class="callout-icon">🏆</div>
+      <div class="callout-body">
+        <div class="callout-title">How to Identify Queue Problems</div>
+        Look for these keywords: <strong>"level by level," "layer by layer," "shortest path," "minimum steps," "spreading," "rotting," "islands," "nearest,"</strong> or anything that implies exploring in waves. These all scream BFS → Queue!
+      </div>
+    </div>
+  </section>
+
+  <!-- ===========================
+       SECTION 9: BFS & GRAPHS
+       =========================== -->
+  <section class="section" id="s9">
+    <div class="section-header">
+      <span class="section-num">09</span>
+      <div>
+        <div class="section-title">BFS and Graph Connections</div>
+        <div class="section-desc">Queue is the engine behind BFS — master this and unlock graph problems</div>
+      </div>
+    </div>
+
+    <div class="viz-container">
+      <div class="viz-title">🗺️ BFS Grid Visualization</div>
+      <p style="color:var(--text2);font-size:0.85rem;margin-bottom:16px;">🟢 Start | 🔴 End | ⬛ Wall | 🟣 Visited | 🟡 Shortest Path</p>
+      <div class="bfs-grid" id="bfsGrid"></div>
+      <div class="viz-controls">
+        <button class="viz-btn" onclick="bfsStep()">BFS Step →</button>
+        <button class="viz-btn" onclick="bfsReset()">Reset</button>
+        <button class="viz-btn" onclick="bfsAuto()">Auto Run</button>
+      </div>
+      <div style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--text3);">Queue: <span id="bfsQueueDisplay">[]</span></div>
+      <div class="viz-log" id="bfsLog"><span class="log-info">Press "BFS Step" to explore level by level.</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-code">Code</span> Rotten Oranges — Classic BFS Problem</div>
+      <div class="callout info">
+        <div class="callout-icon">🍊</div>
+        <div class="callout-body"><strong>Problem:</strong> In a grid, 0=empty, 1=fresh orange, 2=rotten orange. Every minute, rotten oranges spread to adjacent fresh ones. Return minimum minutes to rot all oranges, or -1 if impossible.</div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">orangesRotting</span>(grid):
+    <span class="str">"""
+    Multi-source BFS — start from ALL rotten oranges at once!
+    Time: O(m*n) | Space: O(m*n)
+    """</span>
+    rows, cols = <span class="kw">len</span>(grid), <span class="kw">len</span>(grid[<span class="num">0</span>])
+    queue = deque()
+    fresh = <span class="num">0</span>
+    
+    <span class="cm"># Step 1: Find all initially rotten + count fresh</span>
+    <span class="kw">for</span> r <span class="kw">in</span> <span class="kw">range</span>(rows):
+        <span class="kw">for</span> c <span class="kw">in</span> <span class="kw">range</span>(cols):
+            <span class="kw">if</span> grid[r][c] == <span class="num">2</span>:
+                queue.append((r, c, <span class="num">0</span>))  <span class="cm"># (row, col, time)</span>
+            <span class="kw">elif</span> grid[r][c] == <span class="num">1</span>:
+                fresh += <span class="num">1</span>
+    
+    <span class="cm"># If no fresh oranges, already done</span>
+    <span class="kw">if</span> fresh == <span class="num">0</span>:
+        <span class="kw">return</span> <span class="num">0</span>
+    
+    <span class="cm"># Step 2: Multi-source BFS from all rotten oranges</span>
+    dirs = [(<span class="num">0</span>,<span class="num">1</span>), (<span class="num">0</span>,<span class="num">-1</span>), (<span class="num">1</span>,<span class="num">0</span>), (<span class="num">-1</span>,<span class="num">0</span>)]
+    max_time = <span class="num">0</span>
+    
+    <span class="kw">while</span> queue:
+        r, c, time = queue.popleft()
+        
+        <span class="kw">for</span> dr, dc <span class="kw">in</span> dirs:
+            nr, nc = r + dr, c + dc
+            <span class="kw">if</span> (<span class="num">0</span> <= nr < rows <span class="kw">and</span> <span class="num">0</span> <= nc < cols
+                    <span class="kw">and</span> grid[nr][nc] == <span class="num">1</span>):  <span class="cm"># Fresh orange!</span>
+                grid[nr][nc] = <span class="num">2</span>             <span class="cm"># Mark as rotten</span>
+                fresh -= <span class="num">1</span>
+                max_time = time + <span class="num">1</span>
+                queue.append((nr, nc, time + <span class="num">1</span>))
+    
+    <span class="cm"># Return -1 if some fresh oranges unreachable</span>
+    <span class="kw">return</span> max_time <span class="kw">if</span> fresh == <span class="num">0</span> <span class="kw">else</span> -<span class="num">1</span>
+
+<span class="cm"># Test</span>
+grid = [[<span class="num">2</span>,<span class="num">1</span>,<span class="num">1</span>],[<span class="num">1</span>,<span class="num">1</span>,<span class="num">0</span>],[<span class="num">0</span>,<span class="num">1</span>,<span class="num">1</span>]]
+<span class="kw">print</span>(orangesRotting(grid))  <span class="cm"># 4 minutes</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===========================
+       SECTION 10: ADVANCED
+       =========================== -->
+  <section class="section" id="s10">
+    <div class="section-header">
+      <span class="section-num">10</span>
+      <div>
+        <div class="section-title">Advanced Queue Concepts</div>
+        <div class="section-desc">Queue using stacks, stack using queues, and system design concepts</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-code">Classic</span> Queue Using Two Stacks</div>
+      <p>A famous interview problem! Implement a queue using only two stacks. The trick: use one stack for enqueue, another for dequeue. Transfer when needed.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">class</span> <span class="cls">MyQueue</span>:
+    <span class="str">"""Queue using two stacks — Amortized O(1) per operation."""</span>
+    
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>):
+        <span class="self">self</span>.in_stack = []   <span class="cm"># For enqueue (push here)</span>
+        <span class="self">self</span>.out_stack = []  <span class="cm"># For dequeue (pop from here)</span>
+    
+    <span class="kw">def</span> <span class="fn">push</span>(<span class="self">self</span>, x):
+        <span class="cm"># Always enqueue to in_stack: O(1)</span>
+        <span class="self">self</span>.in_stack.append(x)
+    
+    <span class="kw">def</span> <span class="fn">_transfer</span>(<span class="self">self</span>):
+        <span class="cm"># Move all from in_stack to out_stack</span>
+        <span class="cm"># This reverses order → FIFO is maintained!</span>
+        <span class="kw">if</span> <span class="kw">not</span> <span class="self">self</span>.out_stack:
+            <span class="kw">while</span> <span class="self">self</span>.in_stack:
+                <span class="self">self</span>.out_stack.append(<span class="self">self</span>.in_stack.pop())
+    
+    <span class="kw">def</span> <span class="fn">pop</span>(<span class="self">self</span>):
+        <span class="cm"># Transfer if out_stack empty, then pop</span>
+        <span class="self">self</span>._transfer()
+        <span class="kw">return</span> <span class="self">self</span>.out_stack.pop()
+    
+    <span class="kw">def</span> <span class="fn">peek</span>(<span class="self">self</span>):
+        <span class="self">self</span>._transfer()
+        <span class="kw">return</span> <span class="self">self</span>.out_stack[<span class="num">-1</span>]
+    
+    <span class="kw">def</span> <span class="fn">empty</span>(<span class="self">self</span>):
+        <span class="kw">return</span> <span class="kw">not</span> <span class="self">self</span>.in_stack <span class="kw">and</span> <span class="kw">not</span> <span class="self">self</span>.out_stack
+
+<span class="cm"># Dry Run</span>
+q = <span class="cls">MyQueue</span>()
+q.push(<span class="num">1</span>); q.push(<span class="num">2</span>); q.push(<span class="num">3</span>)
+<span class="cm"># in_stack=[1,2,3], out_stack=[]</span>
+<span class="kw">print</span>(q.pop())   <span class="cm"># Transfer: out=[3,2,1], pop=1</span>
+<span class="kw">print</span>(q.peek())  <span class="cm"># out=[3,2], peek=2</span>
+q.push(<span class="num">4</span>)
+<span class="cm"># in_stack=[4], out_stack=[3,2]</span>
+<span class="kw">print</span>(q.pop())   <span class="cm"># No transfer needed: pop 2</span>
+<span class="kw">print</span>(q.pop())   <span class="cm"># pop 3</span>
+<span class="kw">print</span>(q.pop())   <span class="cm"># Transfer in→out: pop 4</span></pre>
+      </div>
+      <div class="callout tip">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body"><div class="callout-title">Why Amortized O(1)?</div>Each element is pushed to in_stack once and popped from out_stack once. Even though transfer looks expensive, across N operations, total work is O(N). Average per operation = O(1). This is amortized analysis!</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-concept">System Design</span> Message Queues in Distributed Systems</div>
+      <p>In production systems, queues are used to decouple services and handle high throughput:</p>
+      <ul style="margin:12px 0 0 16px;">
+        <li><strong>Apache Kafka</strong> — Distributed message queue, handles millions of messages/second</li>
+        <li><strong>RabbitMQ</strong> — Traditional message broker with AMQP protocol</li>
+        <li><strong>AWS SQS</strong> — Managed queue service by Amazon</li>
+        <li><strong>Redis Queue</strong> — In-memory queue with persistence options</li>
+      </ul>
+      <div class="callout info" style="margin-top:16px;">
+        <div class="callout-icon">🏗️</div>
+        <div class="callout-body"><div class="callout-title">Producer-Consumer Pattern</div>Producer puts items in queue → Consumer takes items. Queue acts as a buffer, allowing producers and consumers to work at different speeds without data loss.</div>
+      </div>
+    </div>
+
+    <div class="deep-dive">
+      <div class="deep-dive-header" onclick="toggleDeepDive(this)">
+        📚 Deep Dive: Async Queues with asyncio
+        <span class="deep-dive-arrow">▼</span>
+      </div>
+      <div class="deep-dive-body">
+        <p>Python's <code>asyncio.Queue</code> is for async/await programming:</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — Async Queue</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">import</span> asyncio
+
+<span class="kw">async def</span> <span class="fn">producer</span>(queue):
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="num">5</span>):
+        <span class="kw">await</span> asyncio.sleep(<span class="num">0.5</span>)  <span class="cm"># Simulate work</span>
+        <span class="kw">await</span> queue.put(i)
+        <span class="kw">print</span>(<span class="str">f"Produced: {i}"</span>)
+
+<span class="kw">async def</span> <span class="fn">consumer</span>(queue):
+    <span class="kw">while True</span>:
+        item = <span class="kw">await</span> queue.get()  <span class="cm"># Waits if empty</span>
+        <span class="kw">print</span>(<span class="str">f"Consumed: {item}"</span>)
+        queue.task_done()
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    queue = asyncio.Queue()
+    <span class="kw">await</span> asyncio.gather(
+        producer(queue),
+        consumer(queue)
+    )
+
+asyncio.run(main())</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===========================
+       SECTION 11: COMPLEXITY
+       =========================== -->
+  <section class="section" id="s11">
+    <div class="section-header">
+      <span class="section-num">11</span>
+      <div>
+        <div class="section-title">Complexity Analysis</div>
+        <div class="section-desc">Time and space complexity for every queue type and operation</div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>Queue Type</th><th>Enqueue</th><th>Dequeue</th><th>Peek</th><th>Search</th><th>Space</th></tr>
+        <tr><td>List-based</td><td class="good">O(1)</td><td class="bad">O(n)</td><td class="good">O(1)</td><td class="bad">O(n)</td><td class="ok">O(n)</td></tr>
+        <tr><td>collections.deque</td><td class="good">O(1)</td><td class="good">O(1)</td><td class="good">O(1)</td><td class="bad">O(n)</td><td class="ok">O(n)</td></tr>
+        <tr><td>queue.Queue</td><td class="good">O(1)</td><td class="good">O(1)</td><td class="good">O(1)</td><td class="bad">O(n)</td><td class="ok">O(n)</td></tr>
+        <tr><td>Circular Queue</td><td class="good">O(1)</td><td class="good">O(1)</td><td class="good">O(1)</td><td class="bad">O(n)</td><td class="good">O(k) fixed</td></tr>
+        <tr><td>Priority Queue (heap)</td><td class="ok">O(log n)</td><td class="ok">O(log n)</td><td class="good">O(1)</td><td class="bad">O(n)</td><td class="ok">O(n)</td></tr>
+        <tr><td>Monotonic Deque</td><td class="good">O(1)*</td><td class="good">O(1)*</td><td class="good">O(1)</td><td class="bad">O(n)</td><td class="ok">O(k)</td></tr>
+      </table>
+    </div>
+    <p style="color:var(--text3);font-size:0.78rem;margin-top:4px;">* Amortized O(1) — each element pushed/popped at most once across all operations</p>
+
+    <div class="card">
+      <div class="card-title"><span class="tag tag-concept">When to Use What</span></div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Scenario</th><th>Best Choice</th><th>Why</th></tr>
+          <tr><td>General BFS / graph</td><td><code>collections.deque</code></td><td>O(1) both ends, fast</td></tr>
+          <tr><td>Multithreaded app</td><td><code>queue.Queue</code></td><td>Thread-safe, blocking</td></tr>
+          <tr><td>Priority scheduling</td><td><code>heapq</code></td><td>O(log n) ordered access</td></tr>
+          <tr><td>Sliding window max/min</td><td>Monotonic deque</td><td>O(n) total complexity</td></tr>
+          <tr><td>Fixed-size buffer</td><td>Circular Queue</td><td>No wasted space</td></tr>
+          <tr><td>Quick prototype</td><td>Python list</td><td>Simple, acceptable for small data</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===========================
+       SECTION 12: PROBLEMS
+       =========================== -->
+  <section class="section" id="s12">
+    <div class="section-header">
+      <span class="section-num">12</span>
+      <div>
+        <div class="section-title">Queue Interview Problems</div>
+        <div class="section-desc">9 must-know problems with full solutions, dry runs, and pattern identification</div>
+      </div>
+    </div>
+
+    <!-- PROBLEM 1 -->
+    <div class="problem-card">
+      <div class="problem-header">
+        <div class="problem-title">1. Binary Tree Level Order Traversal</div>
+        <span class="diff-badge diff-med">Medium</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--text3);">LeetCode 102</span>
+      </div>
+      <div class="problem-body">
+        <div class="problem-tabs">
+          <div class="ptab active" onclick="switchTab(this,'p1-explain')">Explanation</div>
+          <div class="ptab" onclick="switchTab(this,'p1-code')">Solution</div>
+          <div class="ptab" onclick="switchTab(this,'p1-dry')">Dry Run</div>
+        </div>
+        <div class="ptab-content active" id="p1-explain">
+          <p><strong>Problem:</strong> Given root of binary tree, return level order traversal as list of lists.</p>
+          <p><strong>Pattern:</strong> Classic BFS — process entire level before moving to next.</p>
+          <p><strong>Key Insight:</strong> Before processing any node, record <code>len(queue)</code> — this is exactly the number of nodes at the current level!</p>
+        </div>
+        <div class="ptab-content" id="p1-code">
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">levelOrder</span>(root):
+    <span class="kw">if not</span> root:
+        <span class="kw">return</span> []
+    
+    result = []
+    queue = deque([root])
+    
+    <span class="kw">while</span> queue:
+        level_size = <span class="kw">len</span>(queue)  <span class="cm"># Nodes at this level</span>
+        level = []
+        
+        <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(level_size):
+            node = queue.popleft()
+            level.append(node.val)
+            
+            <span class="kw">if</span> node.left:
+                queue.append(node.left)
+            <span class="kw">if</span> node.right:
+                queue.append(node.right)
+        
+        result.append(level)
+    
+    <span class="kw">return</span> result
+<span class="cm"># Time: O(n) | Space: O(n)</span></pre>
+          </div>
+        </div>
+        <div class="ptab-content" id="p1-dry">
+          <div class="dry-run">
+            <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:8px;font-size:0.85rem;">Tree: 3 → [9, 20] → [15, 7]</div>
+            <div class="dry-step"><span class="dry-step-num">L0:</span><span class="dry-step-action">queue=[3] → process 3 → add 9,20</span><span class="dry-step-state">result=[[3]]</span></div>
+            <div class="dry-step"><span class="dry-step-num">L1:</span><span class="dry-step-action">queue=[9,20] → process both → add 15,7</span><span class="dry-step-state">result=[[3],[9,20]]</span></div>
+            <div class="dry-step"><span class="dry-step-num">L2:</span><span class="dry-step-action">queue=[15,7] → process both → no children</span><span class="dry-step-state">result=[[3],[9,20],[15,7]]</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROBLEM 2 -->
+    <div class="problem-card">
+      <div class="problem-header">
+        <div class="problem-title">2. Sliding Window Maximum</div>
+        <span class="diff-badge diff-hard">Hard</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--text3);">LeetCode 239</span>
+      </div>
+      <div class="problem-body">
+        <div class="problem-tabs">
+          <div class="ptab active" onclick="switchTab(this,'p2-explain')">Explanation</div>
+          <div class="ptab" onclick="switchTab(this,'p2-code')">Solution</div>
+        </div>
+        <div class="ptab-content active" id="p2-explain">
+          <p><strong>Problem:</strong> Given array <code>nums</code> and window size <code>k</code>, return max in each sliding window.</p>
+          <p><strong>Brute Force:</strong> O(n·k) — for each window, scan all k elements. Too slow!</p>
+          <p><strong>Optimal:</strong> Monotonic Decreasing Deque — O(n) total, O(k) space.</p>
+          <p><strong>Rule:</strong> Maintain deque with indices such that <code>nums[dq[0]] ≥ nums[dq[1]] ≥ ... ≥ nums[dq[-1]]</code>. Front is always the max!</p>
+        </div>
+        <div class="ptab-content" id="p2-code">
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">maxSlidingWindow</span>(nums, k):
+    dq = deque()  <span class="cm"># Monotonic decreasing deque (stores indices)</span>
+    result = []
+    
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(nums)):
+        <span class="cm"># Remove out-of-window indices</span>
+        <span class="kw">while</span> dq <span class="kw">and</span> dq[<span class="num">0</span>] < i - k + <span class="num">1</span>:
+            dq.popleft()
+        
+        <span class="cm"># Remove indices of smaller elements (useless)</span>
+        <span class="kw">while</span> dq <span class="kw">and</span> nums[dq[<span class="num">-1</span>]] < nums[i]:
+            dq.pop()
+        
+        dq.append(i)
+        
+        <span class="kw">if</span> i >= k - <span class="num">1</span>:
+            result.append(nums[dq[<span class="num">0</span>]])
+    
+    <span class="kw">return</span> result
+<span class="cm"># Time: O(n) | Space: O(k)</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROBLEM 3 -->
+    <div class="problem-card">
+      <div class="problem-header">
+        <div class="problem-title">3. Implement Queue using Stacks</div>
+        <span class="diff-badge diff-easy">Easy</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--text3);">LeetCode 232</span>
+      </div>
+      <div class="problem-body">
+        <div class="problem-tabs">
+          <div class="ptab active" onclick="switchTab(this,'p3-code')">Solution</div>
+        </div>
+        <div class="ptab-content active" id="p3-code">
+          <p style="margin-bottom:12px;">Implement FIFO queue using only two stacks. Full solution with amortized O(1) operations — see Section 10 above!</p>
+          <div class="callout tip">
+            <div class="callout-icon">💡</div>
+            <div class="callout-body"><div class="callout-title">The Trick</div>Two stacks together act as a queue! in_stack collects, out_stack serves. Transfer only when out_stack is empty. Each element transferred exactly once → amortized O(1).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROBLEM 4 -->
+    <div class="problem-card">
+      <div class="problem-header">
+        <div class="problem-title">4. First Non-Repeating Character in Stream</div>
+        <span class="diff-badge diff-med">Medium</span>
+      </div>
+      <div class="problem-body">
+        <div class="problem-tabs">
+          <div class="ptab active" onclick="switchTab(this,'p4-explain')">Explanation</div>
+          <div class="ptab" onclick="switchTab(this,'p4-code')">Solution</div>
+        </div>
+        <div class="ptab-content active" id="p4-explain">
+          <p><strong>Problem:</strong> Given a stream of characters, for every character in stream, find first non-repeating character so far.</p>
+          <p><strong>Pattern:</strong> Queue + Counter. Maintain a queue of characters. Use Counter to track frequencies. Front of queue is candidate for non-repeating — if its count > 1, discard it.</p>
+        </div>
+        <div class="ptab-content" id="p4-code">
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><span class="kw">from</span> collections <span class="kw">import</span> deque, Counter
+
+<span class="kw">def</span> <span class="fn">firstNonRepeating</span>(stream):
+    <span class="str">"""For each char in stream, return first non-repeating so far."""</span>
+    queue = deque()  <span class="cm"># Maintains insertion order</span>
+    count = Counter()  <span class="cm"># Frequency of each char</span>
+    result = []
+    
+    <span class="kw">for</span> char <span class="kw">in</span> stream:
+        count[char] += <span class="num">1</span>
+        queue.append(char)
+        
+        <span class="cm"># Remove front if it became repeating</span>
+        <span class="kw">while</span> queue <span class="kw">and</span> count[queue[<span class="num">0</span>]] > <span class="num">1</span>:
+            queue.popleft()
+        
+        <span class="cm"># Front of queue is first non-repeating</span>
+        result.append(queue[<span class="num">0</span>] <span class="kw">if</span> queue <span class="kw">else</span> <span class="str">'#'</span>)
+    
+    <span class="kw">return</span> result
+
+stream = <span class="str">"abacd"</span>
+<span class="kw">print</span>(firstNonRepeating(stream))
+<span class="cm"># a → 'a'</span>
+<span class="cm"># b → 'a'  (a still first non-repeating)</span>
+<span class="cm"># a → 'b'  (a repeated, b is now first)</span>
+<span class="cm"># c → 'b'</span>
+<span class="cm"># d → 'b'</span>
+<span class="cm"># Output: ['a', 'a', 'b', 'b', 'b']</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROBLEM 5 -->
+    <div class="problem-card">
+      <div class="problem-header">
+        <div class="problem-title">5. Task Scheduler</div>
+        <span class="diff-badge diff-med">Medium</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--text3);">LeetCode 621</span>
+      </div>
+      <div class="problem-body">
+        <div class="problem-tabs">
+          <div class="ptab active" onclick="switchTab(this,'p5-explain')">Explanation</div>
+          <div class="ptab" onclick="switchTab(this,'p5-code')">Solution</div>
+        </div>
+        <div class="ptab-content active" id="p5-explain">
+          <p><strong>Problem:</strong> CPU tasks, each with cooldown n between same tasks. Return minimum time to finish all tasks.</p>
+          <p><strong>Pattern:</strong> Max Heap + Queue. Process most frequent task first. Use queue to track tasks in cooldown, release them when cooldown expires.</p>
+        </div>
+        <div class="ptab-content" id="p5-code">
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><span class="kw">import</span> heapq
+<span class="kw">from</span> collections <span class="kw">import</span> Counter, deque
+
+<span class="kw">def</span> <span class="fn">leastInterval</span>(tasks, n):
+    <span class="str">"""
+    Max heap + cooldown queue approach.
+    Time: O(n log n) | Space: O(n)
+    """</span>
+    count = Counter(tasks)
+    <span class="cm"># Max-heap: negate counts (Python has min-heap)</span>
+    heap = [-c <span class="kw">for</span> c <span class="kw">in</span> count.values()]
+    heapq.heapify(heap)
+    
+    <span class="cm"># Queue: stores (-remaining_count, available_at_time)</span>
+    cooldown_q = deque()
+    time = <span class="num">0</span>
+    
+    <span class="kw">while</span> heap <span class="kw">or</span> cooldown_q:
+        time += <span class="num">1</span>
+        
+        <span class="kw">if</span> heap:
+            cnt = heapq.heappop(heap) + <span class="num">1</span>  <span class="cm"># Do task (decrement)</span>
+            <span class="kw">if</span> cnt:  <span class="cm"># Still has remaining count</span>
+                cooldown_q.append((cnt, time + n))  <span class="cm"># Put in cooldown</span>
+        
+        <span class="cm"># Release tasks whose cooldown expired</span>
+        <span class="kw">if</span> cooldown_q <span class="kw">and</span> cooldown_q[<span class="num">0</span>][<span class="num">1</span>] == time:
+            heapq.heappush(heap, cooldown_q.popleft()[<span class="num">0</span>])
+    
+    <span class="kw">return</span> time
+
+<span class="kw">print</span>(leastInterval([<span class="str">"A"</span>,<span class="str">"A"</span>,<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"B"</span>,<span class="str">"B"</span>], <span class="num">2</span>))  <span class="cm"># 8</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROBLEM 6 -->
+    <div class="problem-card">
+      <div class="problem-header">
+        <div class="problem-title">6. Moving Average from Data Stream</div>
+        <span class="diff-badge diff-easy">Easy</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--text3);">LeetCode 346</span>
+      </div>
+      <div class="problem-body">
+        <div class="problem-tabs">
+          <div class="ptab active" onclick="switchTab(this,'p6-code')">Solution</div>
+        </div>
+        <div class="ptab-content active" id="p6-code">
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">class</span> <span class="cls">MovingAverage</span>:
+    <span class="str">"""Moving average using fixed-size deque window."""</span>
+    
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>, size):
+        <span class="self">self</span>.size = size
+        <span class="self">self</span>.window = deque()
+        <span class="self">self</span>.window_sum = <span class="num">0</span>
+    
+    <span class="kw">def</span> <span class="fn">next</span>(<span class="self">self</span>, val):
+        <span class="kw">if</span> <span class="kw">len</span>(<span class="self">self</span>.window) == <span class="self">self</span>.size:
+            <span class="cm"># Remove oldest element, subtract from sum</span>
+            <span class="self">self</span>.window_sum -= <span class="self">self</span>.window.popleft()
+        
+        <span class="self">self</span>.window.append(val)
+        <span class="self">self</span>.window_sum += val
+        
+        <span class="kw">return</span> <span class="self">self</span>.window_sum / <span class="kw">len</span>(<span class="self">self</span>.window)
+
+mv = <span class="cls">MovingAverage</span>(<span class="num">3</span>)
+<span class="kw">print</span>(mv.next(<span class="num">1</span>))  <span class="cm"># 1.0  → window=[1]</span>
+<span class="kw">print</span>(mv.next(<span class="num">10</span>)) <span class="cm"># 5.5  → window=[1,10]</span>
+<span class="kw">print</span>(mv.next(<span class="num">3</span>))  <span class="cm"># 4.67 → window=[1,10,3]</span>
+<span class="kw">print</span>(mv.next(<span class="num">5</span>))  <span class="cm"># 6.0  → window=[10,3,5] (1 evicted)</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROBLEM 7: Number of Recent Calls -->
+    <div class="problem-card">
+      <div class="problem-header">
+        <div class="problem-title">7. Number of Recent Calls</div>
+        <span class="diff-badge diff-easy">Easy</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--text3);">LeetCode 933</span>
+      </div>
+      <div class="problem-body">
+        <div class="problem-tabs">
+          <div class="ptab active" onclick="switchTab(this,'p7-code')">Solution</div>
+        </div>
+        <div class="ptab-content active" id="p7-code">
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">class</span> <span class="cls">RecentCounter</span>:
+    <span class="str">"""Count requests within last 3000ms using queue."""</span>
+    
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>):
+        <span class="self">self</span>.q = deque()  <span class="cm"># Stores timestamps</span>
+    
+    <span class="kw">def</span> <span class="fn">ping</span>(<span class="self">self</span>, t: int) -> int:
+        <span class="self">self</span>.q.append(t)
+        
+        <span class="cm"># Remove timestamps older than [t-3000, t]</span>
+        <span class="kw">while</span> <span class="self">self</span>.q[<span class="num">0</span>] < t - <span class="num">3000</span>:
+            <span class="self">self</span>.q.popleft()
+        
+        <span class="kw">return</span> <span class="kw">len</span>(<span class="self">self</span>.q)  <span class="cm"># All remaining are in range</span>
+
+<span class="cm"># Test</span>
+rc = <span class="cls">RecentCounter</span>()
+<span class="kw">print</span>(rc.ping(<span class="num">1</span>))     <span class="cm"># 1 (only t=1 in [1-3000,1]=[-2999,1])</span>
+<span class="kw">print</span>(rc.ping(<span class="num">100</span>))   <span class="cm"># 2</span>
+<span class="kw">print</span>(rc.ping(<span class="num">3001</span>))  <span class="cm"># 3</span>
+<span class="kw">print</span>(rc.ping(<span class="num">3002</span>))  <span class="cm"># 3 (t=1 removed — 3002-3000=2 > 1)</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROBLEM 8: Design Circular Queue -->
+    <div class="problem-card">
+      <div class="problem-header">
+        <div class="problem-title">8. Design Circular Queue</div>
+        <span class="diff-badge diff-med">Medium</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--text3);">LeetCode 622</span>
+      </div>
+      <div class="problem-body">
+        <div class="problem-tabs">
+          <div class="ptab active" onclick="switchTab(this,'p8-code')">Solution</div>
+        </div>
+        <div class="ptab-content active" id="p8-code">
+          <p style="margin-bottom:10px;">Full implementation — see Section 4 (Circular Queue) above for the complete solution with explanation!</p>
+          <div class="callout interview">
+            <div class="callout-icon">🎯</div>
+            <div class="callout-body"><div class="callout-title">Key Interview Points</div><strong>Formula:</strong> <code>rear = (rear + 1) % k</code> | <strong>Full check:</strong> <code>size == capacity</code> | <strong>Empty check:</strong> <code>size == 0</code> | These are what interviewers want to hear.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROBLEM 9 -->
+    <div class="problem-card">
+      <div class="problem-header">
+        <div class="problem-title">9. Rotten Oranges</div>
+        <span class="diff-badge diff-med">Medium</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--text3);">LeetCode 994</span>
+      </div>
+      <div class="problem-body">
+        <div class="problem-tabs">
+          <div class="ptab active" onclick="switchTab(this,'p9-code')">Solution</div>
+        </div>
+        <div class="ptab-content active" id="p9-code">
+          <p style="margin-bottom:10px;">Full solution in Section 9 (BFS and Graphs). Pattern: <strong>Multi-Source BFS</strong> — start from all rotten oranges simultaneously!</p>
+          <div class="callout info">
+            <div class="callout-icon">🍊</div>
+            <div class="callout-body"><div class="callout-title">Multi-Source BFS Pattern</div>Add ALL starting nodes to queue before BFS starts. This simulates them all "spreading" at time=0 simultaneously. Single-source BFS would be wrong here!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===========================
+       SECTION 13: CHEAT SHEET
+       =========================== -->
+  <section class="section" id="s13">
+    <div class="section-header">
+      <span class="section-num">13</span>
+      <div>
+        <div class="section-title">Queue Cheat Sheet</div>
+        <div class="section-desc">Quick revision — everything you need for your interview tomorrow</div>
+      </div>
+    </div>
+
+    <div class="cheat-grid">
+      <div class="cheat-item">
+        <div class="cheat-item-title">🚀 Core Queue (deque)</div>
+        <div class="code-block" style="margin:0;">
+          <pre style="font-size:0.72rem;padding:12px;"><span class="kw">from</span> collections <span class="kw">import</span> deque
+q = deque()
+q.append(x)      <span class="cm"># enqueue O(1)</span>
+q.popleft()      <span class="cm"># dequeue O(1)</span>
+q[0]             <span class="cm"># front O(1)</span>
+q[-1]            <span class="cm"># rear O(1)</span>
+<span class="kw">len</span>(q) == 0      <span class="cm"># isEmpty</span></pre>
+        </div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-item-title">⚡ Priority Queue (heapq)</div>
+        <div class="code-block" style="margin:0;">
+          <pre style="font-size:0.72rem;padding:12px;"><span class="kw">import</span> heapq
+h = []
+heapq.heappush(h, x)  <span class="cm"># O(log n)</span>
+heapq.heappop(h)      <span class="cm"># O(log n)</span>
+h[0]                  <span class="cm"># peek O(1)</span>
+<span class="cm"># Max-heap: push(-x), -pop()</span>
+<span class="cm"># Tuple: (priority, data)</span></pre>
+        </div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-item-title">🔄 BFS Template</div>
+        <div class="code-block" style="margin:0;">
+          <pre style="font-size:0.72rem;padding:12px;">q = deque([start])
+visited = {start}
+<span class="kw">while</span> q:
+  sz = <span class="kw">len</span>(q)
+  <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(sz):
+    node = q.popleft()
+    <span class="cm"># process node</span>
+    <span class="kw">for</span> nb <span class="kw">in</span> neighbors:
+      <span class="kw">if</span> nb <span class="kw">not in</span> visited:
+        q.append(nb)</pre>
+        </div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-item-title">🪟 Sliding Window Max</div>
+        <div class="code-block" style="margin:0;">
+          <pre style="font-size:0.72rem;padding:12px;">dq = deque()  <span class="cm"># indices</span>
+<span class="kw">for</span> i, n <span class="kw">in</span> <span class="kw">enumerate</span>(nums):
+  <span class="kw">while</span> dq <span class="kw">and</span> dq[0] < i-k+1:
+    dq.popleft()
+  <span class="kw">while</span> dq <span class="kw">and</span> nums[dq[-1]] < n:
+    dq.pop()
+  dq.append(i)
+  <span class="kw">if</span> i >= k-1:
+    res.append(nums[dq[0]])</pre>
+        </div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-item-title">🔁 Circular Queue Key</div>
+        <ul>
+          <li><code>rear = (rear+1) % capacity</code></li>
+          <li><code>front = (front+1) % capacity</code></li>
+          <li>Full: <code>size == capacity</code></li>
+          <li>Empty: <code>size == 0</code></li>
+          <li>Never use <code>front == rear</code> alone!</li>
+        </ul>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-item-title">📊 Complexity Quick Ref</div>
+        <ul>
+          <li>deque enqueue/dequeue: <strong>O(1)</strong></li>
+          <li>list dequeue (pop 0): <strong>O(n) ❌</strong></li>
+          <li>heapq push/pop: <strong>O(log n)</strong></li>
+          <li>heapq peek: <strong>O(1)</strong></li>
+          <li>Monotonic total: <strong>O(n)</strong></li>
+        </ul>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-item-title">🎯 Pattern Recognition</div>
+        <ul>
+          <li>"Level by level" → BFS queue</li>
+          <li>"Shortest path" → BFS queue</li>
+          <li>"Spreading/rotting" → Multi-source BFS</li>
+          <li>"Window max/min" → Monotonic deque</li>
+          <li>"By priority" → heapq</li>
+          <li>"Fixed buffer" → Circular queue</li>
+        </ul>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-item-title">⚠️ Common Traps</div>
+        <ul>
+          <li>Using list.pop(0) — it's O(n)!</li>
+          <li>No isEmpty check before dequeue</li>
+          <li>Forgetting visited set in BFS</li>
+          <li>Single-source BFS for multi-source problem</li>
+          <li>Max-heap: forget to negate!</li>
+          <li>Circular queue: wrong full/empty check</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="interview-box">
+      <div class="interview-box-title">🎯 Interview Shortcuts — Say These Out Loud</div>
+      <ul>
+        <li>"I'll use <code>collections.deque</code> for O(1) enqueue and dequeue" — always say this</li>
+        <li>"This is a BFS pattern because [reason] — I'll use a queue"</li>
+        <li>"For sliding window max, I'll use a monotonic decreasing deque to maintain the maximum efficiently in O(n)"</li>
+        <li>"I'll use a priority queue (min-heap) since we need to always process the minimum cost/priority first"</li>
+        <li>"Let me add the visited set to prevent infinite loops in BFS"</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===========================
+       SECTION 14: ROADMAP
+       =========================== -->
+  <section class="section" id="s14">
+    <div class="section-header">
+      <span class="section-num">14</span>
+      <div>
+        <div class="section-title">7-Day Queue Mastery Roadmap</div>
+        <div class="section-desc">Your complete daily schedule to go from zero to interview-ready</div>
+      </div>
+    </div>
+
+    <div class="roadmap">
+      <div class="roadmap-day">
+        <div class="roadmap-dot" style="border-color:var(--accent3);">D1</div>
+        <div class="roadmap-content">
+          <div class="roadmap-day-title">Day 1 — Foundations <span class="badge badge-easy">Beginner</span></div>
+          <ul class="roadmap-items">
+            <li>Read Sections 1–2 (What is Queue, FIFO, operations)</li>
+            <li>Use the interactive visualizer 20+ times</li>
+            <li>Implement Queue using list and deque (Section 3)</li>
+            <li>Write the custom Queue class from scratch without looking</li>
+            <li>Practice: enqueue, dequeue, peek, isEmpty manually on paper</li>
+          </ul>
+        </div>
+      </div>
+      <div class="roadmap-day">
+        <div class="roadmap-dot" style="border-color:var(--accent);">D2</div>
+        <div class="roadmap-content">
+          <div class="roadmap-day-title">Day 2 — Special Queues <span class="badge badge-easy">Beginner</span></div>
+          <ul class="roadmap-items">
+            <li>Circular Queue — understand modulo wrapping (Section 4)</li>
+            <li>Implement Circular Queue from scratch</li>
+            <li>Priority Queue with heapq — min and max heap (Section 5)</li>
+            <li>Practice: heappush, heappop, convert list to heap</li>
+            <li>Solve: LeetCode 933 (Number of Recent Calls) — Easy</li>
+          </ul>
+        </div>
+      </div>
+      <div class="roadmap-day">
+        <div class="roadmap-dot" style="border-color:var(--accent4);">D3</div>
+        <div class="roadmap-content">
+          <div class="roadmap-day-title">Day 3 — Deque and Patterns <span class="badge badge-med">Intermediate</span></div>
+          <ul class="roadmap-items">
+            <li>Deque operations — all 4 directions (Section 6)</li>
+            <li>Understand when to use deque vs queue</li>
+            <li>BFS pattern internalization — memorize the template (Section 8)</li>
+            <li>Solve: LeetCode 102 (Level Order Traversal) — Medium</li>
+            <li>Solve: LeetCode 346 (Moving Average) — Easy</li>
+          </ul>
+        </div>
+      </div>
+      <div class="roadmap-day">
+        <div class="roadmap-dot" style="border-color:#ffa500;">D4</div>
+        <div class="roadmap-content">
+          <div class="roadmap-day-title">Day 4 — BFS Mastery <span class="badge badge-med">Intermediate</span></div>
+          <ul class="roadmap-items">
+            <li>Grid BFS template — practice until automatic (Section 9)</li>
+            <li>Multi-source BFS concept — Rotten Oranges</li>
+            <li>Solve: LeetCode 994 (Rotten Oranges) — Medium</li>
+            <li>Solve: LeetCode 232 (Queue using Stacks) — Easy</li>
+            <li>Solve: LeetCode 622 (Design Circular Queue) — Medium</li>
+          </ul>
+        </div>
+      </div>
+      <div class="roadmap-day">
+        <div class="roadmap-dot" style="border-color:var(--accent2);">D5</div>
+        <div class="roadmap-content">
+          <div class="roadmap-day-title">Day 5 — Advanced Patterns <span class="badge badge-hard">Advanced</span></div>
+          <ul class="roadmap-items">
+            <li>Monotonic Queue deep dive (Section 7)</li>
+            <li>Sliding window maximum — trace through the algorithm manually</li>
+            <li>Solve: LeetCode 239 (Sliding Window Maximum) — Hard</li>
+            <li>Solve: First Non-Repeating Character in stream</li>
+            <li>Study Task Scheduler pattern (heapq + queue combo)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="roadmap-day">
+        <div class="roadmap-dot" style="border-color:#ffd700;">D6</div>
+        <div class="roadmap-content">
+          <div class="roadmap-day-title">Day 6 — Mixed Problems <span class="badge badge-hard">Advanced</span></div>
+          <ul class="roadmap-items">
+            <li>LeetCode 621 (Task Scheduler) — Medium</li>
+            <li>LeetCode 1438 (Longest Subarray with Abs diff ≤ limit) — Hard</li>
+            <li>LeetCode 1696 (Jump Game VI) — Hard (monotonic deque DP)</li>
+            <li>Review complexity analysis for all queue types</li>
+            <li>Study Section 10 (Queue using Stacks, advanced topics)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="roadmap-day">
+        <div class="roadmap-dot" style="border-color:var(--accent3);">D7</div>
+        <div class="roadmap-content">
+          <div class="roadmap-day-title">Day 7 — Mock Interview Day <span class="badge badge-hard">Interview</span></div>
+          <ul class="roadmap-items">
+            <li>Revise Cheat Sheet (Section 13) — 30 minutes</li>
+            <li>Practice explaining "why deque over list" out loud</li>
+            <li>Solve 3 unseen problems with timer (45 mins each)</li>
+            <li>Review all patterns: BFS, multi-source BFS, monotonic, priority</li>
+            <li>Final check: Can you code BFS template without looking?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout success">
+      <div class="callout-icon">🏆</div>
+      <div class="callout-body">
+        <div class="callout-title">You're Interview-Ready When You Can...</div>
+        <ul style="margin:0;padding-left:16px;">
+          <li>Code any queue implementation from scratch in &lt;5 minutes</li>
+          <li>Identify queue patterns from problem description alone</li>
+          <li>Write BFS template without any reference</li>
+          <li>Explain time complexity of every operation confidently</li>
+          <li>Know when to use deque, heapq, or monotonic queue</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-icon">🚫</div>
+      <div class="callout-body">
+        <div class="callout-title">When NOT to Use a Queue</div>
+        <ul style="margin:0;padding-left:16px;">
+          <li><strong>Random access needed</strong> → Use Array/List instead</li>
+          <li><strong>Backtracking/Undo</strong> → Stack is better (LIFO)</li>
+          <li><strong>Sorted data retrieval</strong> → Binary Search Tree or sorted array</li>
+          <li><strong>Key-value lookups</strong> → Dictionary/HashMap</li>
+          <li><strong>DFS traversal</strong> → Stack (or recursion), not queue</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div>⚡ Queue Mastery — Complete DSA Course</div>
+    <div style="margin-top:6px;color:var(--text3);">Built for interview success. Start from Section 1 and never stop until Section 14.</div>
+  </footer>
+
+</main>
+</div>
+
+<script>
+// ============================================================
+// THEME TOGGLE
+// ============================================================
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+}
+
+// ============================================================
+// SIDEBAR TOGGLE (Mobile)
+// ============================================================
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+
+// ============================================================
+// SMOOTH SCROLL
+// ============================================================
+function scrollTo(id) {
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  // Update active nav
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  // Close sidebar on mobile
+  if (window.innerWidth <= 768) toggleSidebar();
+}
+
+// ============================================================
+// COPY CODE
+// ============================================================
+function copyCode(btn) {
+  const code = btn.closest('.code-block').querySelector('pre').innerText;
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1800);
+  });
+}
+
+// ============================================================
+// QUIZ
+// ============================================================
+function checkQuiz(btn, result, feedbackId) {
+  const opts = btn.closest('.quiz-options').querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.disabled = true);
+  const feedback = document.getElementById(feedbackId);
+  
+  if (result === 'correct') {
+    btn.classList.add('correct');
+    feedback.className = 'quiz-feedback show ok';
+  } else {
+    btn.classList.add('wrong');
+    opts.forEach(o => { if (o.textContent.includes('FIFO')) o.classList.add('correct'); });
+    feedback.className = 'quiz-feedback show no';
+    feedback.textContent = '❌ Not quite! Queue follows FIFO — First In, First Out. The first element added is the first removed.';
+  }
+}
+
+// ============================================================
+// DEEP DIVE TOGGLE
+// ============================================================
+function toggleDeepDive(header) {
+  header.closest('.deep-dive').classList.toggle('open');
+}
+
+// ============================================================
+// PROBLEM TABS
+// ============================================================
+function switchTab(tab, contentId) {
+  const card = tab.closest('.problem-body');
+  card.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+  card.querySelectorAll('.ptab-content').forEach(c => c.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById(contentId).classList.add('active');
+}
+
+// ============================================================
+// QUEUE VISUALIZER (Section 2)
+// ============================================================
+let vizQueue = [];
+function updateVizDisplay() {
+  const el = document.getElementById('queueViz');
+  if (vizQueue.length === 0) {
+    el.innerHTML = '<span style="color:var(--text3);font-family:\'JetBrains Mono\',monospace;font-size:0.8rem;">Queue is empty. Enqueue something!</span>';
+    return;
+  }
+  el.innerHTML = '';
+  vizQueue.forEach((v, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'queue-cell' + (i === 0 ? ' front' : '') + (i === vizQueue.length - 1 ? ' rear' : '');
+    cell.textContent = v;
+    el.appendChild(cell);
+    if (i < vizQueue.length - 1) {
+      const arr = document.createElement('div');
+      arr.className = 'queue-arrow';
+      arr.textContent = '→';
+      el.appendChild(arr);
+    }
+  });
+}
+
+function log(msg, type = 'info') {
+  document.getElementById('vizLog').innerHTML = `<span class="log-${type}">${msg}</span>`;
+}
+
+function enqueueViz() {
+  const val = document.getElementById('enqInput').value || Math.floor(Math.random()*99)+1;
+  if (vizQueue.length >= 8) { log('❌ Queue full (max 8 for display)', 'err'); return; }
+  vizQueue.push(Number(val));
+  updateVizDisplay();
+  // Animate last cell
+  const cells = document.querySelectorAll('#queueViz .queue-cell');
+  if (cells.length > 0) {
+    cells[cells.length - 1].classList.add('entering');
+    setTimeout(() => cells[cells.length - 1].classList.remove('entering'), 500);
+  }
+  log(`✅ Enqueued ${val} → Rear. Size: ${vizQueue.length}`, 'ok');
+  updateProgress();
+}
+
+function dequeueViz() {
+  if (vizQueue.length === 0) { log('❌ Queue Underflow! Cannot dequeue from empty queue.', 'err'); return; }
+  const val = vizQueue.shift();
+  log(`⬅️ Dequeued ${val} ← Front. Remaining size: ${vizQueue.length}`, 'ok');
+  updateVizDisplay();
+}
+
+function peekViz() {
+  if (vizQueue.length === 0) { log('❌ Queue is empty. Nothing to peek!', 'err'); return; }
+  log(`👁 Front element: ${vizQueue[0]} | Rear: ${vizQueue[vizQueue.length-1]} | Size: ${vizQueue.length}`, 'info');
+}
+
+function clearViz() {
+  vizQueue = [];
+  updateVizDisplay();
+  log('🗑 Queue cleared.', 'info');
+}
+
+// ============================================================
+// CIRCULAR QUEUE VISUALIZER
+// ============================================================
+const CQ_SIZE = 6;
+let cqData = Array(CQ_SIZE).fill(null);
+let cqFront = 0, cqRear = -1, cqCount = 0;
+let cqValCounter = 1;
+
+function cqLog(msg, type = 'info') {
+  document.getElementById('cqLog').innerHTML = `<span class="log-${type}">${msg}</span>`;
+}
+
+function drawCircQueue() {
+  const canvas = document.getElementById('circCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2, r = 100;
+  ctx.clearRect(0, 0, W, H);
+
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  const textColor = isDark ? '#e8e8f0' : '#1a1a2e';
+  const bgColor = isDark ? '#111118' : '#ffffff';
+  const borderColor = isDark ? '#2a2a3a' : '#d0d0e0';
+
+  for (let i = 0; i < CQ_SIZE; i++) {
+    const angle = (i / CQ_SIZE) * 2 * Math.PI - Math.PI / 2;
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    const isF = (i === cqFront && cqCount > 0);
+    const isR = (i === ((cqRear + CQ_SIZE) % CQ_SIZE) && cqCount > 0 && cqRear !== -1);
+    const hasVal = cqData[i] !== null;
+
+    // Draw cell
+    ctx.beginPath();
+    ctx.arc(x, y, 24, 0, 2 * Math.PI);
+    ctx.fillStyle = hasVal ? (isF ? 'rgba(67,233,123,0.15)' : isR ? 'rgba(255,101,132,0.15)' : 'rgba(108,99,255,0.15)') : bgColor;
+    ctx.fill();
+    ctx.strokeStyle = isF ? '#43e97b' : isR ? '#ff6584' : (hasVal ? '#6c63ff' : borderColor);
+    ctx.lineWidth = isF || isR ? 3 : 1.5;
+    ctx.stroke();
+
+    // Value or index
+    ctx.fillStyle = textColor;
+    ctx.font = 'bold 14px Syne, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(cqData[i] !== null ? cqData[i] : i, x, y);
+
+    // Labels
+    if (isF && isR) {
+      ctx.fillStyle = '#43e97b';
+      ctx.font = '9px JetBrains Mono, monospace';
+      ctx.fillText('F/R', x, y + 32);
+    } else if (isF) {
+      ctx.fillStyle = '#43e97b';
+      ctx.font = '9px JetBrains Mono, monospace';
+      ctx.fillText('FRONT', x, y + 32);
+    } else if (isR) {
+      ctx.fillStyle = '#ff6584';
+      ctx.font = '9px JetBrains Mono, monospace';
+      ctx.fillText('REAR', x, y + 32);
+    }
+  }
+
+  // Center info
+  ctx.fillStyle = textColor;
+  ctx.font = 'bold 13px Syne, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(`Size: ${cqCount}/${CQ_SIZE}`, cx, cy - 10);
+  ctx.font = '10px JetBrains Mono, monospace';
+  ctx.fillStyle = cqCount === CQ_SIZE ? '#ff6584' : cqCount === 0 ? '#43e97b' : '#6c63ff';
+  ctx.fillText(cqCount === CQ_SIZE ? 'FULL' : cqCount === 0 ? 'EMPTY' : 'OK', cx, cy + 10);
+}
+
+function cqEnqueue() {
+  const val = document.getElementById('cqInput').value || cqValCounter;
+  if (cqCount === CQ_SIZE) { cqLog('❌ Queue FULL! Cannot enqueue.', 'err'); return; }
+  cqRear = (cqRear + 1) % CQ_SIZE;
+  cqData[cqRear] = Number(val);
+  cqCount++;
+  cqValCounter++;
+  document.getElementById('cqInput').value = cqValCounter;
+  cqLog(`✅ Enqueued ${val} at index ${cqRear}. rear=(${(cqRear === 0 ? CQ_SIZE - 1 : cqRear - 1)}+1)%${CQ_SIZE}=${cqRear}`, 'ok');
+  drawCircQueue();
+}
+
+function cqDequeue() {
+  if (cqCount === 0) { cqLog('❌ Queue EMPTY! Cannot dequeue.', 'err'); return; }
+  const val = cqData[cqFront];
+  cqData[cqFront] = null;
+  const oldFront = cqFront;
+  cqFront = (cqFront + 1) % CQ_SIZE;
+  cqCount--;
+  cqLog(`⬅️ Dequeued ${val} from index ${oldFront}. front=(${oldFront}+1)%${CQ_SIZE}=${cqFront}`, 'ok');
+  drawCircQueue();
+}
+
+function cqReset() {
+  cqData = Array(CQ_SIZE).fill(null);
+  cqFront = 0; cqRear = -1; cqCount = 0; cqValCounter = 1;
+  document.getElementById('cqInput').value = '1';
+  cqLog('🔄 Circular Queue reset.', 'info');
+  drawCircQueue();
+}
+
+// ============================================================
+// DEQUE VISUALIZER
+// ============================================================
+let dqArr = [];
+function dqLog(msg, type = 'info') {
+  document.getElementById('dqLog').innerHTML = `<span class="log-${type}">${msg}</span>`;
+}
+function updateDequeDisplay() {
+  const el = document.getElementById('dequeViz');
+  if (dqArr.length === 0) {
+    el.innerHTML = '<span style="color:var(--text3);font-family:\'JetBrains Mono\',monospace;font-size:0.8rem;">Empty. Add elements!</span>';
+    return;
+  }
+  el.innerHTML = dqArr.map(v => `<div class="deque-cell">${v}</div>`).join('');
+}
+function dqOp(op) {
+  const val = Number(document.getElementById('dqInput').value) || 0;
+  if (op === 'append') {
+    if (dqArr.length >= 7) { dqLog('❌ Display limit reached', 'err'); return; }
+    dqArr.push(val);
+    dqLog(`✅ append(${val}) → Added to RIGHT. Deque: [${dqArr}]`, 'ok');
+  } else if (op === 'appendleft') {
+    if (dqArr.length >= 7) { dqLog('❌ Display limit reached', 'err'); return; }
+    dqArr.unshift(val);
+    dqLog(`✅ appendleft(${val}) → Added to LEFT. Deque: [${dqArr}]`, 'ok');
+  } else if (op === 'pop') {
+    if (!dqArr.length) { dqLog('❌ Cannot pop from empty deque!', 'err'); return; }
+    const v = dqArr.pop();
+    dqLog(`⬅️ pop() → Removed ${v} from RIGHT. Deque: [${dqArr}]`, 'ok');
+  } else if (op === 'popleft') {
+    if (!dqArr.length) { dqLog('❌ Cannot popleft from empty deque!', 'err'); return; }
+    const v = dqArr.shift();
+    dqLog(`⬅️ popleft() → Removed ${v} from LEFT. Deque: [${dqArr}]`, 'ok');
+  }
+  updateDequeDisplay();
+}
+
+// ============================================================
+// SLIDING WINDOW VIZ
+// ============================================================
+const SW_NUMS = [1, 3, -1, -3, 5, 3, 6, 7];
+const SW_K = 3;
+let swStep = -1;
+let swResults = [];
+let monoDeque = [];
+
+function initSwArray() {
+  const el = document.getElementById('swArray');
+  el.innerHTML = SW_NUMS.map((n, i) => `<div class="sw-cell" id="swc${i}">${n}</div>`).join('');
+}
+
+function swReset() {
+  swStep = -1;
+  monoDeque = [];
+  swResults = [];
+  initSwArray();
+  document.getElementById('monoQueue').innerHTML = '<span style="color:var(--text3);font-size:0.75rem;font-family:\'JetBrains Mono\'">empty</span>';
+  document.getElementById('swLog').innerHTML = '<span class="log-info">Press "Next Step" to begin sliding window.</span>';
+  document.getElementById('swResult').textContent = '';
+}
+
+function swNext() {
+  swStep++;
+  if (swStep >= SW_NUMS.length) {
+    document.getElementById('swLog').innerHTML = `<span class="log-ok">✅ Done! Result: [${swResults}]</span>`;
+    document.getElementById('swResult').textContent = `Output: [${swResults}]`;
+    return;
+  }
+  const i = swStep;
+  const num = SW_NUMS[i];
+
+  // Remove out of window
+  while (monoDeque.length && monoDeque[0] < i - SW_K + 1) monoDeque.shift();
+  // Remove smaller
+  while (monoDeque.length && SW_NUMS[monoDeque[monoDeque.length - 1]] < num) monoDeque.pop();
+  monoDeque.push(i);
+
+  // Update array display
+  document.querySelectorAll('.sw-cell').forEach((c, idx) => {
+    c.classList.remove('in-window', 'is-max');
+    if (idx >= i - SW_K + 1 && idx <= i) c.classList.add('in-window');
+  });
+  if (monoDeque[0] !== undefined) document.getElementById(`swc${monoDeque[0]}`).classList.add('is-max');
+
+  // Update mono queue display
+  const mqEl = document.getElementById('monoQueue');
+  mqEl.innerHTML = monoDeque.map(idx => `<div class="mono-cell">${SW_NUMS[idx]}<sub style="font-size:0.6em;color:var(--text3)">[${idx}]</sub></div>`).join('') || '<span style="color:var(--text3);font-size:0.75rem">empty</span>';
+
+  let msg = `Step ${i}: Processing nums[${i}]=${num}. `;
+  if (i >= SW_K - 1) {
+    const max = SW_NUMS[monoDeque[0]];
+    swResults.push(max);
+    msg += `Window full → Max = ${max}`;
+    document.getElementById('swResult').textContent = `Results so far: [${swResults}]`;
+  } else {
+    msg += `Building window...`;
+  }
+  document.getElementById('swLog').innerHTML = `<span class="log-info">${msg}</span>`;
+}
+
+// ============================================================
+// BFS GRID VISUALIZER
+// ============================================================
+const BFS_GRID_DATA = [
+  [0,0,1,0,0,0],
+  [0,0,0,0,1,0],
+  [0,0,0,0,0,0],
+  [0,1,1,0,0,0],
+  [0,0,0,0,1,0],
+  [0,0,0,0,1,0]
+];
+const BFS_START = [0,0], BFS_END = [5,5];
+let bfsQueue = [], bfsVisited = new Set(), bfsParent = {}, bfsDone = false, bfsFoundPath = false;
+let bfsAutoInterval = null;
+
+function bfsKey(r, c) { return `${r},${c}`; }
+
+function initBfsGrid() {
+  const el = document.getElementById('bfsGrid');
+  el.innerHTML = '';
+  for (let r = 0; r < 6; r++) {
+    for (let c = 0; c < 6; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'bfs-cell';
+      cell.id = `bfs${r}${c}`;
+      if (BFS_GRID_DATA[r][c] === 1) cell.classList.add('wall');
+      else if (r === BFS_START[0] && c === BFS_START[1]) { cell.classList.add('start'); cell.textContent = 'S'; }
+      else if (r === BFS_END[0] && c === BFS_END[1]) { cell.classList.add('end'); cell.textContent = 'E'; }
+      el.appendChild(cell);
+    }
+  }
+}
+
+function bfsReset() {
+  clearInterval(bfsAutoInterval);
+  bfsQueue = [[...BFS_START]];
+  bfsVisited = new Set([bfsKey(...BFS_START)]);
+  bfsParent = {};
+  bfsDone = false; bfsFoundPath = false;
+  initBfsGrid();
+  document.getElementById('bfsQueueDisplay').textContent = `[(0,0)]`;
+  document.getElementById('bfsLog').innerHTML = '<span class="log-info">Press "BFS Step" to explore level by level.</span>';
+}
+
+function bfsStep() {
+  if (bfsDone) return;
+  if (!bfsQueue.length) { 
+    document.getElementById('bfsLog').innerHTML = '<span class="log-err">No path found!</span>';
+    bfsDone = true; return; 
+  }
+
+  const [r, c] = bfsQueue.shift();
+  const dirs = [[0,1],[0,-1],[1,0],[-1,0]];
+  const cell = document.getElementById(`bfs${r}${c}`);
+
+  if (r === BFS_END[0] && c === BFS_END[1]) {
+    // Trace path
+    let cur = bfsKey(r, c);
+    while (bfsParent[cur]) {
+      const [pr, pc] = bfsParent[cur].split(',').map(Number);
+      const pCell = document.getElementById(`bfs${pr}${pc}`);
+      if (!pCell.classList.contains('start')) pCell.classList.add('path');
+      cur = bfsParent[cur];
+    }
+    document.getElementById('bfsLog').innerHTML = '<span class="log-ok">✅ Path found! Yellow = shortest path.</span>';
+    bfsDone = true;
+    clearInterval(bfsAutoInterval);
+    return;
+  }
+
+  if (!cell.classList.contains('start') && !cell.classList.contains('end')) {
+    cell.classList.add('visited');
+  }
+
+  for (const [dr, dc] of dirs) {
+    const nr = r + dr, nc = c + dc;
+    const key = bfsKey(nr, nc);
+    if (nr >= 0 && nr < 6 && nc >= 0 && nc < 6 && BFS_GRID_DATA[nr][nc] !== 1 && !bfsVisited.has(key)) {
+      bfsVisited.add(key);
+      bfsParent[key] = bfsKey(r, c);
+      bfsQueue.push([nr, nc]);
+      const nCell = document.getElementById(`bfs${nr}${nc}`);
+      if (!nCell.classList.contains('end')) nCell.style.opacity = '0.6';
+    }
+  }
+
+  document.getElementById('bfsQueueDisplay').textContent = `[${bfsQueue.map(p=>p.join(',')).join(' | ')}]`;
+  document.getElementById('bfsLog').innerHTML = `<span class="log-info">Visited (${r},${c}). Queue size: ${bfsQueue.length}</span>`;
+}
+
+function bfsAuto() {
+  clearInterval(bfsAutoInterval);
+  bfsReset();
+  bfsAutoInterval = setInterval(() => {
+    if (bfsDone) { clearInterval(bfsAutoInterval); return; }
+    bfsStep();
+  }, 300);
+}
+
+// ============================================================
+// PROGRESS TRACKING
+// ============================================================
+function updateProgress() {
+  const sections = document.querySelectorAll('.section');
+  const scrolled = window.scrollY + window.innerHeight;
+  let visible = 0;
+  sections.forEach(s => {
+    if (s.offsetTop < scrolled - 100) visible++;
+  });
+  const pct = Math.min(100, Math.round((visible / sections.length) * 100));
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+// Active nav on scroll
+function updateActiveNav() {
+  const sections = document.querySelectorAll('.section');
+  const navLinks = document.querySelectorAll('.nav-link');
+  let activeId = '';
+  sections.forEach(s => {
+    if (s.offsetTop <= window.scrollY + 200) activeId = s.id;
+  });
+  navLinks.forEach(l => {
+    l.classList.remove('active');
+    const sec = l.getAttribute('onclick');
+    if (sec && sec.includes(activeId)) l.classList.add('active');
+  });
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('scroll', () => { updateProgress(); updateActiveNav(); });
+window.addEventListener('load', () => {
+  updateVizDisplay();
+  updateDequeDisplay();
+  initSwArray();
+  bfsReset();
+  drawCircQueue();
+});
+
+// Redraw canvas on theme change
+const observer = new MutationObserver(() => drawCircQueue());
+observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+// Redraw on resize
+window.addEventListener('resize', drawCircQueue);
+</script>
+
+</body>
+</html>

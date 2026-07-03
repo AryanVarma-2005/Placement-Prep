@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bit Manipulation Mastery — Complete DSA Course</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN: Industrial / Terminal aesthetic
+   Deep charcoal + electric green on dark, warm offwhite on light
+   ============================================================ */
+:root {
+  --bg:      #0d0f0d;
+  --bg2:     #131613;
+  --bg3:     #1a1e1a;
+  --bg4:     #222822;
+  --border:  #2a302a;
+  --a1:      #39ff14;   /* neon green — primary */
+  --a2:      #ff3860;   /* red */
+  --a3:      #00e5ff;   /* cyan */
+  --a4:      #ffaa00;   /* amber */
+  --a5:      #bf5fff;   /* purple */
+  --text:    #e4ede4;
+  --text2:   #7a917a;
+  --text3:   #3d4d3d;
+  --code-bg: #080f08;
+  --sw:      275px;
+  --r:       6px;
+}
+[data-theme="light"] {
+  --bg:      #f2f4f0;
+  --bg2:     #ffffff;
+  --bg3:     #eaece8;
+  --bg4:     #dfe2dc;
+  --border:  #d0d5cc;
+  --text:    #141a14;
+  --text2:   #4a5a4a;
+  --text3:   #8a9a8a;
+  --code-bg: #0d0f0d;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'IBM Plex Sans',system-ui,sans-serif;
+  background:var(--bg);color:var(--text);
+  line-height:1.74;overflow-x:hidden;
+  transition:background .25s,color .25s;
+}
+::selection{background:var(--a1);color:#000}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--a1);border-radius:2px}
+
+/* ============================================================ LAYOUT */
+.shell{display:flex;min-height:100vh}
+
+.sidebar{
+  width:var(--sw);background:var(--bg2);
+  border-right:1px solid var(--border);
+  position:fixed;top:0;left:0;bottom:0;
+  overflow-y:auto;z-index:100;
+  display:flex;flex-direction:column;
+  transition:transform .3s;
+}
+.sb-top{padding:20px 16px 14px;border-bottom:1px solid var(--border)}
+.sb-icon{font-size:2.2rem;display:block;margin-bottom:6px;line-height:1}
+.sb-title{
+  font-family:'Archivo Black',sans-serif;
+  font-size:1.1rem;letter-spacing:-.5px;line-height:1.15;
+}
+.sb-title span{color:var(--a1)}
+.sb-sub{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.58rem;letter-spacing:3px;
+  text-transform:uppercase;color:var(--text3);margin-top:4px;
+}
+.sb-nav{padding:8px 0;flex:1}
+.ngroup{font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:3px;text-transform:uppercase;color:var(--text3);padding:10px 16px 3px}
+.nlink{
+  display:flex;align-items:center;gap:9px;
+  padding:7px 16px;font-size:.8rem;font-weight:500;
+  color:var(--text2);cursor:pointer;border-left:2px solid transparent;
+  transition:all .15s;
+}
+.nlink:hover{color:var(--text);background:var(--bg3);border-left-color:var(--a1)}
+.nlink.active{color:var(--a1);border-left-color:var(--a1);background:var(--bg3)}
+.nlink .n{font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--text3);min-width:20px}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border)}
+.plbl{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:1px;color:var(--text3);margin-bottom:5px}
+.pbar{height:3px;background:var(--bg4);border-radius:1px;overflow:hidden}
+.pfill{height:100%;background:var(--a1);width:0%;transition:width .5s}
+
+.main{margin-left:var(--sw);flex:1;max-width:940px;padding:0 42px 100px}
+
+.topbar{
+  position:sticky;top:0;z-index:50;
+  background:var(--bg);border-bottom:1px solid var(--border);
+  padding:11px 42px;margin:0 -42px;
+  display:flex;align-items:center;justify-content:space-between;
+  backdrop-filter:blur(10px);
+}
+.bc{font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--text3)}
+.tbtns{display:flex;gap:8px}
+.pill{
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text);padding:4px 13px;border-radius:3px;
+  cursor:pointer;font-family:'IBM Plex Sans',sans-serif;
+  font-size:.74rem;font-weight:600;transition:all .18s;
+}
+.pill:hover{border-color:var(--a1);color:var(--a1)}
+.hbg{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer}
+
+/* ============================================================ HERO */
+.hero{padding:50px 0 38px;position:relative;overflow:hidden}
+.hero-decor{
+  position:absolute;right:0;top:0;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10rem;line-height:1;
+  color:var(--border);pointer-events:none;
+  opacity:.5;user-select:none;
+  letter-spacing:-4px;
+}
+.hchip{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.62rem;letter-spacing:2px;text-transform:uppercase;
+  color:var(--a1);background:rgba(57,255,20,.07);
+  border:1px solid rgba(57,255,20,.2);
+  padding:3px 11px;border-radius:2px;margin-bottom:16px;
+}
+.hero h2{
+  font-family:'Archivo Black',sans-serif;
+  font-size:clamp(2.4rem,6vw,4.2rem);
+  letter-spacing:-1.5px;line-height:1.05;margin-bottom:12px;
+}
+.hero h2 .hl{color:var(--a1)}
+.hlead{font-size:.98rem;color:var(--text2);max-width:560px;margin-bottom:26px}
+.hstats{display:flex;gap:28px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;gap:2px}
+.sn{font-family:'Archivo Black',sans-serif;font-size:2.2rem;color:var(--a1);line-height:1}
+.sl{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
+
+/* ============================================================ SECTIONS */
+.section{margin-bottom:68px;scroll-margin-top:70px}
+.shdr{display:flex;align-items:flex-start;gap:12px;margin-bottom:24px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.snum{
+  font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:2px;
+  color:var(--a1);background:rgba(57,255,20,.07);border:1px solid rgba(57,255,20,.18);
+  padding:3px 8px;border-radius:2px;margin-top:7px;white-space:nowrap;
+}
+.stitle{font-family:'Archivo Black',sans-serif;font-size:clamp(1.5rem,3.5vw,2.1rem);letter-spacing:-1px;line-height:1.1}
+.ssub{color:var(--text2);margin-top:4px;font-size:.88rem}
+
+/* ============================================================ CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:15px}
+.cttl{font-size:.92rem;font-weight:600;margin-bottom:11px;display:flex;align-items:center;gap:8px}
+.tag{font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border-radius:2px;font-weight:400}
+.t1{background:rgba(57,255,20,.1);color:var(--a1)}
+.t2{background:rgba(255,56,96,.1);color:var(--a2)}
+.t3{background:rgba(0,229,255,.08);color:var(--a3)}
+.t4{background:rgba(255,170,0,.1);color:var(--a4)}
+.t5{background:rgba(191,95,255,.1);color:var(--a5)}
+
+/* ============================================================ CALLOUTS */
+.callout{padding:13px 17px;border-radius:var(--r);margin:13px 0;border-left:3px solid;display:flex;gap:11px;align-items:flex-start}
+.ci{font-size:1.05rem;margin-top:2px;flex-shrink:0}
+.cb{flex:1}
+.cbt{font-size:.81rem;font-weight:600;margin-bottom:3px}
+.callout.info{background:rgba(57,255,20,.05);border-color:var(--a1)}
+.callout.warn{background:rgba(255,56,96,.05);border-color:var(--a2)}
+.callout.tip{background:rgba(0,229,255,.05);border-color:var(--a3)}
+.callout.gold{background:rgba(255,170,0,.05);border-color:var(--a4)}
+.callout.ok{background:rgba(57,255,20,.05);border-color:var(--a1)}
+
+/* ============================================================ CODE */
+.cb2{position:relative;margin:13px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border)}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:7px 13px;background:var(--bg3);border-bottom:1px solid var(--border)}
+.cl{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--a1)}
+.cpb{background:none;border:1px solid var(--border);color:var(--text3);padding:2px 8px;border-radius:2px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:.58rem;transition:all .18s}
+.cpb:hover{color:var(--text);border-color:var(--a1)}
+pre{background:var(--code-bg);padding:17px;overflow-x:auto;margin:0;font-family:'IBM Plex Mono',monospace;font-size:.81rem;line-height:1.7}
+.kw{color:#ff79c6}.fn{color:#50fa7b}.str{color:#f1fa8c}
+.num{color:#bd93f9}.cm{color:#3d5a3d;font-style:italic}
+.cls{color:#ffb86c}.bl{color:#ff5555}.self{color:#8be9fd}
+
+/* ============================================================ TABLES */
+.tw{overflow-x:auto;margin:13px 0;border-radius:var(--r);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;background:var(--bg2)}
+th{background:var(--bg3);padding:10px 14px;text-align:left;font-size:.76rem;font-weight:600;border-bottom:1px solid var(--border);font-family:'IBM Plex Mono',monospace}
+td{padding:9px 14px;border-bottom:1px solid var(--border);font-size:.84rem;vertical-align:middle;font-family:'IBM Plex Mono',monospace}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg3)}
+.g{color:var(--a1);font-weight:600}.b{color:var(--a2);font-weight:600}.o{color:var(--a4);font-weight:600}
+
+/* ============================================================ VIZ */
+.viz{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:16px 0}
+.vtitle{font-family:'Archivo Black',sans-serif;font-size:1rem;letter-spacing:-.5px;color:var(--text2);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.vctl{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.vbtn{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:var(--r);cursor:pointer;font-size:.76rem;font-weight:600;transition:all .18s;font-family:'IBM Plex Sans',sans-serif}
+.vbtn:hover{background:var(--a1);border-color:var(--a1);color:#000}
+.vbtn.red:hover{background:var(--a2);border-color:var(--a2);color:#fff}
+.vbtn.cyan:hover{background:var(--a3);border-color:var(--a3);color:#000}
+.vinput{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:6px 11px;border-radius:var(--r);font-family:'IBM Plex Mono',monospace;font-size:.81rem;width:90px;outline:none}
+.vinput:focus{border-color:var(--a1)}
+.vlog{margin-top:11px;padding:9px 13px;background:var(--bg);border-radius:var(--r);font-family:'IBM Plex Mono',monospace;font-size:.74rem;color:var(--text2);min-height:33px;border:1px solid var(--border)}
+.vok{color:var(--a1)}.verr{color:var(--a2)}.vinf{color:var(--a3)}
+
+/* BIT DISPLAY */
+.bit-display{
+  display:flex;gap:3px;align-items:flex-end;
+  margin:14px 0;flex-wrap:wrap;
+}
+.bit-group{display:flex;gap:3px}
+.bit-sep{width:10px;display:flex;align-items:center;justify-content:center;color:var(--text3);font-family:'IBM Plex Mono',monospace;font-size:.7rem}
+.bit-cell{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+}
+.bit-val{
+  width:38px;height:38px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--border);background:var(--bg3);
+  border-radius:3px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:1.1rem;font-weight:700;
+  transition:all .3s;
+  cursor:default;
+}
+.bit-val.on{border-color:var(--a1);background:rgba(57,255,20,.15);color:var(--a1)}
+.bit-val.off{border-color:var(--border);background:var(--bg3);color:var(--text3)}
+.bit-val.hi{border-color:var(--a3);background:rgba(0,229,255,.15);color:var(--a3)}
+.bit-val.amber{border-color:var(--a4);background:rgba(255,170,0,.15);color:var(--a4)}
+.bit-val.changed{animation:bflash .5s ease}
+@keyframes bflash{0%{transform:scale(1.3);background:rgba(57,255,20,.4)}100%{transform:scale(1)}}
+.bit-idx{font-family:'IBM Plex Mono',monospace;font-size:.55rem;color:var(--text3)}
+.num-display{
+  font-family:'Archivo Black',sans-serif;
+  font-size:2rem;color:var(--a1);
+  letter-spacing:-1px;margin:8px 0;
+}
+.hex-display{font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--a4);margin-bottom:8px}
+
+/* OPERATION DISPLAY */
+.op-display{
+  display:flex;flex-direction:column;gap:6px;
+  margin:14px 0;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.85rem;
+}
+.op-row{display:flex;align-items:center;gap:10px}
+.op-label{width:50px;color:var(--text3);font-size:.72rem;text-align:right;flex-shrink:0}
+.op-bits{display:flex;gap:2px}
+.op-bit{
+  width:28px;height:28px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:2px;font-size:.85rem;font-weight:700;
+  border:1px solid var(--border);
+  transition:all .25s;
+}
+.op-bit.on{background:rgba(57,255,20,.15);color:var(--a1);border-color:var(--a1)}
+.op-bit.off{background:var(--bg3);color:var(--text3)}
+.op-bit.res{background:rgba(0,229,255,.15);color:var(--a3);border-color:var(--a3)}
+.op-sep{height:1px;background:var(--border);margin:4px 0;flex:1}
+.op-sym{color:var(--a4);width:50px;text-align:right;font-size:.85rem;flex-shrink:0}
+
+/* DRY RUN */
+.dry{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:14px 17px;margin:10px 0;font-family:'IBM Plex Mono',monospace;font-size:.76rem;line-height:1.82}
+.ds{display:flex;gap:10px;margin-bottom:2px;align-items:flex-start}
+.dsn{color:var(--text3);min-width:28px}.dsa{color:var(--text);flex:1}.dss{color:var(--a1);white-space:nowrap;margin-left:auto}
+
+/* QUIZ */
+.quiz{background:linear-gradient(135deg,rgba(57,255,20,.03),rgba(0,229,255,.03));border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:20px 0}
+.qttl{font-size:.86rem;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.qq{font-size:.88rem;color:var(--text);margin-bottom:12px;font-style:italic}
+.qopts{display:flex;flex-direction:column;gap:6px}
+.qopt{background:var(--bg2);border:1px solid var(--border);padding:9px 14px;border-radius:var(--r);cursor:pointer;font-size:.8rem;font-weight:500;text-align:left;color:var(--text2);transition:all .18s;font-family:'IBM Plex Mono',monospace}
+.qopt:hover{border-color:var(--a1);color:var(--text)}
+.qopt.correct{border-color:var(--a1);background:rgba(57,255,20,.08);color:var(--a1)}
+.qopt.wrong{border-color:var(--a2);background:rgba(255,56,96,.08);color:var(--a2)}
+.qfb{margin-top:10px;padding:8px 12px;border-radius:var(--r);font-size:.81rem;display:none;font-family:'IBM Plex Mono',monospace}
+.qfb.show{display:block}
+.qfb.ok{background:rgba(57,255,20,.06);color:var(--a1);border-left:2px solid var(--a1)}
+.qfb.no{background:rgba(255,56,96,.06);color:var(--a2);border-left:2px solid var(--a2)}
+
+/* DEEP */
+.deep{border:1px solid var(--border);border-radius:var(--r);margin:13px 0;overflow:hidden}
+.dhdr{padding:12px 17px;background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:.84rem;font-weight:600;user-select:none;transition:background .18s}
+.dhdr:hover{background:var(--bg4)}
+.darr{transition:transform .3s;color:var(--text3)}
+.deep.open .darr{transform:rotate(180deg)}
+.dbdy{display:none;padding:17px;border-top:1px solid var(--border)}
+.deep.open .dbdy{display:block}
+
+/* PROBLEMS */
+.prob{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px}
+.phdr{padding:13px 17px;background:var(--bg3);display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.ptitle{font-size:.88rem;font-weight:600;flex:1}
+.diff{font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:20px}
+.de{background:rgba(57,255,20,.12);color:var(--a1)}.dm{background:rgba(255,170,0,.12);color:var(--a4)}.dh{background:rgba(255,56,96,.12);color:var(--a2)}
+.pbody{padding:17px}
+.ptabs{display:flex;gap:2px;margin-bottom:13px;border-bottom:1px solid var(--border);padding-bottom:0}
+.ptab{font-size:.74rem;font-weight:600;padding:6px 12px;cursor:pointer;border-bottom:2px solid transparent;color:var(--text3);transition:all .18s;margin-bottom:-1px;font-family:'IBM Plex Mono',monospace}
+.ptab:hover{color:var(--text)}.ptab.active{border-bottom-color:var(--a1);color:var(--a1)}
+.ptc{display:none}.ptc.active{display:block}
+
+/* COMPLEXITY */
+.cxrow{display:flex;gap:9px;flex-wrap:wrap;margin:10px 0}
+.cx{display:flex;flex-direction:column;align-items:center;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:8px 13px;gap:2px;min-width:85px}
+.cxop{font-family:'IBM Plex Mono',monospace;font-size:.58rem;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.cxv{font-family:'IBM Plex Mono',monospace;font-size:.92rem;font-weight:700}
+.o1 .cxv{color:var(--a1)}.on .cxv{color:var(--a4)}.ologn .cxv{color:var(--a3)}
+
+/* PATTERNS */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin:13px 0}
+.pc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;transition:all .18s;cursor:default}
+.pc:hover{border-color:var(--a1);transform:translateY(-2px)}
+.pi{font-size:1.6rem;margin-bottom:7px}
+.pn{font-size:.84rem;font-weight:600;margin-bottom:4px}
+.pd{font-size:.74rem;color:var(--text2)}
+
+/* ROADMAP */
+.roadmap{position:relative;padding:8px 0}
+.roadmap::before{content:'';position:absolute;left:22px;top:0;bottom:0;width:1px;background:linear-gradient(180deg,var(--a1),var(--a5),var(--a3))}
+.rday{display:flex;gap:16px;margin-bottom:20px;position:relative}
+.rdot{width:46px;height:46px;border-radius:50%;background:var(--bg2);border:2px solid var(--a1);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:.7rem;font-weight:700;flex-shrink:0;z-index:1;color:var(--a1)}
+.rbody{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 17px;margin-top:6px}
+.rttl{font-size:.86rem;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.badge{font-size:.58rem;padding:2px 7px;border-radius:20px;font-family:'IBM Plex Mono',monospace;letter-spacing:1px;text-transform:uppercase}
+.be{background:rgba(57,255,20,.1);color:var(--a1)}.bm{background:rgba(255,170,0,.1);color:var(--a4)}.bh{background:rgba(255,56,96,.1);color:var(--a2)}
+.rlist{list-style:none;display:flex;flex-direction:column;gap:3px}
+.rlist li{font-size:.81rem;color:var(--text2);display:flex;gap:6px;align-items:flex-start}
+.rlist li::before{content:'›';color:var(--a1);font-weight:700}
+
+/* CHEAT */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:13px;margin:13px 0}
+.ci2{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.cit{font-size:.78rem;font-weight:600;margin-bottom:8px;color:var(--a1)}
+.ci2 p,.ci2 li{font-size:.78rem;color:var(--text2);line-height:1.55}
+.ci2 ul{list-style:none;padding:0}
+.ci2 ul li::before{content:'> ';color:var(--a1)}
+
+/* IBOX */
+.ibox{background:rgba(255,170,0,.04);border:1px solid rgba(255,170,0,.2);border-radius:var(--r);padding:17px 20px;margin:16px 0}
+.iboxt{font-size:.86rem;font-weight:600;color:var(--a4);margin-bottom:9px;display:flex;align-items:center;gap:7px}
+.ibox ul{padding-left:14px}
+.ibox li{font-size:.84rem;color:var(--text2);margin-bottom:4px}
+
+/* MISC */
+p{margin-bottom:10px}p:last-child{margin-bottom:0}
+strong{color:var(--text)}ul,ol{padding-left:17px;margin-bottom:10px}
+li{margin-bottom:3px;font-size:.88rem}
+.footer{text-align:center;padding:38px 0;border-top:1px solid var(--border);margin-top:58px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--text3)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99}
+.overlay.show{display:block}
+
+@media(max-width:768px){
+  :root{--sw:0px}
+  .sidebar{transform:translateX(-275px);width:275px}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding:0 16px 60px}
+  .topbar{padding:11px 16px;margin:0 -16px}
+  .hbg{display:block}
+  .hero-decor{display:none}
+  .cgrid,.pgrid{grid-template-columns:1fr}
+}
+
+/* TRUTH TABLE */
+.ttbl td,.ttbl th{font-family:'IBM Plex Mono',monospace;font-size:.8rem;text-align:center;padding:8px 14px}
+.ttbl .on{color:var(--a1);font-weight:700}
+.ttbl .off{color:var(--text3)}
+
+/* Bit animation */
+@keyframes bitpop{0%{transform:scale(1.5);opacity:.4}100%{transform:scale(1);opacity:1}}
+.bit-val.pop{animation:bitpop .35s ease}
+
+/* Number line / masking viz */
+.mask-row{display:flex;align-items:center;gap:12px;margin:8px 0;font-family:'IBM Plex Mono',monospace;font-size:.82rem}
+.mask-lbl{width:55px;color:var(--text3);text-align:right;flex-shrink:0;font-size:.72rem}
+.mask-bits{display:flex;gap:2px}
+.mb{width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:2px;font-size:.82rem;font-weight:700;border:1px solid var(--border);font-family:'IBM Plex Mono',monospace;transition:all .25s}
+.mb.on{background:rgba(57,255,20,.15);color:var(--a1);border-color:var(--a1)}
+.mb.off{background:var(--bg3);color:var(--text3)}
+.mb.res{background:rgba(0,229,255,.15);color:var(--a3);border-color:var(--a3)}
+.mb.mask{background:rgba(255,170,0,.12);color:var(--a4);border-color:var(--a4)}
+.mb.zero{background:rgba(255,56,96,.08);color:var(--a2);border-color:var(--a2)}
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="closeSb()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-top">
+    <span class="sb-icon">⚙️</span>
+    <div class="sb-title">Bit <span>Manipulation</span><br>Mastery</div>
+    <div class="sb-sub">Complete DSA Course</div>
+  </div>
+  <nav class="sb-nav">
+    <div class="ngroup">Foundations</div>
+    <a class="nlink active" onclick="gt('s1')"><span class="n">01</span>Bits & Binary</a>
+    <a class="nlink" onclick="gt('s2')"><span class="n">02</span>Bitwise Operators</a>
+    <a class="nlink" onclick="gt('s3')"><span class="n">03</span>Bit Tricks</a>
+    <a class="nlink" onclick="gt('s4')"><span class="n">04</span>Number Representation</a>
+    <div class="ngroup">Core Patterns</div>
+    <a class="nlink" onclick="gt('s5')"><span class="n">05</span>Get / Set / Clear</a>
+    <a class="nlink" onclick="gt('s6')"><span class="n">06</span>Counting & Parity</a>
+    <a class="nlink" onclick="gt('s7')"><span class="n">07</span>Powers of Two</a>
+    <a class="nlink" onclick="gt('s8')"><span class="n">08</span>XOR Patterns</a>
+    <div class="ngroup">Advanced</div>
+    <a class="nlink" onclick="gt('s9')"><span class="n">09</span>Bitmask DP</a>
+    <a class="nlink" onclick="gt('s10')"><span class="n">10</span>Subsets & Masks</a>
+    <a class="nlink" onclick="gt('s11')"><span class="n">11</span>Advanced Tricks</a>
+    <div class="ngroup">Interview Prep</div>
+    <a class="nlink" onclick="gt('s12')"><span class="n">12</span>Interview Problems</a>
+    <a class="nlink" onclick="gt('s13')"><span class="n">13</span>Cheat Sheet</a>
+    <a class="nlink" onclick="gt('s14')"><span class="n">14</span>7-Day Roadmap</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="plbl">Progress</div>
+    <div class="pbar"><div class="pfill" id="pfill"></div></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="hbg" onclick="openSb()">☰</button>
+      <div class="bc">bit-manipulation / complete-course</div>
+    </div>
+    <div class="tbtns"><button class="pill" onclick="toggleTheme()">🌓 Theme</button></div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-decor">01</div>
+    <div class="hchip">⚙️ Interview-Ready in 7 Days</div>
+    <h2>BIT<br><span class="hl">MANIPULATION</span></h2>
+    <p class="hlead">The dark art of DSA. Master binary operations, XOR tricks, bitmasks, and Bitmask DP — and solve problems in O(1) that others struggle with in O(n).</p>
+    <div class="hstats">
+      <div class="stat"><span class="sn">14</span><span class="sl">Sections</span></div>
+      <div class="stat"><span class="sn">15+</span><span class="sl">Problems</span></div>
+      <div class="stat"><span class="sn">25+</span><span class="sl">Code Examples</span></div>
+      <div class="stat"><span class="sn">7</span><span class="sl">Day Plan</span></div>
+    </div>
+  </div>
+
+  <!-- ===== S1: BITS & BINARY ===== -->
+  <section class="section" id="s1">
+    <div class="shdr">
+      <span class="snum">01</span>
+      <div><div class="stitle">Bits & Binary</div><div class="ssub">How computers actually store numbers — the foundation of everything</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Concept</span>What is a Bit?</div>
+      <p>A <strong>bit</strong> (binary digit) is the smallest unit of data in a computer. It can only be <strong>0</strong> or <strong>1</strong>. Every number, character, image, and program is stored as a sequence of bits.</p>
+      <p>8 bits = 1 byte. A 32-bit integer uses 32 bits. A 64-bit integer uses 64 bits.</p>
+      <div style="background:var(--bg);border-radius:var(--r);padding:14px;border:1px dashed var(--border);font-family:'IBM Plex Mono',monospace;font-size:.8rem;margin:11px 0">
+        Decimal 13  =  Binary 1101  =  Hex 0xD<br><br>
+        <span style="color:var(--a1)">1</span>&times;2³ + <span style="color:var(--a3)">1</span>&times;2² + <span style="color:var(--text3)">0</span>&times;2¹ + <span style="color:var(--a4)">1</span>&times;2⁰<br>
+        &nbsp;= 8 &nbsp;&nbsp;+ 4 &nbsp;&nbsp;+ 0 &nbsp;&nbsp;+ 1 = <strong style="color:var(--a1)">13</strong>
+      </div>
+    </div>
+
+    <!-- INTERACTIVE BIT EXPLORER -->
+    <div class="viz">
+      <div class="vtitle">⚙️ INTERACTIVE BIT EXPLORER</div>
+      <div class="vctl">
+        <input class="vinput" id="numInput" type="number" value="42" min="0" max="255" placeholder="0–255">
+        <button class="vbtn" onclick="updateBits()">Update</button>
+        <button class="vbtn cyan" onclick="flipAll()">Flip All (~)</button>
+        <button class="vbtn" onclick="shiftLeft()">Shift Left «</button>
+        <button class="vbtn" onclick="shiftRight()">Shift Right »</button>
+        <button class="vbtn red" onclick="clearBits()">Clear</button>
+      </div>
+      <div class="num-display" id="numDisplay">42</div>
+      <div class="hex-display" id="hexDisplay">0x2A = 0b00101010</div>
+      <div class="bit-display" id="bitDisplay"></div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:var(--text3);margin-top:6px">Click any bit to toggle it</div>
+      <div class="vlog" id="bitLog"><span class="vinf">Click bits to toggle. Try operations above!</span></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Conversion</span>Decimal ↔ Binary in Python</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># Decimal → Binary</span>
+<span class="kw">bin</span>(<span class="num">42</span>)        <span class="cm"># '0b101010'</span>
+<span class="kw">bin</span>(<span class="num">42</span>)[<span class="num">2</span>:]    <span class="cm"># '101010'  (strip '0b' prefix)</span>
+<span class="kw">format</span>(<span class="num">42</span>, <span class="str">'08b'</span>)  <span class="cm"># '00101010' (zero-padded to 8 bits)</span>
+
+<span class="cm"># Binary → Decimal</span>
+<span class="kw">int</span>(<span class="str">'101010'</span>, <span class="num">2</span>)   <span class="cm"># 42</span>
+<span class="num">0b101010</span>            <span class="cm"># 42 (binary literal)</span>
+
+<span class="cm"># Decimal → Hex</span>
+<span class="kw">hex</span>(<span class="num">42</span>)        <span class="cm"># '0x2a'</span>
+<span class="kw">int</span>(<span class="str">'2a'</span>, <span class="num">16</span>)  <span class="cm"># 42</span>
+
+<span class="cm"># Number of bits needed</span>
+(<span class="num">42</span>).bit_length()  <span class="cm"># 6  (101010 → 6 digits)</span>
+(<span class="num">0</span>).bit_length()   <span class="cm"># 0</span>
+
+<span class="cm"># Python integers are arbitrary precision — no overflow!</span>
+<span class="cm"># For 32-bit masking: use & 0xFFFFFFFF</span></pre></div>
+    </div>
+
+    <div class="quiz">
+      <div class="qttl">⚡ Quick Check</div>
+      <div class="qq">What is the binary representation of decimal 25?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,'wrong','q1')">10011</button>
+        <button class="qopt" onclick="cq(this,'correct','q1')">11001</button>
+        <button class="qopt" onclick="cq(this,'wrong','q1')">11010</button>
+        <button class="qopt" onclick="cq(this,'wrong','q1')">10101</button>
+      </div>
+      <div class="qfb" id="q1">✅ 11001 = 16+8+1 = 25. Check: 1×2⁴ + 1×2³ + 0×2² + 0×2¹ + 1×2⁰ = 16+8+0+0+1 = 25</div>
+    </div>
+  </section>
+
+  <!-- ===== S2: BITWISE OPERATORS ===== -->
+  <section class="section" id="s2">
+    <div class="shdr">
+      <span class="snum">02</span>
+      <div><div class="stitle">Bitwise Operators</div><div class="ssub">AND, OR, XOR, NOT, Left Shift, Right Shift — with interactive truth tables</div></div>
+    </div>
+
+    <!-- OPERATOR VIZ -->
+    <div class="viz">
+      <div class="vtitle">🔬 BITWISE OPERATION VISUALIZER</div>
+      <div class="vctl">
+        <input class="vinput" id="opA" type="number" value="12" placeholder="A">
+        <select id="opSel" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:var(--r);font-family:'IBM Plex Mono',monospace;font-size:.78rem;outline:none">
+          <option value="and">AND (&amp;)</option>
+          <option value="or">OR (|)</option>
+          <option value="xor">XOR (^)</option>
+          <option value="not">NOT (~A)</option>
+          <option value="lsh">Left Shift (&lt;&lt;)</option>
+          <option value="rsh">Right Shift (&gt;&gt;)</option>
+        </select>
+        <input class="vinput" id="opB" type="number" value="10" placeholder="B or n">
+        <button class="vbtn" onclick="runOp()">Compute</button>
+      </div>
+      <div id="opDisplay" class="op-display"></div>
+      <div class="vlog" id="opLog"><span class="vinf">Enter two numbers and select an operation.</span></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Truth Tables</span>All Operators at a Glance</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">
+        <!-- AND -->
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:var(--a1);font-weight:700;margin-bottom:6px">AND (&amp;) — Both must be 1</div>
+          <div class="tw"><table class="ttbl">
+            <tr><th>A</th><th>B</th><th>A&amp;B</th></tr>
+            <tr><td class="off">0</td><td class="off">0</td><td class="off">0</td></tr>
+            <tr><td class="off">0</td><td class="on">1</td><td class="off">0</td></tr>
+            <tr><td class="on">1</td><td class="off">0</td><td class="off">0</td></tr>
+            <tr><td class="on">1</td><td class="on">1</td><td class="on">1</td></tr>
+          </table></div>
+        </div>
+        <!-- OR -->
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:var(--a3);font-weight:700;margin-bottom:6px">OR (|) — At least one is 1</div>
+          <div class="tw"><table class="ttbl">
+            <tr><th>A</th><th>B</th><th>A|B</th></tr>
+            <tr><td class="off">0</td><td class="off">0</td><td class="off">0</td></tr>
+            <tr><td class="off">0</td><td class="on">1</td><td class="on">1</td></tr>
+            <tr><td class="on">1</td><td class="off">0</td><td class="on">1</td></tr>
+            <tr><td class="on">1</td><td class="on">1</td><td class="on">1</td></tr>
+          </table></div>
+        </div>
+        <!-- XOR -->
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:var(--a4);font-weight:700;margin-bottom:6px">XOR (^) — Exactly one is 1</div>
+          <div class="tw"><table class="ttbl">
+            <tr><th>A</th><th>B</th><th>A^B</th></tr>
+            <tr><td class="off">0</td><td class="off">0</td><td class="off">0</td></tr>
+            <tr><td class="off">0</td><td class="on">1</td><td class="on">1</td></tr>
+            <tr><td class="on">1</td><td class="off">0</td><td class="on">1</td></tr>
+            <tr><td class="on">1</td><td class="on">1</td><td class="off">0</td></tr>
+          </table></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Reference</span>All 6 Operators in Python</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre>a, b = <span class="num">12</span>, <span class="num">10</span>
+<span class="cm"># a = 1100 (binary)
+# b = 1010 (binary)</span>
+
+<span class="cm"># AND: 1 only where BOTH are 1</span>
+a & b   <span class="cm"># 8   = 1000  (only bit 3 is on in both)</span>
+
+<span class="cm"># OR: 1 where at least ONE is 1</span>
+a | b   <span class="cm"># 14  = 1110</span>
+
+<span class="cm"># XOR: 1 where EXACTLY ONE is 1</span>
+a ^ b   <span class="cm"># 6   = 0110  ← XOR flips differing bits</span>
+
+<span class="cm"># NOT: flips all bits (two's complement)</span>
+~a      <span class="cm"># -13  = -(a+1) in Python</span>
+
+<span class="cm"># LEFT SHIFT: multiply by 2^n</span>
+a << <span class="num">2</span>  <span class="cm"># 48  = 12 × 4 = 110000</span>
+a << <span class="num">1</span>  <span class="cm"># 24  = 12 × 2</span>
+
+<span class="cm"># RIGHT SHIFT: divide by 2^n (floor)</span>
+a >> <span class="num">1</span>  <span class="cm"># 6   = 12 // 2</span>
+a >> <span class="num">2</span>  <span class="cm"># 3   = 12 // 4</span>
+
+<span class="cm"># Python: ~ n = -(n+1) because Python has signed arbitrary-precision ints</span>
+<span class="cm"># For 32-bit NOT: ~n & 0xFFFFFFFF</span></pre></div>
+    </div>
+
+    <div class="callout info">
+      <div class="ci">🧠</div>
+      <div class="cb"><div class="cbt">Memory Tricks</div>
+        <strong>AND</strong> = filter (keeps only bits that match the mask)<br>
+        <strong>OR</strong> = set (turns bits ON)<br>
+        <strong>XOR</strong> = toggle (flips matching bits)<br>
+        <strong>Left shift by n</strong> = multiply by 2ⁿ (super fast!)<br>
+        <strong>Right shift by n</strong> = divide by 2ⁿ (floor division)
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="qttl">⚡ Quick Check</div>
+      <div class="qq">What is 5 ^ 3 in Python? (5=101, 3=011)</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,'wrong','q2')">7 (111)</button>
+        <button class="qopt" onclick="cq(this,'correct','q2')">6 (110)</button>
+        <button class="qopt" onclick="cq(this,'wrong','q2')">1 (001)</button>
+        <button class="qopt" onclick="cq(this,'wrong','q2')">15 (1111)</button>
+      </div>
+      <div class="qfb" id="q2">✅ 101 XOR 011 = 110 = 6. Bit-by-bit: 1^0=1, 0^1=1, 1^1=0. Result: 110 = 6.</div>
+    </div>
+  </section>
+
+  <!-- ===== S3: BIT TRICKS ===== -->
+  <section class="section" id="s3">
+    <div class="shdr">
+      <span class="snum">03</span>
+      <div><div class="stitle">Essential Bit Tricks</div><div class="ssub">The building blocks every bit manipulation problem uses</div></div>
+    </div>
+
+    <div class="viz">
+      <div class="vtitle">🛠️ BIT TRICKS PLAYGROUND</div>
+      <div class="vctl">
+        <input class="vinput" id="trickNum" type="number" value="44" min="0" max="255">
+        <input class="vinput" id="trickPos" type="number" value="3" min="0" max="7" placeholder="bit pos">
+        <button class="vbtn" onclick="showTricks()">Show All Tricks</button>
+      </div>
+      <div id="tricksOut" style="margin-top:12px"></div>
+      <div class="vlog" id="trickLog"><span class="vinf">Enter a number and bit position, then click "Show All Tricks".</span></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Reference</span>The Essential 12 Bit Tricks</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python — Core Bit Tricks</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre>n = <span class="num">44</span>  <span class="cm"># 0b00101100</span>
+i = <span class="num">3</span>   <span class="cm"># bit position (0 = rightmost)</span>
+
+<span class="cm"># ══ TRICK 1: Get bit i ══</span>
+<span class="cm"># Is bit i set? → AND with mask (1 << i)</span>
+(n >> i) & <span class="num">1</span>       <span class="cm"># 1 if bit i is 1, else 0</span>
+(n & (<span class="num">1</span> << i)) != <span class="num">0</span> <span class="cm"># same result, different form</span>
+
+<span class="cm"># ══ TRICK 2: Set bit i (turn ON) ══</span>
+n | (<span class="num">1</span> << i)        <span class="cm"># forces bit i to 1</span>
+
+<span class="cm"># ══ TRICK 3: Clear bit i (turn OFF) ══</span>
+n & ~(<span class="num">1</span> << i)       <span class="cm"># forces bit i to 0</span>
+
+<span class="cm"># ══ TRICK 4: Toggle bit i ══</span>
+n ^ (<span class="num">1</span> << i)        <span class="cm"># flips bit i</span>
+
+<span class="cm"># ══ TRICK 5: Check if power of 2 ══</span>
+n & (n - <span class="num">1</span>) == <span class="num">0</span> <span class="kw">and</span> n != <span class="num">0</span>
+<span class="cm"># If n=8 (1000): 8&7 = 1000&0111 = 0 ✅</span>
+<span class="cm"># If n=6 (110):  6&5 = 110&101  = 100 ≠ 0 ❌</span>
+
+<span class="cm"># ══ TRICK 6: Remove lowest set bit ══</span>
+n & (n - <span class="num">1</span>)         <span class="cm"># turns off rightmost 1-bit</span>
+<span class="cm"># 44=101100 → 44&43 = 101100&101011 = 101000 = 40</span>
+
+<span class="cm"># ══ TRICK 7: Isolate lowest set bit ══</span>
+n & (-n)             <span class="cm"># keeps only rightmost 1-bit</span>
+<span class="cm"># 44=101100 → 44&(-44) = 000100 = 4</span>
+
+<span class="cm"># ══ TRICK 8: Count set bits (popcount) ══</span>
+bin(n).count(<span class="str">'1'</span>)   <span class="cm"># Pythonic</span>
+n.bit_count()        <span class="cm"># Python 3.10+ built-in</span>
+
+<span class="cm"># ══ TRICK 9: Check if bit i is set ══</span>
+bool(n & (<span class="num">1</span> << i))  <span class="cm"># True / False</span>
+
+<span class="cm"># ══ TRICK 10: Swap two numbers (no temp) ══</span>
+a, b = <span class="num">5</span>, <span class="num">9</span>
+a ^= b; b ^= a; a ^= b   <span class="cm"># a=9, b=5</span>
+
+<span class="cm"># ══ TRICK 11: Multiply/divide by 2 ══</span>
+n << <span class="num">1</span>   <span class="cm"># n × 2</span>
+n >> <span class="num">1</span>   <span class="cm"># n // 2</span>
+
+<span class="cm"># ══ TRICK 12: Sign check ══</span>
+n >> <span class="num">31</span>  <span class="cm"># -1 if negative, 0 if positive (32-bit)</span></pre></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Deep Dive</span>Why n & (n-1) Removes Lowest Set Bit</div>
+      <div class="dry">
+        <div style="font-weight:700;margin-bottom:8px;font-size:.82rem">n = 44 = 0b101100</div>
+        <div class="ds"><span class="dsn">n:</span><span class="dsa">1 0 1 1 0 0  (44 in binary)</span></div>
+        <div class="ds"><span class="dsn">n-1:</span><span class="dsa">1 0 1 0 1 1  (43 in binary)</span></div>
+        <div class="ds"><span class="dsn">n&(n-1):</span><span class="dsa">1 0 1 0 0 0  (40 in binary)</span><span class="dss">lowest 1-bit gone!</span></div>
+        <div style="margin-top:8px;color:var(--text2);font-size:.74rem">
+          Subtracting 1 flips the lowest set bit to 0 and all bits below it to 1.<br>
+          ANDing with original keeps everything above, zeros everything at and below the lowest set bit.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== S4: NUMBER REPRESENTATION ===== -->
+  <section class="section" id="s4">
+    <div class="shdr">
+      <span class="snum">04</span>
+      <div><div class="stitle">Number Representation</div><div class="ssub">Two's complement, signed integers, overflow — what Python does differently</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Concept</span>Two's Complement (How CPUs store negatives)</div>
+      <p>Negative numbers are stored using <strong>two's complement</strong>: flip all bits, then add 1. This is why <code>~n = -(n+1)</code> in Python.</p>
+      <div class="dry">
+        <div style="font-weight:700;margin-bottom:6px;font-size:.82rem">How to get -5 from +5 (8-bit example):</div>
+        <div class="ds"><span class="dsn">+5:</span><span class="dsa">0000 0101</span></div>
+        <div class="ds"><span class="dsn">Flip bits:</span><span class="dsa">1111 1010  (= ~5 in 8-bit)</span></div>
+        <div class="ds"><span class="dsn">Add 1:</span><span class="dsa">1111 1011  (= -5 in 8-bit two's complement)</span><span class="dss">✅</span></div>
+        <div class="ds"><span class="dsn">Verify:</span><span class="dsa">0000 0101 + 1111 1011 = 1 0000 0000 = 0 (overflow discarded)</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t4">Python Gotchas</span>How Python Differs from C/Java</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># Python has ARBITRARY PRECISION ints — no overflow!</span>
+<span class="cm"># But C/Java wrap around at 2^31 - 1 for 32-bit</span>
+
+<span class="cm"># Python's ~ operator:</span>
+~<span class="num">5</span>   <span class="cm"># -6  (= -(5+1)) — Python's signed ~</span>
+~<span class="num">0</span>   <span class="cm"># -1</span>
+~(-<span class="num">1</span>) <span class="cm"># 0</span>
+
+<span class="cm"># For 32-bit problems (most LeetCode), mask to 32 bits:</span>
+MAX32 = <span class="num">0xFFFFFFFF</span>  <span class="cm"># = 2^32 - 1 = all 1s in 32 bits</span>
+~<span class="num">5</span> & MAX32          <span class="cm"># 4294967290  (correct 32-bit NOT)</span>
+
+<span class="cm"># Convert to signed 32-bit if needed:</span>
+<span class="kw">def</span> <span class="fn">to_signed32</span>(n):
+    n &= MAX32
+    <span class="kw">return</span> n - (<span class="num">1</span> << <span class="num">32</span>) <span class="kw">if</span> n >= (<span class="num">1</span> << <span class="num">31</span>) <span class="kw">else</span> n
+
+<span class="cm"># Right shift of negatives in Python:</span>
+-<span class="num">8</span> >> <span class="num">1</span>   <span class="cm"># -4  (arithmetic shift — sign bit preserved)</span>
+<span class="cm"># In C: -8 >> 1 is implementation-defined but usually -4</span>
+
+<span class="cm"># Python int ranges (for reference):</span>
+<span class="cm"># No fixed range — grows as needed</span>
+<span class="cm"># LeetCode problems typically constrain to -2^31 to 2^31-1</span></pre></div>
+    </div>
+  </section>
+
+  <!-- ===== S5: GET/SET/CLEAR ===== -->
+  <section class="section" id="s5">
+    <div class="shdr">
+      <span class="snum">05</span>
+      <div><div class="stitle">Get / Set / Clear / Toggle Bits</div><div class="ssub">Precise bit manipulation — the CRUD of bit operations</div></div>
+    </div>
+
+    <div class="viz">
+      <div class="vtitle">🎛️ BIT MANIPULATION DEMO</div>
+      <div class="vctl">
+        <input class="vinput" id="bsNum" type="number" value="44" min="0" max="255">
+        <input class="vinput" id="bsPos" type="number" value="1" min="0" max="7" placeholder="bit pos">
+        <button class="vbtn" onclick="bsOp('get')">Get</button>
+        <button class="vbtn" onclick="bsOp('set')">Set</button>
+        <button class="vbtn red" onclick="bsOp('clear')">Clear</button>
+        <button class="vbtn cyan" onclick="bsOp('toggle')">Toggle</button>
+      </div>
+      <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin:10px 0">
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:var(--text3);margin-bottom:4px">BEFORE</div>
+          <div id="bsBefore" class="mask-row" style="gap:2px"></div>
+        </div>
+        <div style="font-family:'Archivo Black',sans-serif;font-size:1.5rem;color:var(--text3)">→</div>
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:var(--text3);margin-bottom:4px">AFTER</div>
+          <div id="bsAfter" class="mask-row" style="gap:2px"></div>
+        </div>
+      </div>
+      <div class="vlog" id="bsLog"><span class="vinf">Enter a number and bit position, then choose an operation.</span></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Complete Bit Field Operations</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># Let n = 44 = 0b00101100</span>
+
+<span class="cm"># ── GET bit at position i ──────────────────────</span>
+<span class="kw">def</span> <span class="fn">get_bit</span>(n, i):
+    <span class="kw">return</span> (n >> i) & <span class="num">1</span>
+<span class="cm"># get_bit(44, 3) = (44>>3)&1 = 5&1 = 1  ✅ (bit 3 is set)</span>
+<span class="cm"># get_bit(44, 0) = (44>>0)&1 = 44&1 = 0 (bit 0 not set)</span>
+
+<span class="cm"># ── SET bit at position i (force to 1) ─────────</span>
+<span class="kw">def</span> <span class="fn">set_bit</span>(n, i):
+    <span class="kw">return</span> n | (<span class="num">1</span> << i)
+<span class="cm"># set_bit(44, 0) = 44|1 = 0b00101100|0b00000001 = 0b00101101 = 45</span>
+
+<span class="cm"># ── CLEAR bit at position i (force to 0) ───────</span>
+<span class="kw">def</span> <span class="fn">clear_bit</span>(n, i):
+    <span class="kw">return</span> n & ~(<span class="num">1</span> << i)
+<span class="cm"># clear_bit(44, 3) = 44 & ~8 = 101100 & 110111 = 100100 = 36</span>
+
+<span class="cm"># ── TOGGLE bit at position i ────────────────────</span>
+<span class="kw">def</span> <span class="fn">toggle_bit</span>(n, i):
+    <span class="kw">return</span> n ^ (<span class="num">1</span> << i)
+<span class="cm"># toggle_bit(44, 3) = 44^8 = 101100^001000 = 100100 = 36</span>
+<span class="cm"># toggle_bit(44, 0) = 44^1 = 101100^000001 = 101101 = 45</span>
+
+<span class="cm"># ── UPDATE bit to a given value v (0 or 1) ─────</span>
+<span class="kw">def</span> <span class="fn">update_bit</span>(n, i, v):
+    <span class="kw">return</span> (n & ~(<span class="num">1</span> << i)) | (v << i)
+<span class="cm"># update_bit(44, 2, 0) → clear bit 2</span>
+<span class="cm"># update_bit(44, 0, 1) → set bit 0</span>
+
+<span class="cm"># ── READ a range of bits [hi..lo] ───────────────</span>
+<span class="kw">def</span> <span class="fn">get_bits</span>(n, lo, hi):
+    mask = (<span class="num">1</span> << (hi - lo + <span class="num">1</span>)) - <span class="num">1</span>
+    <span class="kw">return</span> (n >> lo) & mask
+<span class="cm"># get_bits(44, 2, 4) → bits 2-4 of 44</span>
+<span class="cm"># 44 = 0b101100 → bits[4:2] = 011 = 3</span></pre></div>
+    </div>
+  </section>
+
+  <!-- ===== S6: COUNTING & PARITY ===== -->
+  <section class="section" id="s6">
+    <div class="shdr">
+      <span class="snum">06</span>
+      <div><div class="stitle">Counting Bits & Parity</div><div class="ssub">Count set bits efficiently — from O(n) to O(1) to O(1) with lookup</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Counting Set Bits — 4 Methods</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># METHOD 1: Built-in (Python 3.10+) — O(1) hardware</span>
+n.bit_count()       <span class="cm"># fastest</span>
+bin(n).count(<span class="str">'1'</span>)  <span class="cm"># Pythonic, works everywhere</span>
+
+<span class="cm"># METHOD 2: Brian Kernighan's Algorithm — O(set bits)</span>
+<span class="kw">def</span> <span class="fn">count_bits_bk</span>(n):
+    count = <span class="num">0</span>
+    <span class="kw">while</span> n:
+        n &= (n - <span class="num">1</span>)  <span class="cm"># Remove lowest set bit each iteration</span>
+        count += <span class="num">1</span>
+    <span class="kw">return</span> count
+<span class="cm"># For n=44 (101100): 3 iterations → count=3</span>
+
+<span class="cm"># METHOD 3: Naive — O(log n)</span>
+<span class="kw">def</span> <span class="fn">count_bits_naive</span>(n):
+    count = <span class="num">0</span>
+    <span class="kw">while</span> n:
+        count += n & <span class="num">1</span>  <span class="cm"># Check last bit</span>
+        n >>= <span class="num">1</span>         <span class="cm"># Shift right</span>
+    <span class="kw">return</span> count
+
+<span class="cm"># METHOD 4: DP — count bits for 0..n in O(n)</span>
+<span class="kw">def</span> <span class="fn">countBits</span>(n):
+    <span class="str">"""LeetCode 338: count bits for each number 0..n"""</span>
+    dp = [<span class="num">0</span>] * (n + <span class="num">1</span>)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, n + <span class="num">1</span>):
+        <span class="cm"># dp[i] = dp[i >> 1] + (i & 1)</span>
+        <span class="cm"># i's bits = (i/2)'s bits + 1 if i is odd</span>
+        dp[i] = dp[i >> <span class="num">1</span>] + (i & <span class="num">1</span>)
+    <span class="kw">return</span> dp
+<span class="cm"># countBits(5) = [0,1,1,2,1,2]</span>
+
+<span class="cm"># PARITY: is number of 1-bits even or odd?</span>
+<span class="kw">def</span> <span class="fn">parity</span>(n):
+    result = <span class="num">0</span>
+    <span class="kw">while</span> n:
+        result ^= <span class="num">1</span>  <span class="cm"># XOR with 1 toggles 0↔1</span>
+        n &= (n - <span class="num">1</span>)
+    <span class="kw">return</span> result
+<span class="cm"># parity(44) = 1 (44 has 3 set bits = odd → parity 1)</span></pre></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">LeetCode 338</span>Counting Bits — DP with Bit Trick</div>
+      <div class="dry">
+        <div style="font-weight:700;margin-bottom:7px">countBits(5): explain dp[i] = dp[i>>1] + (i&1)</div>
+        <div class="ds"><span class="dsn">i=0:</span><span class="dsa">0 in binary → dp[0]=0</span></div>
+        <div class="ds"><span class="dsn">i=1:</span><span class="dsa">dp[1>>1]=dp[0]=0, 1&1=1 → dp[1]=1</span></div>
+        <div class="ds"><span class="dsn">i=2:</span><span class="dsa">dp[2>>1]=dp[1]=1, 2&1=0 → dp[2]=1</span></div>
+        <div class="ds"><span class="dsn">i=3:</span><span class="dsa">dp[3>>1]=dp[1]=1, 3&1=1 → dp[3]=2</span></div>
+        <div class="ds"><span class="dsn">i=4:</span><span class="dsa">dp[4>>1]=dp[2]=1, 4&1=0 → dp[4]=1</span></div>
+        <div class="ds"><span class="dsn">i=5:</span><span class="dsa">dp[5>>1]=dp[2]=1, 5&1=1 → dp[5]=2</span><span class="dss">[0,1,1,2,1,2] ✅</span></div>
+        <div style="margin-top:6px;font-size:.74rem;color:var(--text2)">Key insight: i >> 1 removes last bit. (i & 1) adds back whether last bit was 1. So dp[i] = bits in i/2 + last bit of i.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== S7: POWERS OF TWO ===== -->
+  <section class="section" id="s7">
+    <div class="shdr">
+      <span class="snum">07</span>
+      <div><div class="stitle">Powers of Two</div><div class="ssub">Detect, check, and exploit powers of 2 with single-line tricks</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Powers of Two — Complete Toolkit</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># ── Is n a power of 2? ──────────────────────────</span>
+<span class="kw">def</span> <span class="fn">is_power_of_two</span>(n):
+    <span class="kw">return</span> n > <span class="num">0</span> <span class="kw">and</span> (n & (n - <span class="num">1</span>)) == <span class="num">0</span>
+<span class="cm"># Why? Powers of 2 have exactly one 1-bit:
+# 8  = 1000
+# 7  = 0111
+# 8 & 7 = 0  ← magic!
+# 6  = 0110
+# 5  = 0101
+# 6 & 5 = 4 ≠ 0  ← not power of 2</span>
+
+<span class="cm"># ── Next power of 2 ≥ n ────────────────────────</span>
+<span class="kw">def</span> <span class="fn">next_power_of_two</span>(n):
+    <span class="kw">if</span> n <= <span class="num">0</span>: <span class="kw">return</span> <span class="num">1</span>
+    n -= <span class="num">1</span>
+    n |= n >> <span class="num">1</span>
+    n |= n >> <span class="num">2</span>
+    n |= n >> <span class="num">4</span>
+    n |= n >> <span class="num">8</span>
+    n |= n >> <span class="num">16</span>
+    <span class="kw">return</span> n + <span class="num">1</span>
+<span class="cm"># next_power_of_two(5) = 8, next_power_of_two(8) = 8</span>
+
+<span class="cm"># ── Log base 2 (position of highest set bit) ───</span>
+<span class="kw">def</span> <span class="fn">log2</span>(n):
+    <span class="kw">return</span> n.bit_length() - <span class="num">1</span>
+<span class="cm"># log2(8) = 3, log2(5) = 2, log2(1) = 0</span>
+
+<span class="cm"># ── Fast modulo (only for power of 2 m) ─────────</span>
+n % m   <span class="cm"># general</span>
+n & (m - <span class="num">1</span>)   <span class="cm"># O(1) fast version IF m is power of 2!</span>
+<span class="cm"># n % 8  ==  n & 7  (8 = 2^3, mask = 0b111)</span>
+<span class="cm"># n % 4  ==  n & 3</span>
+<span class="cm"># n % 16 ==  n & 15</span>
+
+<span class="cm"># ── Power of 4 check ────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">is_power_of_four</span>(n):
+    <span class="cm"># Must be power of 2 AND the 1-bit is at an even position</span>
+    <span class="cm"># 0x55555555 = 01010101... (1s at even positions)</span>
+    <span class="kw">return</span> n > <span class="num">0</span> <span class="kw">and</span> (n & (n-<span class="num">1</span>)) == <span class="num">0</span> <span class="kw">and</span> (n & <span class="num">0x55555555</span>) != <span class="num">0</span></pre></div>
+    </div>
+  </section>
+
+  <!-- ===== S8: XOR PATTERNS ===== -->
+  <section class="section" id="s8">
+    <div class="shdr">
+      <span class="snum">08</span>
+      <div><div class="stitle">XOR Patterns</div><div class="ssub">XOR's magical properties unlock some of the most elegant DSA solutions</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t4">Properties</span>The 5 XOR Properties That Matter</div>
+      <div class="dry">
+        <div class="ds"><span class="dsn">P1:</span><span class="dsa">a ^ 0 = a &nbsp;&nbsp;&nbsp;(XOR with 0 → identity)</span><span class="dss">a=a</span></div>
+        <div class="ds"><span class="dsn">P2:</span><span class="dsa">a ^ a = 0 &nbsp;&nbsp;&nbsp;(XOR with self → zero)</span><span class="dss">cancels!</span></div>
+        <div class="ds"><span class="dsn">P3:</span><span class="dsa">a ^ b = b ^ a &nbsp;(commutative)</span></div>
+        <div class="ds"><span class="dsn">P4:</span><span class="dsa">(a^b)^c = a^(b^c) &nbsp;(associative)</span></div>
+        <div class="ds"><span class="dsn">P5:</span><span class="dsa">a ^ b ^ a = b &nbsp;(self-cancellation → find unique)</span><span class="dss">KEY!</span></div>
+      </div>
+      <div class="callout info">
+        <div class="ci">💡</div>
+        <div class="cb"><div class="cbt">P2+P5 are why XOR finds the unique element</div>
+          XOR all numbers together. Pairs cancel out (a^a=0). Only the unique number survives!<br>
+          [1,2,3,2,1] → 1^2^3^2^1 = (1^1)^(2^2)^3 = 0^0^3 = <strong>3</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>XOR — The Single Number Family</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># ═══════════════════════════════════════
+# CLASSIC: Single Number I — LC 136
+# Every element appears twice except one
+# ═══════════════════════════════════════</span>
+<span class="kw">def</span> <span class="fn">singleNumber</span>(nums):
+    result = <span class="num">0</span>
+    <span class="kw">for</span> n <span class="kw">in</span> nums:
+        result ^= n  <span class="cm"># Pairs cancel: a^a=0</span>
+    <span class="kw">return</span> result   <span class="cm"># O(n) time, O(1) space!</span>
+
+<span class="cm"># ═══════════════════════════════════════
+# HARDER: Single Number III — LC 260
+# Two unique numbers, rest appear twice
+# ═══════════════════════════════════════</span>
+<span class="kw">def</span> <span class="fn">singleNumber3</span>(nums):
+    xor = <span class="num">0</span>
+    <span class="kw">for</span> n <span class="kw">in</span> nums:
+        xor ^= n  <span class="cm"># xor = a ^ b (the two unique numbers)</span>
+
+    <span class="cm"># Find any bit where a and b differ (lowest set bit of xor)</span>
+    diff_bit = xor & (-xor)
+
+    <span class="cm"># Partition numbers into two groups by this bit</span>
+    a = <span class="num">0</span>
+    <span class="kw">for</span> n <span class="kw">in</span> nums:
+        <span class="kw">if</span> n & diff_bit:
+            a ^= n  <span class="cm"># Group 1: bit is set</span>
+    <span class="kw">return</span> [a, xor ^ a]  <span class="cm"># [a, b]</span>
+
+<span class="cm"># ═══════════════════════════════════════
+# XOR SWAP — no temp variable
+# ═══════════════════════════════════════</span>
+a, b = <span class="num">5</span>, <span class="num">9</span>
+a ^= b   <span class="cm"># a = 5^9</span>
+b ^= a   <span class="cm"># b = 9^(5^9) = 5</span>
+a ^= b   <span class="cm"># a = (5^9)^5 = 9</span>
+<span class="cm"># Now a=9, b=5  ← swapped!</span>
+
+<span class="cm"># ═══════════════════════════════════════
+# Missing Number — LC 268
+# ═══════════════════════════════════════</span>
+<span class="kw">def</span> <span class="fn">missingNumber</span>(nums):
+    result = <span class="kw">len</span>(nums)
+    <span class="kw">for</span> i, n <span class="kw">in</span> <span class="kw">enumerate</span>(nums):
+        result ^= i ^ n  <span class="cm"># XOR with index AND value</span>
+    <span class="kw">return</span> result
+<span class="cm"># [3,0,1]: result = 3^(0^3)^(1^0)^(2^1) = 2</span></pre></div>
+    </div>
+  </section>
+
+  <!-- ===== S9: BITMASK DP ===== -->
+  <section class="section" id="s9">
+    <div class="shdr">
+      <span class="snum">09</span>
+      <div><div class="stitle">Bitmask Dynamic Programming</div><div class="ssub">Represent states as integers — solve exponential problems in O(2ⁿ × n)</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Concept</span>What is Bitmask DP?</div>
+      <p>When n is small (≤ 20), we can represent a <strong>subset of n items</strong> as an integer. Bit i = 1 means item i is in the set. This turns exponential state enumeration into compact O(2ⁿ × n) DP.</p>
+      <div style="background:var(--bg);border-radius:var(--r);padding:13px;border:1px dashed var(--border);font-family:'IBM Plex Mono',monospace;font-size:.78rem;margin:11px 0">
+        n=4 items: {A, B, C, D}<br><br>
+        mask = 0b1010 = 10  → means {B, D} selected<br>
+        mask = 0b1111 = 15  → means {A, B, C, D} all selected<br>
+        mask = 0b0000 = 0   → means {} empty set<br><br>
+        Total states: 2⁴ = 16 possible subsets
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Travelling Salesman Problem (TSP) — Classic Bitmask DP</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="kw">def</span> <span class="fn">tsp</span>(dist):
+    <span class="str">"""
+    TSP: visit all n cities, return to start, min cost.
+    Bitmask DP: dp[mask][i] = min cost to visit cities
+    in 'mask', ending at city i.
+    Time: O(2^n * n^2) | Space: O(2^n * n)
+    """</span>
+    n = <span class="kw">len</span>(dist)
+    INF = <span class="kw">float</span>(<span class="str">'inf'</span>)
+    <span class="cm"># dp[mask][i] = min cost to reach city i</span>
+    <span class="cm">#               having visited exactly the cities in mask</span>
+    dp = [[INF] * n <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span> << n)]
+    dp[<span class="num">1</span>][<span class="num">0</span>] = <span class="num">0</span>  <span class="cm"># Start at city 0, mask = 0001</span>
+
+    <span class="kw">for</span> mask <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span> << n):
+        <span class="kw">for</span> u <span class="kw">in</span> <span class="kw">range</span>(n):
+            <span class="kw">if not</span> (mask >> u) & <span class="num">1</span>: <span class="kw">continue</span>  <span class="cm"># u not in mask</span>
+            <span class="kw">if</span> dp[mask][u] == INF: <span class="kw">continue</span>
+            <span class="kw">for</span> v <span class="kw">in</span> <span class="kw">range</span>(n):
+                <span class="kw">if</span> (mask >> v) & <span class="num">1</span>: <span class="kw">continue</span>   <span class="cm"># v already visited</span>
+                new_mask = mask | (<span class="num">1</span> << v)
+                dp[new_mask][v] = <span class="kw">min</span>(
+                    dp[new_mask][v],
+                    dp[mask][u] + dist[u][v]
+                )
+
+    full = (<span class="num">1</span> << n) - <span class="num">1</span>  <span class="cm"># All cities visited</span>
+    <span class="kw">return</span> <span class="kw">min</span>(dp[full][i] + dist[i][<span class="num">0</span>] <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(n))
+
+<span class="cm"># Bitmask DP KEY OPERATIONS:
+# Check if city i is in mask:     (mask >> i) & 1
+# Add city i to mask:              mask | (1 << i)
+# Remove city i from mask:         mask & ~(1 << i)
+# Check all cities visited:        mask == (1 << n) - 1</span></pre></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Partition to K Equal Subsets — LC 698</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="kw">def</span> <span class="fn">canPartitionKSubsets</span>(nums, k):
+    <span class="str">"""
+    Can nums be partitioned into k equal-sum subsets?
+    Bitmask DP: dp[mask] = True if subset represented
+    by mask can be distributed into complete buckets.
+    """</span>
+    total = <span class="kw">sum</span>(nums)
+    <span class="kw">if</span> total % k != <span class="num">0</span>: <span class="kw">return False</span>
+    target = total // k
+    n = <span class="kw">len</span>(nums)
+    dp = [<span class="bl">False</span>] * (<span class="num">1</span> << n)
+    dp[<span class="num">0</span>] = <span class="bl">True</span>
+    cur_sum = [<span class="num">0</span>] * (<span class="num">1</span> << n)
+
+    <span class="kw">for</span> mask <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span> << n):
+        <span class="kw">if not</span> dp[mask]: <span class="kw">continue</span>
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(n):
+            <span class="kw">if</span> (mask >> i) & <span class="num">1</span>: <span class="kw">continue</span>  <span class="cm"># i already used</span>
+            next_mask = mask | (<span class="num">1</span> << i)
+            <span class="kw">if</span> cur_sum[mask] + nums[i] <= target:
+                dp[next_mask] = <span class="bl">True</span>
+                cur_sum[next_mask] = (cur_sum[mask] + nums[i]) % target
+    <span class="kw">return</span> dp[(<span class="num">1</span> << n) - <span class="num">1</span>]</pre></div>
+    </div>
+  </section>
+
+  <!-- ===== S10: SUBSETS ===== -->
+  <section class="section" id="s10">
+    <div class="shdr">
+      <span class="snum">10</span>
+      <div><div class="stitle">Subsets & Enumeration</div><div class="ssub">Generate all 2ⁿ subsets using bit masks — cleaner than recursion</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Enumerate All Subsets with Bitmask</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># ── All 2^n subsets ───────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">all_subsets</span>(arr):
+    n = <span class="kw">len</span>(arr)
+    result = []
+    <span class="kw">for</span> mask <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span> << n):   <span class="cm"># 0 to 2^n - 1</span>
+        subset = []
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(n):
+            <span class="kw">if</span> (mask >> i) & <span class="num">1</span>:  <span class="cm"># Bit i is set in mask</span>
+                subset.append(arr[i])
+        result.append(subset)
+    <span class="kw">return</span> result
+<span class="cm"># all_subsets([1,2,3]):
+# mask=000 → []
+# mask=001 → [1]    (bit 0 set)
+# mask=010 → [2]    (bit 1 set)
+# mask=011 → [1,2]  (bits 0,1 set)
+# ... 8 total subsets</span>
+
+<span class="cm"># ── Enumerate all submasks of a mask ──────────────</span>
+<span class="cm"># Useful for subset-sum, partition problems</span>
+<span class="kw">def</span> <span class="fn">all_submasks</span>(mask):
+    sub = mask
+    <span class="kw">while</span> sub > <span class="num">0</span>:
+        <span class="cm"># Process sub (a submask of mask)</span>
+        <span class="kw">yield</span> sub
+        sub = (sub - <span class="num">1</span>) & mask  <span class="cm"># Next submask trick!</span>
+<span class="cm"># For mask=0b1010: yields 0b1010, 0b1000, 0b0010
+# Time: O(3^n) to enumerate all submasks for all masks</span>
+
+<span class="cm"># ── Count set bits in mask (population count) ─────</span>
+popcount = <span class="kw">lambda</span> x: bin(x).count(<span class="str">'1'</span>)
+
+<span class="cm"># ── Check if mask2 is a subset of mask1 ───────────</span>
+<span class="kw">def</span> <span class="fn">is_subset</span>(mask1, mask2):
+    <span class="kw">return</span> (mask1 & mask2) == mask2</pre></div>
+    </div>
+  </section>
+
+  <!-- ===== S11: ADVANCED TRICKS ===== -->
+  <section class="section" id="s11">
+    <div class="shdr">
+      <span class="snum">11</span>
+      <div><div class="stitle">Advanced Bit Tricks</div><div class="ssub">Reverse bits, find position, gray code, and more interview favorites</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Reverse Bits — LC 190</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="kw">def</span> <span class="fn">reverseBits</span>(n):
+    <span class="str">"""Reverse 32-bit unsigned integer's bits. LC 190."""</span>
+    result = <span class="num">0</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(<span class="num">32</span>):
+        result = (result << <span class="num">1</span>) | (n & <span class="num">1</span>)  <span class="cm"># Add last bit of n</span>
+        n >>= <span class="num">1</span>                            <span class="cm"># Shift n right</span>
+    <span class="kw">return</span> result
+<span class="cm"># reverseBits(43261596) = 964176192</span>
+<span class="cm"># 00000010100101000001111010011100
+# → 00111001011110000010100101000000</span>
+
+<span class="cm"># Pythonic one-liner:</span>
+<span class="kw">def</span> <span class="fn">reverseBits2</span>(n):
+    <span class="kw">return</span> <span class="kw">int</span>(bin(n)[<span class="num">2</span>:].zfill(<span class="num">32</span>)[::-<span class="num">1</span>], <span class="num">2</span>)</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Gray Code, Bit Tricks for Interviews</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python — Advanced Patterns</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># ── GRAY CODE: adjacent codes differ by 1 bit ────</span>
+<span class="kw">def</span> <span class="fn">grayCode</span>(n):
+    <span class="kw">return</span> [i ^ (i >> <span class="num">1</span>) <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span> << n)]
+<span class="cm"># grayCode(3) = [0,1,3,2,6,7,5,4]
+# 000→001→011→010→110→111→101→100 (1 bit change each)</span>
+
+<span class="cm"># ── FIND POSITION of rightmost set bit ────────────</span>
+<span class="kw">def</span> <span class="fn">rightmost_bit_pos</span>(n):
+    <span class="kw">return</span> (n & -n).bit_length() - <span class="num">1</span>
+<span class="cm"># n=12 (1100): n&-n = 4 (0100) → pos=2</span>
+
+<span class="cm"># ── XOR of all numbers from 1 to n ────────────────</span>
+<span class="kw">def</span> <span class="fn">xor_to_n</span>(n):
+    <span class="cm"># Pattern repeats every 4: n%4: 0→n, 1→1, 2→n+1, 3→0</span>
+    patterns = [n, <span class="num">1</span>, n + <span class="num">1</span>, <span class="num">0</span>]
+    <span class="kw">return</span> patterns[n % <span class="num">4</span>]
+<span class="cm"># xor_to_n(5) = 5^4^3^2^1 = 1 (use formula, not loop!)</span>
+
+<span class="cm"># ── Sum of two integers WITHOUT + operator ────────</span>
+<span class="kw">def</span> <span class="fn">getSum</span>(a, b):
+    <span class="kw">while</span> b != <span class="num">0</span>:
+        carry = (a & b) << <span class="num">1</span>  <span class="cm"># Carry bits</span>
+        a = a ^ b              <span class="cm"># Sum without carry</span>
+        b = carry
+    <span class="kw">return</span> a
+<span class="cm"># getSum(3, 5) = 8
+# a=3(011), b=5(101)
+# carry=(011&101)<<1 = (001)<<1 = 010
+# a=011^101=110=6, b=010
+# carry=(110&010)<<1=(010)<<1=100
+# a=110^010=100=4, b=100
+# carry=(100&100)<<1=1000, a=100^100=0, b=1000
+# carry=(0&1000)<<1=0, a=0^1000=8, b=0  → 8 ✅</span>
+
+<span class="cm"># ── Divide without / operator ──────────────────────</span>
+<span class="kw">def</span> <span class="fn">divide</span>(dividend, divisor):
+    sign = -<span class="num">1</span> <span class="kw">if</span> (dividend < <span class="num">0</span>) ^ (divisor < <span class="num">0</span>) <span class="kw">else</span> <span class="num">1</span>
+    a, b = <span class="kw">abs</span>(dividend), <span class="kw">abs</span>(divisor)
+    result = <span class="num">0</span>
+    <span class="kw">while</span> a >= b:
+        temp, mult = b, <span class="num">1</span>
+        <span class="kw">while</span> a >= temp << <span class="num">1</span>:
+            temp <<= <span class="num">1</span>; mult <<= <span class="num">1</span>
+        a -= temp; result += mult
+    <span class="kw">return</span> sign * result</pre></div>
+    </div>
+  </section>
+
+  <!-- ===== S12: INTERVIEW PROBLEMS ===== -->
+  <section class="section" id="s12">
+    <div class="shdr">
+      <span class="snum">12</span>
+      <div><div class="stitle">Interview Problems</div><div class="ssub">15 must-know bit manipulation problems with full solutions</div></div>
+    </div>
+
+    <!-- P1 -->
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">1. Single Number</div><span class="diff de">Easy</span><span style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--text3)">LC 136</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p1e')">Explain</div><div class="ptab" onclick="st(this,'p1c')">Code</div></div>
+        <div class="ptc active" id="p1e"><p><strong>Pattern:</strong> XOR all numbers. Pairs cancel (a^a=0). Single remains. O(n) time, O(1) space — beats HashMap O(n) space.</p></div>
+        <div class="ptc" id="p1c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">singleNumber</span>(nums):
+    <span class="kw">return</span> __import__(<span class="str">'functools'</span>).reduce(<span class="kw">lambda</span> a,b: a^b, nums)
+<span class="cm"># Or explicit: res=0; for n in nums: res^=n; return res</span></pre></div></div>
+      </div>
+    </div>
+
+    <!-- P2 -->
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">2. Number of 1 Bits (Hamming Weight)</div><span class="diff de">Easy</span><span style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--text3)">LC 191</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p2e')">Explain</div><div class="ptab" onclick="st(this,'p2c')">Code</div></div>
+        <div class="ptc active" id="p2e"><p><strong>Pattern:</strong> Brian Kernighan: n &= (n-1) removes lowest set bit each time. Loop count = number of set bits.</p></div>
+        <div class="ptc" id="p2c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">hammingWeight</span>(n):
+    count = <span class="num">0</span>
+    <span class="kw">while</span> n:
+        n &= n - <span class="num">1</span>  <span class="cm"># Remove lowest set bit</span>
+        count += <span class="num">1</span>
+    <span class="kw">return</span> count  <span class="cm"># O(set_bits), O(1) space</span></pre></div></div>
+      </div>
+    </div>
+
+    <!-- P3 -->
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">3. Counting Bits</div><span class="diff de">Easy</span><span style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--text3)">LC 338</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p3e')">Explain</div><div class="ptab" onclick="st(this,'p3c')">Code</div></div>
+        <div class="ptc active" id="p3e"><p><strong>Pattern:</strong> DP with bit trick. dp[i] = dp[i>>1] + (i&1). Count bits for 0..n in one pass, O(n) time O(n) space.</p></div>
+        <div class="ptc" id="p3c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">countBits</span>(n):
+    dp = [<span class="num">0</span>] * (n+<span class="num">1</span>)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, n+<span class="num">1</span>):
+        dp[i] = dp[i >> <span class="num">1</span>] + (i & <span class="num">1</span>)
+    <span class="kw">return</span> dp</pre></div></div>
+      </div>
+    </div>
+
+    <!-- P4 -->
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">4. Reverse Bits</div><span class="diff de">Easy</span><span style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--text3)">LC 190</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p4e')">Explain</div></div>
+        <div class="ptc active" id="p4e"><p><strong>Pattern:</strong> Extract last bit of n, append to result (shift result left first). Repeat 32 times. Full code in Section 11.</p></div>
+      </div>
+    </div>
+
+    <!-- P5 -->
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">5. Missing Number</div><span class="diff de">Easy</span><span style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--text3)">LC 268</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p5e')">Explain</div><div class="ptab" onclick="st(this,'p5c')">Code</div></div>
+        <div class="ptc active" id="p5e"><p><strong>Pattern:</strong> XOR all indices 0..n with all values. Pairs cancel. Only missing index survives.</p></div>
+        <div class="ptc" id="p5c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">missingNumber</span>(nums):
+    res = <span class="kw">len</span>(nums)
+    <span class="kw">for</span> i, n <span class="kw">in</span> <span class="kw">enumerate</span>(nums):
+        res ^= i ^ n
+    <span class="kw">return</span> res  <span class="cm"># O(n) time, O(1) space</span></pre></div></div>
+      </div>
+    </div>
+
+    <!-- P6 -->
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">6. Power of Two</div><span class="diff de">Easy</span><span style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--text3)">LC 231</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p6c')">Code</div></div>
+        <div class="ptc active" id="p6c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">isPowerOfTwo</span>(n):
+    <span class="kw">return</span> n > <span class="num">0</span> <span class="kw">and</span> (n & (n-<span class="num">1</span>)) == <span class="num">0</span>
+<span class="cm"># Powers of 2 have exactly one bit set.
+# n & (n-1) removes lowest set bit → 0 iff only one bit.</span></pre></div></div>
+      </div>
+    </div>
+
+    <!-- P7 -->
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">7. Sum of Two Integers (No +)</div><span class="diff dm">Medium</span><span style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--text3)">LC 371</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p7e')">Explain</div></div>
+        <div class="ptc active" id="p7e"><p><strong>Pattern:</strong> a^b = sum without carry. (a&b)<<1 = carry. Repeat until no carry. Full code in Section 11. O(1) time.</p></div>
+      </div>
+    </div>
+
+    <!-- P8 -->
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">8. Single Number III (Two Unique)</div><span class="diff dm">Medium</span><span style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--text3)">LC 260</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p8e')">Explain</div></div>
+        <div class="ptc active" id="p8e"><p><strong>Pattern:</strong> XOR all → get a^b. Find diff bit (lowest set bit). Partition by that bit → each group has one unique. Full code in Section 8.</p></div>
+      </div>
+    </div>
+
+    <!-- P9 -->
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">9. Bitwise AND of Numbers Range</div><span class="diff dm">Medium</span><span style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--text3)">LC 201</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p9e')">Explain</div><div class="ptab" onclick="st(this,'p9c')">Code</div></div>
+        <div class="ptc active" id="p9e"><p><strong>Key Insight:</strong> AND of [m..n] = common prefix of m and n in binary. Shift both right until equal — count shifts. Shift result back left by same count.</p></div>
+        <div class="ptc" id="p9c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">rangeBitwiseAnd</span>(m, n):
+    shift = <span class="num">0</span>
+    <span class="kw">while</span> m != n:
+        m >>= <span class="num">1</span>; n >>= <span class="num">1</span>; shift += <span class="num">1</span>
+    <span class="kw">return</span> m << shift  <span class="cm"># O(log n)</span></pre></div></div>
+      </div>
+    </div>
+
+    <!-- P10 -->
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">10. Hamming Distance</div><span class="diff de">Easy</span><span style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--text3)">LC 461</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p10c')">Code</div></div>
+        <div class="ptc active" id="p10c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">hammingDistance</span>(x, y):
+    <span class="kw">return</span> bin(x ^ y).count(<span class="str">'1'</span>)
+<span class="cm"># XOR gives 1 where bits DIFFER.
+# Count set bits of XOR = hamming distance.
+# hammingDistance(1, 4): 001^100 = 101 → 2 bits</span></pre></div></div>
+      </div>
+    </div>
+
+    <!-- P11 -->
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">11. Find the Duplicate Number</div><span class="diff dm">Medium</span><span style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--text3)">LC 287</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p11e')">Explain</div><div class="ptab" onclick="st(this,'p11c')">Code</div></div>
+        <div class="ptc active" id="p11e"><p><strong>Bit Pattern:</strong> For each bit position, count bits set in nums vs 1..n. If nums has more → that bit is set in duplicate.</p></div>
+        <div class="ptc" id="p11c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">findDuplicate</span>(nums):
+    n = <span class="kw">len</span>(nums) - <span class="num">1</span>; duplicate = <span class="num">0</span>
+    <span class="kw">for</span> bit <span class="kw">in</span> <span class="kw">range</span>(n.bit_length() + <span class="num">1</span>):
+        mask = <span class="num">1</span> << bit
+        cnt_nums = <span class="kw">sum</span>(<span class="num">1</span> <span class="kw">for</span> x <span class="kw">in</span> nums <span class="kw">if</span> x & mask)
+        cnt_ref  = <span class="kw">sum</span>(<span class="num">1</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>,n+<span class="num">1</span>) <span class="kw">if</span> x & mask)
+        <span class="kw">if</span> cnt_nums > cnt_ref:
+            duplicate |= mask
+    <span class="kw">return</span> duplicate  <span class="cm"># O(n log n)</span></pre></div></div>
+      </div>
+    </div>
+
+    <!-- P12 -->
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">12. Subsets</div><span class="diff dm">Medium</span><span style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--text3)">LC 78</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p12c')">Code</div></div>
+        <div class="ptc active" id="p12c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">subsets</span>(nums):
+    n = <span class="kw">len</span>(nums); result = []
+    <span class="kw">for</span> mask <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span> << n):
+        subset = [nums[i] <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(n) <span class="kw">if</span> (mask>>i)&<span class="num">1</span>]
+        result.append(subset)
+    <span class="kw">return</span> result  <span class="cm"># O(2^n * n)</span></pre></div></div>
+      </div>
+    </div>
+
+    <!-- P13 -->
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">13. Maximum XOR of Two Numbers</div><span class="diff dm">Medium</span><span style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--text3)">LC 421</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p13e')">Explain</div><div class="ptab" onclick="st(this,'p13c')">Code</div></div>
+        <div class="ptc active" id="p13e"><p><strong>Pattern:</strong> Greedy from MSB to LSB. Try to set each bit of result to 1. Use prefix set: if a^b = candidate with bit set, then a and b both in prefix set.</p></div>
+        <div class="ptc" id="p13c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">findMaximumXOR</span>(nums):
+    max_xor = mask = <span class="num">0</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="num">31</span>, -<span class="num">1</span>, -<span class="num">1</span>):
+        mask |= <span class="num">1</span> << i
+        prefixes = {n & mask <span class="kw">for</span> n <span class="kw">in</span> nums}
+        candidate = max_xor | (<span class="num">1</span> << i)
+        <span class="kw">if</span> <span class="kw">any</span>(candidate ^ p <span class="kw">in</span> prefixes <span class="kw">for</span> p <span class="kw">in</span> prefixes):
+            max_xor = candidate
+    <span class="kw">return</span> max_xor  <span class="cm"># O(32n)</span></pre></div></div>
+      </div>
+    </div>
+
+    <!-- P14 -->
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">14. Total Hamming Distance</div><span class="diff dm">Medium</span><span style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--text3)">LC 477</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p14e')">Explain</div><div class="ptab" onclick="st(this,'p14c')">Code</div></div>
+        <div class="ptc active" id="p14e"><p><strong>Pattern:</strong> For each bit position, count ones and zeros. Contribution = ones × zeros. Sum over all 32 bit positions. O(32n) = O(n).</p></div>
+        <div class="ptc" id="p14c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">totalHammingDistance</span>(nums):
+    total = <span class="num">0</span>
+    <span class="kw">for</span> bit <span class="kw">in</span> <span class="kw">range</span>(<span class="num">32</span>):
+        ones = <span class="kw">sum</span>((n >> bit) & <span class="num">1</span> <span class="kw">for</span> n <span class="kw">in</span> nums)
+        zeros = <span class="kw">len</span>(nums) - ones
+        total += ones * zeros  <span class="cm"># pairs with different bits</span>
+    <span class="kw">return</span> total  <span class="cm"># O(32n) = O(n)</span></pre></div></div>
+      </div>
+    </div>
+
+    <!-- P15 -->
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">15. Gray Code</div><span class="diff dm">Medium</span><span style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--text3)">LC 89</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p15c')">Code</div></div>
+        <div class="ptc active" id="p15c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">grayCode</span>(n):
+    <span class="kw">return</span> [i ^ (i >> <span class="num">1</span>) <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span> << n)]
+<span class="cm"># Formula: gray(i) = i XOR (i >> 1)
+# Each adjacent pair differs by exactly 1 bit.</span></pre></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== S13: CHEAT SHEET ===== -->
+  <section class="section" id="s13">
+    <div class="shdr">
+      <span class="snum">13</span>
+      <div><div class="stitle">Cheat Sheet</div><div class="ssub">Every trick, pattern, and formula — interview-ready in one glance</div></div>
+    </div>
+
+    <div class="cgrid">
+      <div class="ci2">
+        <div class="cit">⚙️ Essential Tricks</div>
+        <div class="cb2" style="margin:0"><pre style="font-size:.68rem;padding:10px">(n>>i)&1       <span class="cm"># get bit i</span>
+n|(1<<i)        <span class="cm"># set bit i</span>
+n&~(1<<i)       <span class="cm"># clear bit i</span>
+n^(1<<i)        <span class="cm"># toggle bit i</span>
+n&(n-1)         <span class="cm"># remove lowest 1-bit</span>
+n&(-n)          <span class="cm"># isolate lowest 1-bit</span>
+n&(n-1)==0      <span class="cm"># is power of 2?</span></pre></div>
+      </div>
+      <div class="ci2">
+        <div class="cit">⚡ XOR Properties</div>
+        <ul>
+          <li>a ^ 0 = a (identity)</li>
+          <li>a ^ a = 0 (self-cancel)</li>
+          <li>a ^ b = b ^ a (commute)</li>
+          <li>a ^ b ^ a = b (cancel pair)</li>
+          <li>XOR all: unique survives!</li>
+          <li>Swap: a^=b; b^=a; a^=b</li>
+        </ul>
+      </div>
+      <div class="ci2">
+        <div class="cit">🔢 Shifts = Multiply/Divide</div>
+        <div class="cb2" style="margin:0"><pre style="font-size:.68rem;padding:10px">n << k  <span class="cm"># n × 2^k</span>
+n >> k  <span class="cm"># n // 2^k</span>
+n & (m-1)  <span class="cm"># n % m (m=2^k)</span>
+n.bit_length()-1  <span class="cm"># floor(log2(n))</span>
+bin(n).count('1')  <span class="cm"># popcount</span>
+n.bit_count()      <span class="cm"># Python 3.10+</span></pre></div>
+      </div>
+      <div class="ci2">
+        <div class="cit">🎭 Bitmask Patterns</div>
+        <ul>
+          <li>(mask >> i) & 1 → check item i</li>
+          <li>mask | (1 << i) → add item i</li>
+          <li>mask & ~(1 << i) → remove item i</li>
+          <li>(1 << n) - 1 → full mask (all n bits set)</li>
+          <li>sub = (sub-1) & mask → next submask</li>
+          <li>2^n states for n-item subset</li>
+        </ul>
+      </div>
+      <div class="ci2">
+        <div class="cit">📊 Complexity</div>
+        <ul>
+          <li>Get/Set/Clear/Toggle: O(1)</li>
+          <li>Count bits (BK): O(set bits)</li>
+          <li>Count bits naive: O(log n)</li>
+          <li>Reverse bits: O(32) = O(1)</li>
+          <li>Bitmask DP: O(2^n × n)</li>
+          <li>Enumerate submasks: O(3^n)</li>
+        </ul>
+      </div>
+      <div class="ci2">
+        <div class="cit">🎯 Pattern Recognition</div>
+        <ul>
+          <li>"One unique, rest pairs" → XOR all</li>
+          <li>"Power of 2 check" → n & (n-1) == 0</li>
+          <li>"Count 1-bits" → Brian Kernighan</li>
+          <li>"Subset states, n≤20" → Bitmask DP</li>
+          <li>"No + operator" → XOR + carry</li>
+          <li>"All subsets" → 0 to (1<<n)-1</li>
+        </ul>
+      </div>
+      <div class="ci2">
+        <div class="cit">⚠️ Python Gotchas</div>
+        <ul>
+          <li>~n = -(n+1), not bit-flip!</li>
+          <li>For 32-bit NOT: ~n & 0xFFFFFFFF</li>
+          <li>Python ints don't overflow</li>
+          <li>Right shift of negatives is arithmetic</li>
+          <li>bin(-5) = '-0b101' in Python</li>
+          <li>Always mask when simulating 32-bit</li>
+        </ul>
+      </div>
+      <div class="ci2">
+        <div class="cit">💬 Interview Phrases</div>
+        <ul>
+          <li>"XOR cancels pairs — the unique survives"</li>
+          <li>"n & (n-1) strips the lowest set bit in O(1)"</li>
+          <li>"Left shift by k = multiply by 2^k"</li>
+          <li>"Brian Kernighan loops only O(set bits) times"</li>
+          <li>"Bitmask DP works because n ≤ 20 → 2^20 = 1M states"</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== S14: ROADMAP ===== -->
+  <section class="section" id="s14">
+    <div class="shdr">
+      <span class="snum">14</span>
+      <div><div class="stitle">7-Day Mastery Roadmap</div><div class="ssub">Structured daily plan from zero to solving hard bit problems</div></div>
+    </div>
+
+    <div class="roadmap">
+      <div class="rday"><div class="rdot">D1</div>
+        <div class="rbody">
+          <div class="rttl">Day 1 — Binary & Operators <span class="badge be">Beginner</span></div>
+          <ul class="rlist">
+            <li>Read Sections 1–2. Use the bit explorer to feel comfortable with binary.</li>
+            <li>Practice: convert 5 decimal numbers to binary by hand.</li>
+            <li>Memorize the 6 operators and truth tables for AND/OR/XOR.</li>
+            <li>Code: implement get_bit, set_bit, clear_bit, toggle_bit from memory.</li>
+            <li>Solve: LC 191 (Hamming Weight), LC 461 (Hamming Distance).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="rday"><div class="rdot" style="border-color:var(--a3)">D2</div>
+        <div class="rbody">
+          <div class="rttl">Day 2 — Bit Tricks <span class="badge be">Beginner</span></div>
+          <ul class="rlist">
+            <li>Read Section 3. Understand each of the 12 bit tricks.</li>
+            <li>Use the tricks playground. Trace n & (n-1) for 5 different numbers.</li>
+            <li>Memorize: n & (n-1) removes lowest bit, n & (-n) isolates it.</li>
+            <li>Solve: LC 231 (Power of Two), LC 190 (Reverse Bits).</li>
+            <li>Solve: LC 338 (Counting Bits) — try the DP approach.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="rday"><div class="rdot" style="border-color:var(--a4)">D3</div>
+        <div class="rbody">
+          <div class="rttl">Day 3 — XOR Patterns <span class="badge bm">Intermediate</span></div>
+          <ul class="rlist">
+            <li>Read Section 8. Memorize the 5 XOR properties.</li>
+            <li>Solve: LC 136 (Single Number) — understand why XOR works.</li>
+            <li>Solve: LC 268 (Missing Number) — XOR with indices.</li>
+            <li>Solve: LC 260 (Single Number III) — harder, understand diff_bit.</li>
+            <li>Solve: LC 89 (Gray Code) — i ^ (i>>1) pattern.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="rday"><div class="rdot" style="border-color:var(--a2)">D4</div>
+        <div class="rbody">
+          <div class="rttl">Day 4 — Medium Problems <span class="badge bm">Intermediate</span></div>
+          <ul class="rlist">
+            <li>Solve: LC 371 (Sum without +) — XOR + carry, trace by hand.</li>
+            <li>Solve: LC 201 (Bitwise AND Range) — common prefix pattern.</li>
+            <li>Solve: LC 421 (Maximum XOR) — greedy from MSB.</li>
+            <li>Solve: LC 477 (Total Hamming Distance) — bit count trick.</li>
+            <li>Solve: LC 78 (Subsets via bitmask).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="rday"><div class="rdot" style="border-color:var(--a5)">D5</div>
+        <div class="rbody">
+          <div class="rttl">Day 5 — Bitmask DP <span class="badge bh">Advanced</span></div>
+          <ul class="rlist">
+            <li>Read Section 9. Understand mask as a set representation.</li>
+            <li>Trace TSP Bitmask DP for 3 cities by hand.</li>
+            <li>Solve: LC 698 (Partition K Equal Subsets) — bitmask DP.</li>
+            <li>Solve: LC 847 (Shortest Path Visiting All Nodes) — hard bitmask BFS.</li>
+            <li>Study submask enumeration (Section 10).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="rday"><div class="rdot" style="border-color:var(--a4)">D6</div>
+        <div class="rbody">
+          <div class="rttl">Day 6 — Advanced & Mixed <span class="badge bh">Advanced</span></div>
+          <ul class="rlist">
+            <li>Solve: LC 287 (Find Duplicate — bit count approach).</li>
+            <li>Solve: LC 136/137 (Single Number I & II).</li>
+            <li>Solve 3 random medium bit manipulation problems.</li>
+            <li>Review Number Representation (Section 4) — Python ~n gotcha.</li>
+            <li>Code the Gray Code generator, Reverse Bits, and Sum without + from memory.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="rday"><div class="rdot" style="border-color:var(--a1)">D7</div>
+        <div class="rbody">
+          <div class="rttl">Day 7 — Mock Interview <span class="badge bh">Interview</span></div>
+          <ul class="rlist">
+            <li>Review Cheat Sheet — 20 min, no code.</li>
+            <li>Code these from memory: get/set/clear/toggle, count bits (BK), single number, missing number.</li>
+            <li>Solve 3 unseen problems (35 min each). Speak your thought process aloud.</li>
+            <li>Explain to yourself: why does n & (n-1) work? Why does XOR cancel pairs?</li>
+            <li>Final check: can you code bitmask subset enumeration without reference?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout ok">
+      <div class="ci">🏆</div>
+      <div class="cb"><div class="cbt">You're Interview-Ready When You Can...</div>
+        <ul style="margin:0;padding-left:16px">
+          <li>Write get/set/clear/toggle without looking in under 2 minutes</li>
+          <li>Explain n & (n-1) and why it works for power-of-2 and popcount</li>
+          <li>Implement XOR single-number and missing-number from memory</li>
+          <li>Set up a bitmask DP table with correct state transitions</li>
+          <li>Enumerate all 2ⁿ subsets using a for loop over masks</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <div class="ci">🚫</div>
+      <div class="cb"><div class="cbt">When NOT to Use Bit Manipulation</div>
+        <ul style="margin:0;padding-left:16px">
+          <li><strong>n > 20-25</strong> for bitmask DP → exponential blowup, use different DP</li>
+          <li><strong>Float/decimal arithmetic</strong> → use regular math</li>
+          <li><strong>String manipulation</strong> → usually cleaner with string methods</li>
+          <li><strong>Readability critical</strong> → bit tricks can obscure intent; comment them</li>
+          <li><strong>Python arbitrary precision pitfall</strong> → always mask to 32 bits for signed problems</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div>⚙️ Bit Manipulation Mastery — Complete DSA Course</div>
+    <div style="margin-top:4px">Every bit counts. Master them all.</div>
+  </footer>
+</main>
+</div>
+
+<script>
+/* ── THEME / SIDEBAR ────────────────────────────── */
+function toggleTheme(){const h=document.documentElement;h.setAttribute('data-theme',h.getAttribute('data-theme')==='dark'?'light':'dark')}
+function openSb(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('show')}
+function closeSb(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
+function gt(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});document.querySelectorAll('.nlink').forEach(n=>n.classList.remove('active'));event.currentTarget.classList.add('active');if(window.innerWidth<=768)closeSb()}
+function cc(btn){const code=btn.closest('.cb2').querySelector('pre').innerText;navigator.clipboard.writeText(code).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',1800)})}
+function cq(btn,r,id){btn.closest('.qopts').querySelectorAll('.qopt').forEach(o=>o.disabled=true);const fb=document.getElementById(id);if(r==='correct'){btn.classList.add('correct');fb.className='qfb show ok'}else{btn.classList.add('wrong');fb.className='qfb show no';fb.textContent='❌ Not quite — review the section above!'}}
+function st(tab,cid){const b=tab.closest('.pbody');b.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));b.querySelectorAll('.ptc').forEach(c=>c.classList.remove('active'));tab.classList.add('active');document.getElementById(cid).classList.add('active')}
+function toggleDeep(h){h.closest('.deep').classList.toggle('open')}
+
+/* ── BIT EXPLORER ───────────────────────────────── */
+let currentNum = 42;
+
+function renderBits(num){
+  const el=document.getElementById('bitDisplay');el.innerHTML='';
+  const isDark=document.documentElement.getAttribute('data-theme')!=='light';
+  // Show 8 bits (byte)
+  for(let i=7;i>=0;i--){
+    const bit=(num>>i)&1;
+    const cell=document.createElement('div');cell.className='bit-cell';
+    const val=document.createElement('div');val.className='bit-val '+(bit?'on':'off');
+    val.textContent=bit;val.title=`Bit ${i}`;
+    val.onclick=()=>toggleBit(i);
+    const idx=document.createElement('div');idx.className='bit-idx';idx.textContent=i;
+    cell.appendChild(val);cell.appendChild(idx);el.appendChild(cell);
+    if(i===4){const sep=document.createElement('div');sep.style.cssText='width:8px';el.appendChild(sep)}
+  }
+  document.getElementById('numDisplay').textContent=num;
+  document.getElementById('hexDisplay').textContent=`0x${num.toString(16).toUpperCase().padStart(2,'0')} = 0b${num.toString(2).padStart(8,'0')}`;
+  currentNum=num;
+}
+
+function toggleBit(i){
+  const prev=currentNum;
+  currentNum^=(1<<i);
+  if(currentNum<0)currentNum=0;
+  if(currentNum>255)currentNum=255;
+  document.getElementById('numInput').value=currentNum;
+  renderBits(currentNum);
+  logBit(`Toggled bit ${i}: ${prev} → ${currentNum} (${prev.toString(2).padStart(8,'0')} → ${currentNum.toString(2).padStart(8,'0')})`);
+}
+
+function updateBits(){
+  let n=parseInt(document.getElementById('numInput').value)||0;
+  n=Math.max(0,Math.min(255,n));
+  renderBits(n);
+  logBit(`Updated to ${n} = 0b${n.toString(2).padStart(8,'0')}`);
+}
+function flipAll(){
+  const n=(~currentNum)&255;
+  document.getElementById('numInput').value=n;
+  renderBits(n);
+  logBit(`NOT ~${currentNum} = ${n} (all bits flipped)`);
+}
+function shiftLeft(){
+  const n=(currentNum<<1)&255;
+  document.getElementById('numInput').value=n;
+  renderBits(n);
+  logBit(`Left shift: ${currentNum} << 1 = ${n} (× 2, high bit lost if overflow)`);
+}
+function shiftRight(){
+  const n=currentNum>>1;
+  document.getElementById('numInput').value=n;
+  renderBits(n);
+  logBit(`Right shift: ${currentNum} >> 1 = ${n} (÷ 2, floor)`);
+}
+function clearBits(){
+  document.getElementById('numInput').value=0;
+  renderBits(0);
+  logBit('Cleared to 0');
+}
+function logBit(msg){document.getElementById('bitLog').innerHTML=`<span class="vinf">${msg}</span>`}
+
+/* ── OPERATOR VIZ ───────────────────────────────── */
+function toBitsArr(n,len=8){return Array.from({length:len},(_, i)=>(n>>(len-1-i))&1)}
+function renderOpRow(label,num,type,len=8){
+  const bits=toBitsArr(num,len);
+  let html=`<div class="op-row"><div class="op-sym">${label}</div><div class="op-bits">`;
+  bits.forEach((b,i)=>{html+=`<div class="op-bit ${type==='res'?'res':(b?'on':'off')}">${b}</div>`});
+  html+=`</div><span style="font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--text2);margin-left:10px">= ${num}</span></div>`;
+  return html;
+}
+
+function runOp(){
+  const a=parseInt(document.getElementById('opA').value)||0;
+  const b=parseInt(document.getElementById('opB').value)||0;
+  const op=document.getElementById('opSel').value;
+  let result,sym,desc;
+  if(op==='and'){result=a&b;sym='&';desc=`${a} AND ${b} = ${result}`}
+  else if(op==='or'){result=a|b;sym='|';desc=`${a} OR ${b} = ${result}`}
+  else if(op==='xor'){result=a^b;sym='^';desc=`${a} XOR ${b} = ${result}`}
+  else if(op==='not'){result=(~a)&255;sym='~';desc=`NOT ${a} (8-bit) = ${result}`}
+  else if(op==='lsh'){result=(a<<b)&255;sym='<<';desc=`${a} << ${b} = ${result}`}
+  else if(op==='rsh'){result=a>>b;sym='>>';desc=`${a} >> ${b} = ${result}`}
+  const d=document.getElementById('opDisplay');
+  d.innerHTML='';
+  d.innerHTML+=renderOpRow(`A=${a}`,a,'a');
+  if(op!=='not')d.innerHTML+=renderOpRow(`B=${b}`,b,'b');
+  d.innerHTML+=`<div class="op-row"><div class="op-sym" style="font-size:1.2rem;color:var(--a4)">${sym}</div><div style="flex:1;height:1px;background:var(--border)"></div></div>`;
+  d.innerHTML+=renderOpRow(`= ${result}`,result,'res');
+  document.getElementById('opLog').innerHTML=`<span class="vinf">${desc} | binary: ${a.toString(2).padStart(8,'0')} ${sym} ${op!=='not'?b.toString(2).padStart(8,'0'):''} = ${result.toString(2).padStart(8,'0')}</span>`;
+}
+
+/* ── TRICKS PLAYGROUND ───────────────────────────── */
+function showTricks(){
+  const n=parseInt(document.getElementById('trickNum').value)||44;
+  const i=parseInt(document.getElementById('trickPos').value)||3;
+  const bin8=(x)=>x.toString(2).padStart(8,'0');
+  const tricks=[
+    [`Get bit ${i}`,(n>>i)&1,`(${n}>>${i})&1 = ${(n>>i)&1}`],
+    [`Set bit ${i}`,n|(1<<i),`${n}|(1<<${i}) = ${n|(1<<i)}`],
+    [`Clear bit ${i}`,n&~(1<<i),`${n}&~(1<<${i}) = ${n&~(1<<i)}`],
+    [`Toggle bit ${i}`,n^(1<<i),`${n}^(1<<${i}) = ${n^(1<<i)}`],
+    ['Is power of 2?',(n&(n-1))===0&&n>0?'✅ YES':'❌ NO',`${n}&${n-1}=${n&(n-1)} → ${(n&(n-1))===0&&n>0?'YES':'NO'}`],
+    ['Remove lowest 1-bit',n&(n-1),`${n}&${n-1}=${n&(n-1)} (${bin8(n)} → ${bin8(n&(n-1))})`],
+    ['Isolate lowest 1-bit',n&(-n),`${n}&${-n}=${n&(-n)} (${bin8(n)})`],
+    ['Count set bits (popcount)',n.toString(2).split('').filter(c=>c==='1').length,`bin(${n}).count('1') = ${n.toString(2).split('').filter(c=>c==='1').length}`],
+    ['Shift left by 1',n<<1,`${n}<<1 = ${n<<1} (×2)`],
+    ['Shift right by 1',n>>1,`${n}>>1 = ${n>>1} (÷2)`],
+    ['n % 8 via bits',n&7,`${n}&7 = ${n&7} (same as ${n}%8=${n%8})`],
+  ];
+  let html='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px">';
+  tricks.forEach(([label,result,detail])=>{
+    html+=`<div style="background:var(--bg3);border-radius:var(--r);padding:10px 13px;border:1px solid var(--border)">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--text3);margin-bottom:3px">${label}</div>
+      <div style="font-family:'Archivo Black',sans-serif;font-size:1.2rem;color:var(--a1);letter-spacing:-.5px">${result}</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--text2);margin-top:2px">${detail}</div>
+    </div>`;
+  });
+  html+='</div>';
+  document.getElementById('tricksOut').innerHTML=html;
+  document.getElementById('trickLog').innerHTML=`<span class="vinf">All tricks shown for n=${n}, bit position i=${i}. Binary: ${bin8(n)}</span>`;
+}
+
+/* ── BIT FIELD VIZ ────────────────────────────────── */
+function renderMaskRow(el,num,highlight=-1,color='on'){
+  el.innerHTML='';
+  for(let i=7;i>=0;i--){
+    const b=(num>>i)&1;
+    const d=document.createElement('div');
+    d.className='mb '+(i===highlight?color:(b?'on':'off'));
+    d.textContent=b;el.appendChild(d);
+    if(i===4){const sp=document.createElement('div');sp.style.cssText='width:6px';el.appendChild(sp)}
+  }
+}
+function bsOp(op){
+  const n=parseInt(document.getElementById('bsNum').value)||0;
+  const pos=parseInt(document.getElementById('bsPos').value)||0;
+  let result,desc;
+  if(op==='get'){result=n;desc=`Bit ${pos} of ${n} is ${(n>>pos)&1}`}
+  else if(op==='set'){result=n|(1<<pos);desc=`Set bit ${pos}: ${n} → ${result}`}
+  else if(op==='clear'){result=n&~(1<<pos);desc=`Clear bit ${pos}: ${n} → ${result}`}
+  else if(op==='toggle'){result=n^(1<<pos);desc=`Toggle bit ${pos}: ${n} → ${result}`}
+  renderMaskRow(document.getElementById('bsBefore'),n,pos,'hi');
+  renderMaskRow(document.getElementById('bsAfter'),result,pos,op==='clear'?'zero':'res');
+  document.getElementById('bsLog').innerHTML=`<span class="vinf">${desc} | ${n.toString(2).padStart(8,'0')} → ${result.toString(2).padStart(8,'0')}</span>`;
+  if(op!=='get'){document.getElementById('bsNum').value=result}
+}
+
+/* ── PROGRESS ────────────────────────────────────── */
+function updateProgress(){
+  const secs=document.querySelectorAll('.section');
+  let vis=0;const sc=window.scrollY+window.innerHeight;
+  secs.forEach(s=>{if(s.offsetTop<sc-100)vis++});
+  document.getElementById('pfill').style.width=Math.min(100,Math.round(vis/secs.length*100))+'%';
+}
+function updateNav(){
+  const secs=document.querySelectorAll('.section');
+  const links=document.querySelectorAll('.nlink');
+  let aid='';
+  secs.forEach(s=>{if(s.offsetTop<=window.scrollY+200)aid=s.id});
+  links.forEach(l=>{l.classList.remove('active');const oc=l.getAttribute('onclick');if(oc&&oc.includes(aid))l.classList.add('active')});
+}
+window.addEventListener('scroll',()=>{updateProgress();updateNav()});
+window.addEventListener('load',()=>{renderBits(42);showTricks();renderMaskRow(document.getElementById('bsBefore'),44,3,'hi');renderMaskRow(document.getElementById('bsAfter'),44,3,'hi')});
+</script>
+</body>
+</html>

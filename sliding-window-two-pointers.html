@@ -1,0 +1,2516 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sliding Window & Two Pointers — Complete DSA Course</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Inconsolata:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   THEME VARS — Stark editorial dark / warm light
+   ============================================================ */
+:root {
+  --bg:      #0b0c0e;
+  --bg2:     #111316;
+  --bg3:     #181b20;
+  --bg4:     #20242b;
+  --border:  #272c36;
+  --a1:      #f0c040;   /* amber — primary accent */
+  --a2:      #ff4757;   /* red */
+  --a3:      #2ed573;   /* green */
+  --a4:      #70a1ff;   /* blue */
+  --a5:      #ff6b81;   /* pink */
+  --text:    #e8eaf0;
+  --text2:   #8a909e;
+  --text3:   #464c5a;
+  --code-bg: #090a0c;
+  --sw:      280px;     /* sidebar width */
+  --r:       8px;
+}
+[data-theme="light"] {
+  --bg:      #f7f5f0;
+  --bg2:     #ffffff;
+  --bg3:     #efede8;
+  --bg4:     #e5e2db;
+  --border:  #d8d4cb;
+  --text:    #18191c;
+  --text2:   #555a66;
+  --text3:   #9fa4b0;
+  --code-bg: #111316;
+}
+
+/* ============================================================
+   RESET
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:var(--bg);color:var(--text);
+  line-height:1.72;overflow-x:hidden;
+  transition:background .25s,color .25s;
+}
+::selection{background:var(--a1);color:#000}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--a1);border-radius:2px}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.shell{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{
+  width:var(--sw);background:var(--bg2);
+  border-right:1px solid var(--border);
+  position:fixed;top:0;left:0;bottom:0;
+  overflow-y:auto;z-index:100;
+  display:flex;flex-direction:column;
+  transition:transform .3s;
+}
+.sb-top{
+  padding:22px 18px 14px;
+  border-bottom:1px solid var(--border);
+}
+.sb-icon{font-size:2.4rem;line-height:1;display:block;margin-bottom:6px}
+.sb-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.35rem;letter-spacing:2px;
+  line-height:1.1;color:var(--a1);
+}
+.sb-sub{
+  font-family:'Inconsolata',monospace;
+  font-size:.62rem;letter-spacing:3px;
+  text-transform:uppercase;color:var(--text3);
+  margin-top:3px;
+}
+.sb-nav{padding:10px 0;flex:1}
+.sb-group-label{
+  font-family:'Inconsolata',monospace;
+  font-size:.58rem;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--text3);
+  padding:10px 18px 4px;
+}
+.sb-link{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 18px;
+  font-size:.81rem;font-weight:500;
+  color:var(--text2);text-decoration:none;
+  border-left:3px solid transparent;
+  cursor:pointer;transition:all .18s;
+}
+.sb-link:hover{color:var(--text);background:var(--bg3);border-left-color:var(--a1)}
+.sb-link.active{color:var(--a1);border-left-color:var(--a1);background:var(--bg3)}
+.sb-link .n{
+  font-family:'Inconsolata',monospace;
+  font-size:.62rem;color:var(--text3);min-width:22px;
+}
+.sb-foot{
+  padding:14px 18px;border-top:1px solid var(--border);
+}
+.prog-lbl{
+  font-family:'Inconsolata',monospace;
+  font-size:.6rem;letter-spacing:1px;color:var(--text3);margin-bottom:6px;
+}
+.prog-bar{height:3px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--a1),var(--a2));width:0%;transition:width .5s}
+
+/* MAIN */
+.main{
+  margin-left:var(--sw);flex:1;
+  max-width:940px;padding:0 44px 100px;
+}
+
+/* TOPBAR */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  background:var(--bg);border-bottom:1px solid var(--border);
+  padding:12px 44px;margin:0 -44px;
+  display:flex;align-items:center;justify-content:space-between;
+  backdrop-filter:blur(12px);
+}
+.breadcrumb{
+  font-family:'Inconsolata',monospace;
+  font-size:.7rem;color:var(--text3);
+}
+.topbar-btns{display:flex;gap:8px;align-items:center}
+.btn-pill{
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text);padding:5px 14px;border-radius:20px;
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+  font-size:.76rem;font-weight:700;transition:all .2s;
+}
+.btn-pill:hover{border-color:var(--a1);color:var(--a1)}
+.hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{
+  padding:52px 0 40px;
+  position:relative;overflow:hidden;
+}
+.hero-bg-text{
+  position:absolute;right:-20px;top:-10px;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:14rem;line-height:1;
+  color:var(--border);pointer-events:none;
+  opacity:.4;letter-spacing:-4px;
+  user-select:none;
+}
+.hero-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:'Inconsolata',monospace;
+  font-size:.66rem;letter-spacing:2px;text-transform:uppercase;
+  color:var(--a1);background:rgba(240,192,64,.08);
+  border:1px solid rgba(240,192,64,.25);
+  padding:4px 12px;border-radius:3px;margin-bottom:18px;
+}
+.hero h2{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(2.8rem,7vw,5rem);
+  letter-spacing:2px;line-height:1;
+  margin-bottom:14px;
+}
+.hero h2 .hl{color:var(--a1)}
+.hero-lead{
+  font-size:1rem;color:var(--text2);
+  max-width:560px;margin-bottom:28px;
+}
+.hero-stats{display:flex;gap:30px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;gap:2px}
+.stat-n{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:2.4rem;letter-spacing:1px;
+  color:var(--a1);line-height:1;
+}
+.stat-l{
+  font-family:'Inconsolata',monospace;
+  font-size:.6rem;letter-spacing:1.5px;
+  color:var(--text3);text-transform:uppercase;
+}
+
+/* ============================================================
+   SECTIONS
+   ============================================================ */
+.section{margin-bottom:72px;scroll-margin-top:72px}
+.sec-hdr{
+  display:flex;align-items:flex-start;gap:14px;
+  margin-bottom:26px;padding-bottom:16px;
+  border-bottom:1px solid var(--border);
+}
+.sec-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:.7rem;letter-spacing:2px;
+  color:var(--a1);background:rgba(240,192,64,.08);
+  border:1px solid rgba(240,192,64,.2);
+  padding:3px 9px;border-radius:3px;
+  margin-top:8px;white-space:nowrap;
+}
+.sec-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(1.7rem,4vw,2.4rem);
+  letter-spacing:2px;line-height:1.1;
+}
+.sec-sub{color:var(--text2);margin-top:4px;font-size:.9rem}
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+.card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);padding:22px;margin-bottom:16px;
+}
+.card-ttl{
+  font-family:'DM Sans',sans-serif;
+  font-size:.95rem;font-weight:700;
+  margin-bottom:12px;display:flex;align-items:center;gap:8px;
+}
+.tag{
+  font-family:'Inconsolata',monospace;
+  font-size:.58rem;letter-spacing:1px;text-transform:uppercase;
+  padding:2px 7px;border-radius:2px;font-weight:400;
+}
+.t1{background:rgba(240,192,64,.12);color:var(--a1)}
+.t2{background:rgba(255,71,87,.12);color:var(--a2)}
+.t3{background:rgba(46,213,115,.1);color:var(--a3)}
+.t4{background:rgba(112,161,255,.12);color:var(--a4)}
+.t5{background:rgba(255,107,129,.12);color:var(--a5)}
+
+/* CALLOUTS */
+.callout{
+  padding:14px 18px;border-radius:var(--r);
+  margin:14px 0;border-left:3px solid;
+  display:flex;gap:12px;align-items:flex-start;
+}
+.ci{font-size:1.1rem;margin-top:2px;flex-shrink:0}
+.cb{flex:1}
+.cb-ttl{font-size:.83rem;font-weight:700;margin-bottom:3px}
+.callout.info{background:rgba(240,192,64,.06);border-color:var(--a1)}
+.callout.ok{background:rgba(46,213,115,.06);border-color:var(--a3)}
+.callout.warn{background:rgba(255,71,87,.06);border-color:var(--a2)}
+.callout.tip{background:rgba(112,161,255,.07);border-color:var(--a4)}
+.callout.gold{background:rgba(255,215,0,.06);border-color:#ffd700}
+
+/* ============================================================
+   CODE BLOCKS
+   ============================================================ */
+.code-block{
+  position:relative;margin:14px 0;
+  border-radius:var(--r);overflow:hidden;
+  border:1px solid var(--border);
+}
+.code-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 14px;background:var(--bg3);
+  border-bottom:1px solid var(--border);
+}
+.code-lang{
+  font-family:'Inconsolata',monospace;
+  font-size:.62rem;letter-spacing:2px;
+  text-transform:uppercase;color:var(--a3);
+}
+.copy-btn{
+  background:none;border:1px solid var(--border);
+  color:var(--text3);padding:2px 8px;border-radius:3px;
+  cursor:pointer;font-family:'Inconsolata',monospace;
+  font-size:.6rem;transition:all .2s;
+}
+.copy-btn:hover{color:var(--text);border-color:var(--a1)}
+pre{
+  background:var(--code-bg);padding:18px;
+  overflow-x:auto;margin:0;
+  font-family:'Inconsolata',monospace;
+  font-size:.82rem;line-height:1.72;
+}
+code{font-family:'Inconsolata',monospace}
+.ic{
+  background:var(--bg3);border:1px solid var(--border);
+  padding:1px 6px;border-radius:3px;
+  font-family:'Inconsolata',monospace;
+  font-size:.82em;color:var(--a3);
+}
+/* Syntax colors */
+.kw{color:#c792ea}.fn{color:#82aaff}.str{color:#c3e88d}
+.num{color:#f78c6c}.cm{color:#3d4451;font-style:italic}
+.cls{color:#ffcb6b}.bl{color:#ff5370}.self{color:#f78c6c}
+.dec{color:#ffcb6b}
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+.tbl-wrap{overflow-x:auto;margin:14px 0;border-radius:var(--r);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;background:var(--bg2)}
+th{
+  background:var(--bg3);padding:11px 15px;text-align:left;
+  font-size:.78rem;font-weight:700;letter-spacing:.3px;
+  border-bottom:1px solid var(--border);
+}
+td{padding:10px 15px;border-bottom:1px solid var(--border);font-size:.86rem;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg3)}
+.good{color:var(--a3);font-weight:600}
+.bad{color:var(--a2);font-weight:600}
+.ok{color:var(--a1);font-weight:600}
+
+/* ============================================================
+   VISUALIZATION ENGINE
+   ============================================================ */
+.viz{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);padding:22px;margin:18px 0;
+}
+.viz-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.1rem;letter-spacing:2px;
+  color:var(--text2);margin-bottom:16px;
+  display:flex;align-items:center;gap:10px;
+}
+.viz-ctrl{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.vbtn{
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text);padding:7px 16px;border-radius:var(--r);
+  cursor:pointer;font-size:.78rem;font-weight:700;
+  transition:all .2s;font-family:'DM Sans',sans-serif;
+}
+.vbtn:hover{background:var(--a1);border-color:var(--a1);color:#000}
+.vbtn.red:hover{background:var(--a2);border-color:var(--a2);color:#fff}
+.vbtn.grn:hover{background:var(--a3);border-color:var(--a3);color:#000}
+.vinput{
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text);padding:7px 12px;border-radius:var(--r);
+  font-family:'Inconsolata',monospace;font-size:.83rem;
+  width:75px;outline:none;
+}
+.vinput:focus{border-color:var(--a1)}
+.vlog{
+  margin-top:12px;padding:10px 14px;background:var(--bg);
+  border-radius:var(--r);font-family:'Inconsolata',monospace;
+  font-size:.76rem;color:var(--text2);min-height:34px;
+  border:1px solid var(--border);
+}
+.vlog .ok{color:var(--a3)}.vlog .err{color:var(--a2)}.vlog .info{color:var(--a1)}
+
+/* ARRAY ROW */
+.arr-row{
+  display:flex;gap:4px;align-items:flex-end;
+  margin:14px 0;flex-wrap:nowrap;overflow-x:auto;
+  padding-bottom:4px;
+}
+.arr-cell{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  flex-shrink:0;
+}
+.cell-val{
+  width:48px;height:48px;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--border);background:var(--bg3);
+  border-radius:var(--r);
+  font-family:'Inconsolata',monospace;
+  font-size:.95rem;font-weight:700;
+  transition:all .35s cubic-bezier(.34,1.56,.64,1);
+}
+.cell-val.in-win{
+  border-color:var(--a1);
+  background:rgba(240,192,64,.14);color:var(--a1);
+}
+.cell-val.ptr-l{
+  border-color:var(--a3);
+  background:rgba(46,213,115,.14);color:var(--a3);
+}
+.cell-val.ptr-r{
+  border-color:var(--a2);
+  background:rgba(255,71,87,.14);color:var(--a2);
+}
+.cell-val.both{
+  border-color:var(--a5);
+  background:rgba(255,107,129,.14);color:var(--a5);
+}
+.cell-val.answer{
+  border-color:var(--a4);
+  background:rgba(112,161,255,.2);color:var(--a4);
+}
+.cell-idx{
+  font-family:'Inconsolata',monospace;
+  font-size:.58rem;color:var(--text3);
+}
+.cell-ptr{
+  font-family:'Inconsolata',monospace;
+  font-size:.6rem;letter-spacing:1px;
+  text-transform:uppercase;
+}
+.cell-ptr.L{color:var(--a3)}
+.cell-ptr.R{color:var(--a2)}
+.cell-ptr.LR{color:var(--a5)}
+
+/* DRY RUN */
+.dry{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--r);padding:15px 18px;margin:11px 0;
+  font-family:'Inconsolata',monospace;font-size:.78rem;line-height:1.85;
+}
+.ds{display:flex;gap:10px;margin-bottom:3px;align-items:flex-start}
+.ds-n{color:var(--text3);min-width:28px}
+.ds-a{color:var(--text);flex:1}
+.ds-s{color:var(--a3);white-space:nowrap;margin-left:auto}
+
+/* QUIZ */
+.quiz{
+  background:linear-gradient(135deg,rgba(240,192,64,.04),rgba(255,71,87,.04));
+  border:1px solid var(--border);border-radius:var(--r);
+  padding:22px;margin:22px 0;
+}
+.quiz-ttl{font-size:.88rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.quiz-q{font-size:.9rem;color:var(--text);margin-bottom:14px;font-style:italic}
+.quiz-opts{display:flex;flex-direction:column;gap:7px}
+.qopt{
+  background:var(--bg2);border:1px solid var(--border);
+  padding:9px 15px;border-radius:var(--r);cursor:pointer;
+  font-size:.81rem;font-weight:500;text-align:left;
+  color:var(--text2);transition:all .2s;
+}
+.qopt:hover{border-color:var(--a1);color:var(--text)}
+.qopt.correct{border-color:var(--a3);background:rgba(46,213,115,.1);color:var(--a3)}
+.qopt.wrong{border-color:var(--a2);background:rgba(255,71,87,.1);color:var(--a2)}
+.quiz-fb{margin-top:11px;padding:9px 13px;border-radius:var(--r);font-size:.83rem;display:none}
+.quiz-fb.show{display:block}
+.quiz-fb.ok{background:rgba(46,213,115,.08);color:var(--a3);border-left:3px solid var(--a3)}
+.quiz-fb.no{background:rgba(255,71,87,.08);color:var(--a2);border-left:3px solid var(--a2)}
+
+/* DEEP DIVE */
+.deep{border:1px solid var(--border);border-radius:var(--r);margin:14px 0;overflow:hidden}
+.deep-hdr{
+  padding:13px 18px;background:var(--bg3);cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:.86rem;font-weight:700;user-select:none;transition:background .2s;
+}
+.deep-hdr:hover{background:var(--bg4)}
+.deep-arr{transition:transform .3s;color:var(--text3)}
+.deep.open .deep-arr{transform:rotate(180deg)}
+.deep-body{display:none;padding:18px;border-top:1px solid var(--border)}
+.deep.open .deep-body{display:block}
+
+/* PROBLEM CARDS */
+.prob{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;margin-bottom:18px;
+}
+.prob-hdr{
+  padding:14px 18px;background:var(--bg3);
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border);
+}
+.prob-title{font-size:.9rem;font-weight:700;flex:1}
+.diff{
+  font-family:'Inconsolata',monospace;font-size:.58rem;
+  letter-spacing:1px;text-transform:uppercase;
+  padding:3px 9px;border-radius:20px;
+}
+.d-e{background:rgba(46,213,115,.15);color:var(--a3)}
+.d-m{background:rgba(240,192,64,.15);color:var(--a1)}
+.d-h{background:rgba(255,71,87,.15);color:var(--a2)}
+.prob-body{padding:18px}
+.ptabs{display:flex;gap:2px;margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:0}
+.ptab{
+  font-size:.76rem;font-weight:700;padding:7px 13px;
+  cursor:pointer;border-bottom:2px solid transparent;
+  color:var(--text3);transition:all .2s;margin-bottom:-1px;
+}
+.ptab:hover{color:var(--text)}
+.ptab.active{border-bottom-color:var(--a1);color:var(--a1)}
+.ptab-c{display:none}.ptab-c.active{display:block}
+
+/* COMPLEXITY ROW */
+.cx-row{display:flex;gap:10px;flex-wrap:wrap;margin:11px 0}
+.cx{
+  display:flex;flex-direction:column;align-items:center;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--r);padding:9px 14px;gap:3px;min-width:88px;
+}
+.cx-op{font-family:'Inconsolata',monospace;font-size:.6rem;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.cx-v{font-family:'Inconsolata',monospace;font-size:.95rem;font-weight:700}
+.c-o1 .cx-v{color:var(--a3)}.c-on .cx-v{color:var(--a1)}.c-on2 .cx-v{color:var(--a2)}
+
+/* PATTERN GRID */
+.pat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:13px;margin:14px 0}
+.pat-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px;
+  transition:all .2s;cursor:default;
+}
+.pat-card:hover{border-color:var(--a1);transform:translateY(-2px)}
+.pat-icon{font-size:1.7rem;margin-bottom:8px}
+.pat-name{font-size:.86rem;font-weight:700;margin-bottom:4px}
+.pat-desc{font-size:.76rem;color:var(--text2)}
+
+/* ROADMAP */
+.roadmap{position:relative;padding:8px 0}
+.roadmap::before{
+  content:'';position:absolute;left:23px;top:0;bottom:0;
+  width:2px;background:linear-gradient(180deg,var(--a1),var(--a2),var(--a3));
+}
+.rm-day{display:flex;gap:18px;margin-bottom:22px;position:relative}
+.rm-dot{
+  width:48px;height:48px;border-radius:50%;background:var(--bg2);
+  border:2px solid var(--a1);display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;
+  flex-shrink:0;z-index:1;color:var(--a1);
+}
+.rm-body{
+  flex:1;background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px 18px;margin-top:7px;
+}
+.rm-day-ttl{font-size:.88rem;font-weight:700;margin-bottom:7px;display:flex;align-items:center;gap:8px}
+.badge{font-size:.6rem;padding:2px 8px;border-radius:20px;font-family:'Inconsolata',monospace;letter-spacing:1px;text-transform:uppercase}
+.b-e{background:rgba(46,213,115,.12);color:var(--a3)}
+.b-m{background:rgba(240,192,64,.12);color:var(--a1)}
+.b-h{background:rgba(255,71,87,.12);color:var(--a2)}
+.rm-list{list-style:none;display:flex;flex-direction:column;gap:4px}
+.rm-list li{font-size:.83rem;color:var(--text2);display:flex;gap:7px;align-items:flex-start}
+.rm-list li::before{content:'›';color:var(--a1);font-weight:700}
+
+/* CHEAT GRID */
+.cheat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:14px;margin:14px 0}
+.cheat-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:15px}
+.cheat-ttl{font-size:.8rem;font-weight:700;margin-bottom:9px;color:var(--a1);font-family:'DM Sans',sans-serif}
+.cheat-item p,.cheat-item li{font-size:.8rem;color:var(--text2);line-height:1.6}
+.cheat-item ul{list-style:none;padding:0}
+.cheat-item ul li::before{content:'• ';color:var(--a3)}
+
+/* INTERVIEW BOX */
+.ibox{
+  background:linear-gradient(135deg,rgba(255,215,0,.05),rgba(240,192,64,.04));
+  border:1px solid rgba(255,215,0,.25);border-radius:var(--r);
+  padding:18px 22px;margin:18px 0;
+}
+.ibox-ttl{font-size:.88rem;font-weight:700;color:#ffd700;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.ibox ul{padding-left:16px}
+.ibox li{font-size:.86rem;color:var(--text2);margin-bottom:5px}
+
+/* MISC */
+p{margin-bottom:11px}p:last-child{margin-bottom:0}
+strong{color:var(--text)}
+ul,ol{padding-left:18px;margin-bottom:11px}
+li{margin-bottom:4px;font-size:.9rem}
+.footer{
+  text-align:center;padding:40px 0;border-top:1px solid var(--border);
+  margin-top:60px;font-family:'Inconsolata',monospace;
+  font-size:.7rem;color:var(--text3);
+}
+.overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.55);z-index:99;
+}
+.overlay.show{display:block}
+
+@media(max-width:768px){
+  :root{--sw:0px}
+  .sidebar{transform:translateX(-280px);width:280px}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding:0 18px 60px}
+  .topbar{padding:12px 18px;margin:0 -18px}
+  .hamburger{display:block}
+  .hero-bg-text{display:none}
+  .cheat-grid,.pat-grid{grid-template-columns:1fr}
+}
+
+/* WINDOW HIGHLIGHT animation */
+@keyframes wPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(240,192,64,.3)}
+  50%{box-shadow:0 0 0 6px rgba(240,192,64,.0)}
+}
+.cell-val.in-win{animation:wPulse 1.4s ease-in-out infinite}
+
+/* Step indicator */
+.step-indicator{
+  display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;
+}
+.step-badge{
+  font-family:'Inconsolata',monospace;font-size:.7rem;
+  padding:4px 10px;border-radius:3px;letter-spacing:1px;
+  background:var(--bg4);color:var(--text3);
+  border:1px solid var(--border);
+}
+.step-badge.active{background:rgba(240,192,64,.12);color:var(--a1);border-color:rgba(240,192,64,.3)}
+.step-badge.done{background:rgba(46,213,115,.1);color:var(--a3);border-color:rgba(46,213,115,.3)}
+
+/* Result display */
+.result-box{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--r);padding:10px 14px;margin-top:12px;
+  font-family:'Inconsolata',monospace;font-size:.82rem;
+  color:var(--text2);min-height:36px;
+}
+.result-box .val{color:var(--a3);font-weight:700}
+
+/* Two-pointer specific */
+.tp-container{
+  display:flex;flex-direction:column;gap:16px;
+}
+.tp-array-wrap{
+  background:var(--bg);border:1px dashed var(--border);
+  border-radius:var(--r);padding:14px 14px 20px;
+}
+.tp-label{
+  font-family:'Inconsolata',monospace;font-size:.62rem;
+  letter-spacing:2px;text-transform:uppercase;
+  color:var(--text3);margin-bottom:10px;
+}
+
+/* Window size indicator */
+.win-size-bar{
+  display:flex;align-items:center;gap:12px;margin:10px 0;
+}
+.win-size-label{
+  font-family:'Inconsolata',monospace;font-size:.7rem;color:var(--text3);
+}
+.win-size-val{
+  font-family:'Bebas Neue',sans-serif;font-size:1.4rem;
+  color:var(--a1);letter-spacing:1px;
+}
+.win-sum-val{
+  font-family:'Bebas Neue',sans-serif;font-size:1.4rem;
+  color:var(--a3);letter-spacing:1px;
+}
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- ================================================
+     SIDEBAR
+     ================================================ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-top">
+    <span class="sb-icon">🪟</span>
+    <div class="sb-title">Sliding Window<br>& Two Pointers</div>
+    <div class="sb-sub">Complete DSA Course</div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-group-label">Foundations</div>
+    <a class="sb-link active" onclick="goTo('s1')"><span class="n">01</span>Introduction</a>
+    <a class="sb-link" onclick="goTo('s2')"><span class="n">02</span>Fixed Window</a>
+    <a class="sb-link" onclick="goTo('s3')"><span class="n">03</span>Variable Window</a>
+    <a class="sb-link" onclick="goTo('s4')"><span class="n">04</span>Two Pointers</a>
+
+    <div class="sb-group-label">Core Patterns</div>
+    <a class="sb-link" onclick="goTo('s5')"><span class="n">05</span>Opposite Ends</a>
+    <a class="sb-link" onclick="goTo('s6')"><span class="n">06</span>Same Direction</a>
+    <a class="sb-link" onclick="goTo('s7')"><span class="n">07</span>Frequency Maps</a>
+    <a class="sb-link" onclick="goTo('s8')"><span class="n">08</span>Monotonic Deque</a>
+
+    <div class="sb-group-label">Advanced</div>
+    <a class="sb-link" onclick="goTo('s9')"><span class="n">09</span>Multi-pointer</a>
+    <a class="sb-link" onclick="goTo('s10')"><span class="n">10</span>Shrinkable Windows</a>
+    <a class="sb-link" onclick="goTo('s11')"><span class="n">11</span>Complexity</a>
+
+    <div class="sb-group-label">Interview Prep</div>
+    <a class="sb-link" onclick="goTo('s12')"><span class="n">12</span>Interview Problems</a>
+    <a class="sb-link" onclick="goTo('s13')"><span class="n">13</span>Cheat Sheet</a>
+    <a class="sb-link" onclick="goTo('s14')"><span class="n">14</span>7-Day Roadmap</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="prog-lbl">Progress</div>
+    <div class="prog-bar"><div class="prog-fill" id="progressFill"></div></div>
+  </div>
+</aside>
+
+<!-- ================================================
+     MAIN
+     ================================================ -->
+<main class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="hamburger" onclick="openSidebar()">☰</button>
+      <div class="breadcrumb">sliding-window-two-pointers / complete-course</div>
+    </div>
+    <div class="topbar-btns">
+      <button class="btn-pill" onclick="toggleTheme()">🌓 Theme</button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-bg-text">SW</div>
+    <div class="hero-chip">🪟 Interview-Ready in 7 Days</div>
+    <h2>SLIDING WINDOW<br>&amp; <span class="hl">TWO POINTERS</span></h2>
+    <p class="hero-lead">The most pattern-dense chapter in DSA. Master these two techniques and unlock 30+ medium/hard problems. Built for placement warriors.</p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-n">14</span><span class="stat-l">Sections</span></div>
+      <div class="stat"><span class="stat-n">15+</span><span class="stat-l">Problems</span></div>
+      <div class="stat"><span class="stat-n">30+</span><span class="stat-l">Code Examples</span></div>
+      <div class="stat"><span class="stat-n">7</span><span class="stat-l">Day Plan</span></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SECTION 1 — INTRODUCTION
+       ============================================================ -->
+  <section class="section" id="s1">
+    <div class="sec-hdr">
+      <span class="sec-num">01</span>
+      <div>
+        <div class="sec-title">Introduction</div>
+        <div class="sec-sub">What they are, why they're essential, and how they're related</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t1">Concept</span>What is Sliding Window?</div>
+      <p>A <strong>Sliding Window</strong> is a contiguous subarray (or substring) that slides over a larger array/string. Instead of recomputing from scratch for every position, you slide the window and update incrementally.</p>
+      <p>Think of it like reading a book through a magnifying glass — you slide the glass across the page rather than reading each word in isolation.</p>
+      <div style="background:var(--bg);border-radius:var(--r);padding:14px;font-family:'Inconsolata',monospace;font-size:.82rem;margin:12px 0;border:1px dashed var(--border)">
+        Array: [<span style="color:var(--a2)">2</span>, <span style="color:var(--a1)">3, 5, 1</span>, 4, 6] &nbsp; ← Window of size 3, sliding right<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[2, <span style="color:var(--a1)">3, 5, 1</span>, 4, 6] &nbsp; ← Next position<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[2, 3, <span style="color:var(--a1)">5, 1, 4</span>, 6] &nbsp; ← Next position<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[2, 3, 5, <span style="color:var(--a1)">1, 4, 6</span>] &nbsp; ← Final position
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t1">Concept</span>What are Two Pointers?</div>
+      <p><strong>Two Pointers</strong> uses two index variables that traverse an array, usually from different positions or at different speeds. Together they narrow down a search space from O(n²) to O(n).</p>
+      <p>Two pointers vs Sliding Window: sliding window is actually a <em>subset</em> of two pointers where both pointers move in the same direction. Two pointers also includes opposite-ends problems (like Two Sum sorted).</p>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t1">Comparison</span>Brute Force vs Sliding Window</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Approach</th><th>Time</th><th>Space</th><th>How it works</th></tr>
+          <tr><td>Brute Force (nested loops)</td><td class="bad">O(n²) or worse</td><td class="good">O(1)</td><td>Check every subarray</td></tr>
+          <tr><td>Sliding Window</td><td class="good">O(n)</td><td class="ok">O(1) or O(k)</td><td>Expand/shrink one window</td></tr>
+          <tr><td>Two Pointers (sorted)</td><td class="good">O(n)</td><td class="good">O(1)</td><td>Squeeze from both ends</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t1">Real World</span>Where you see these patterns</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:11px;margin-top:8px;">
+        <div style="background:var(--bg3);border-radius:var(--r);padding:13px;border:1px solid var(--border)"><div style="font-size:1.7rem;margin-bottom:5px">📶</div><div style="font-size:.8rem;font-weight:700;margin-bottom:3px">Network Buffering</div><div style="font-size:.75rem;color:var(--text2)">Sliding window TCP/UDP flow control</div></div>
+        <div style="background:var(--bg3);border-radius:var(--r);padding:13px;border:1px solid var(--border)"><div style="font-size:1.7rem;margin-bottom:5px">📊</div><div style="font-size:.8rem;font-weight:700;margin-bottom:3px">Moving Averages</div><div style="font-size:.75rem;color:var(--text2)">Stock market rolling window calculations</div></div>
+        <div style="background:var(--bg3);border-radius:var(--r);padding:13px;border:1px solid var(--border)"><div style="font-size:1.7rem;margin-bottom:5px">🔍</div><div style="font-size:.8rem;font-weight:700;margin-bottom:3px">Text Search</div><div style="font-size:.75rem;color:var(--text2)">Find substring, anagram detection</div></div>
+        <div style="background:var(--bg3);border-radius:var(--r);padding:13px;border:1px solid var(--border)"><div style="font-size:1.7rem;margin-bottom:5px">🧬</div><div style="font-size:.8rem;font-weight:700;margin-bottom:3px">DNA Matching</div><div style="font-size:.75rem;color:var(--text2)">Substring matching in genomics</div></div>
+        <div style="background:var(--bg3);border-radius:var(--r);padding:13px;border:1px solid var(--border)"><div style="font-size:1.7rem;margin-bottom:5px">🎮</div><div style="font-size:.8rem;font-weight:700;margin-bottom:3px">Game Scores</div><div style="font-size:.75rem;color:var(--text2)">Highest scoring k consecutive moves</div></div>
+        <div style="background:var(--bg3);border-radius:var(--r);padding:13px;border:1px solid var(--border)"><div style="font-size:1.7rem;margin-bottom:5px">💧</div><div style="font-size:.8rem;font-weight:700;margin-bottom:3px">Water Trapping</div><div style="font-size:.75rem;color:var(--text2)">Two pointers from both ends</div></div>
+      </div>
+    </div>
+
+    <div class="callout gold">
+      <div class="ci">🎯</div>
+      <div class="cb">
+        <div class="cb-ttl">How to Identify These Patterns</div>
+        <ul style="margin:0;padding-left:16px">
+          <li><strong>"Subarray/substring with condition"</strong> → Sliding Window</li>
+          <li><strong>"Maximum/minimum subarray of size k"</strong> → Fixed Window</li>
+          <li><strong>"Longest subarray with at most X..."</strong> → Variable Window</li>
+          <li><strong>"Two numbers that sum to target"</strong> → Two Pointers (opposite ends)</li>
+          <li><strong>"Remove duplicates / 3Sum / container with water"</strong> → Two Pointers</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-ttl">⚡ Quick Check</div>
+      <div class="quiz-q">Which of the following is NOT a sign that sliding window should be used?</div>
+      <div class="quiz-opts">
+        <button class="qopt" onclick="cq(this,'wrong','qq1')">Problem asks for a contiguous subarray</button>
+        <button class="qopt" onclick="cq(this,'wrong','qq1')">Brute force would be O(n²) with nested loops</button>
+        <button class="qopt" onclick="cq(this,'correct','qq1')">Array is unsorted and you need to find any two elements</button>
+        <button class="qopt" onclick="cq(this,'wrong','qq1')">Problem involves maximum/minimum over a window</button>
+      </div>
+      <div class="quiz-fb" id="qq1">✅ Correct! "Find any two elements" (like two sum unsorted) → use HashMap, not sliding window. Sliding window is for <em>contiguous</em> sequences. Two Sum sorted → two pointers.</div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 2 — FIXED WINDOW
+       ============================================================ -->
+  <section class="section" id="s2">
+    <div class="sec-hdr">
+      <span class="sec-num">02</span>
+      <div>
+        <div class="sec-title">Fixed Window</div>
+        <div class="sec-sub">Window size k is constant — the simplest sliding window pattern</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t1">Concept</span>Fixed Window — The Template</div>
+      <p>When window size <code>k</code> is given and constant, the algorithm is straightforward:</p>
+      <ol>
+        <li>Build the first window of size k</li>
+        <li>Slide right: add the new element, remove the element that left</li>
+        <li>Track the answer at each valid window position</li>
+      </ol>
+      <div class="code-block">
+        <div class="code-hdr"><span class="code-lang">Python — Fixed Window Template</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">def</span> <span class="fn">fixed_window_template</span>(arr, k):
+    <span class="str">"""Fixed size sliding window. O(n) time, O(1) space."""</span>
+    n = <span class="kw">len</span>(arr)
+    <span class="kw">if</span> n < k:
+        <span class="kw">return</span> -<span class="num">1</span>  <span class="cm"># Edge case: array smaller than window</span>
+
+    <span class="cm"># Step 1: Build first window</span>
+    window_sum = <span class="kw">sum</span>(arr[:k])
+    result = window_sum  <span class="cm"># Initialize answer</span>
+
+    <span class="cm"># Step 2: Slide the window</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(k, n):
+        window_sum += arr[i]       <span class="cm"># Add incoming element</span>
+        window_sum -= arr[i - k]   <span class="cm"># Remove outgoing element</span>
+        result = <span class="kw">max</span>(result, window_sum)  <span class="cm"># Update answer</span>
+
+    <span class="kw">return</span> result
+
+<span class="cm"># Example: Max sum subarray of size 3
+# Input: [2, 1, 5, 1, 3, 2], k=3
+# Windows: [2,1,5]=8, [1,5,1]=7, [5,1,3]=9, [1,3,2]=6
+# Answer: 9</span>
+<span class="kw">print</span>(fixed_window_template([<span class="num">2</span>,<span class="num">1</span>,<span class="num">5</span>,<span class="num">1</span>,<span class="num">3</span>,<span class="num">2</span>], <span class="num">3</span>))  <span class="cm"># 9</span></pre>
+      </div>
+    </div>
+
+    <!-- INTERACTIVE FIXED WINDOW VIZ -->
+    <div class="viz">
+      <div class="viz-title">🪟 FIXED WINDOW VISUALIZER</div>
+      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
+        <div>
+          <div class="tp-label">Array (editable)</div>
+          <input id="fwInput" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:var(--r);font-family:'Inconsolata',monospace;font-size:.83rem;width:280px;outline:none" value="2, 1, 5, 1, 3, 2" placeholder="e.g. 2,1,5,1,3,2">
+        </div>
+        <div>
+          <div class="tp-label">Window Size k</div>
+          <input id="fwK" class="vinput" type="number" value="3" min="1" max="8">
+        </div>
+        <button class="vbtn grn" onclick="fwInit()">▶ Run</button>
+      </div>
+      <div class="viz-ctrl">
+        <button class="vbtn" onclick="fwStep()">Next Step →</button>
+        <button class="vbtn red" onclick="fwReset()">Reset</button>
+        <button class="vbtn" onclick="fwAuto()">Auto Run ▶▶</button>
+      </div>
+      <div class="win-size-bar">
+        <span class="win-size-label">WINDOW SUM:</span>
+        <span class="win-sum-val" id="fwSum">—</span>
+        <span class="win-size-label" style="margin-left:16px">MAX SO FAR:</span>
+        <span class="win-sum-val" id="fwMax" style="color:var(--a2)">—</span>
+      </div>
+      <div class="arr-row" id="fwArray"></div>
+      <div class="vlog" id="fwLog"><span class="info">Set array and k, then press "Run" to initialize.</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t3">Example</span>Maximum Sum Subarray of Size K</div>
+      <div class="dry">
+        <div style="font-weight:700;margin-bottom:8px;font-size:.85rem">Array: [2,1,5,1,3,2], k=3</div>
+        <div class="ds"><span class="ds-n">Init:</span><span class="ds-a">Build window [2,1,5] → sum=8</span><span class="ds-s">max=8</span></div>
+        <div class="ds"><span class="ds-n">i=3:</span><span class="ds-a">Add arr[3]=1, Remove arr[0]=2 → sum=8+1−2=7</span><span class="ds-s">max=8</span></div>
+        <div class="ds"><span class="ds-n">i=4:</span><span class="ds-a">Add arr[4]=3, Remove arr[1]=1 → sum=7+3−1=9</span><span class="ds-s">max=9</span></div>
+        <div class="ds"><span class="ds-n">i=5:</span><span class="ds-a">Add arr[5]=2, Remove arr[2]=5 → sum=9+2−5=6</span><span class="ds-s">max=9 ✅</span></div>
+      </div>
+      <div class="cx-row">
+        <div class="cx c-o1"><span class="cx-op">Time</span><span class="cx-v">O(n)</span></div>
+        <div class="cx c-o1"><span class="cx-op">Space</span><span class="cx-v">O(1)</span></div>
+        <div class="cx c-on2"><span class="cx-op">Brute</span><span class="cx-v">O(n·k)</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t3">Code</span>First Negative in Every Window of Size K</div>
+      <div class="code-block">
+        <div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">firstNegativeInWindow</span>(arr, k):
+    <span class="str">"""
+    Find first negative number in every window of size k.
+    Use deque to store indices of negative numbers.
+    Time: O(n) | Space: O(k)
+    """</span>
+    result = []
+    dq = deque()  <span class="cm"># Stores indices of negatives</span>
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(arr)):
+        <span class="cm"># Add negative indices to deque</span>
+        <span class="kw">if</span> arr[i] < <span class="num">0</span>:
+            dq.append(i)
+
+        <span class="cm"># Remove indices outside current window</span>
+        <span class="kw">if</span> dq <span class="kw">and</span> dq[<span class="num">0</span>] < i - k + <span class="num">1</span>:
+            dq.popleft()
+
+        <span class="cm"># Window is fully formed (i >= k-1)</span>
+        <span class="kw">if</span> i >= k - <span class="num">1</span>:
+            result.append(arr[dq[<span class="num">0</span>]] <span class="kw">if</span> dq <span class="kw">else</span> <span class="num">0</span>)
+
+    <span class="kw">return</span> result
+
+arr = [-<span class="num">8</span>, <span class="num">2</span>, <span class="num">3</span>, -<span class="num">6</span>, <span class="num">10</span>]
+<span class="kw">print</span>(firstNegativeInWindow(arr, <span class="num">2</span>))
+<span class="cm"># Windows: [-8,2]=−8, [2,3]=0, [3,-6]=−6, [-6,10]=−6
+# Output: [-8, 0, -6, -6]</span></pre>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-ttl">⚡ Quick Check</div>
+      <div class="quiz-q">In a fixed window of size k, when we slide one step right, what operations do we do?</div>
+      <div class="quiz-opts">
+        <button class="qopt" onclick="cq(this,'wrong','qq2')">Recompute sum of all k elements from scratch</button>
+        <button class="qopt" onclick="cq(this,'correct','qq2')">Add arr[i], subtract arr[i-k]</button>
+        <button class="qopt" onclick="cq(this,'wrong','qq2')">Add arr[i+1], subtract arr[i]</button>
+        <button class="qopt" onclick="cq(this,'wrong','qq2')">Sort the window then pick the max</button>
+      </div>
+      <div class="quiz-fb" id="qq2">✅ Add incoming (arr[i]) and subtract outgoing (arr[i-k]). This makes each slide O(1) instead of O(k), turning the full algorithm from O(n·k) to O(n)!</div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 3 — VARIABLE WINDOW
+       ============================================================ -->
+  <section class="section" id="s3">
+    <div class="sec-hdr">
+      <span class="sec-num">03</span>
+      <div>
+        <div class="sec-title">Variable Window</div>
+        <div class="sec-sub">Window expands and shrinks based on a condition — the harder, more powerful pattern</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t1">Concept</span>The Variable Window Idea</div>
+      <p>In variable window problems, you don't know the size in advance. You <strong>expand the right pointer</strong> to grow the window, and <strong>shrink the left pointer</strong> when a condition is violated.</p>
+      <div class="callout info">
+        <div class="ci">💡</div>
+        <div class="cb">
+          <div class="cb-ttl">The Core Mental Model</div>
+          Think of a rubber band stretched across an array. Pull right to expand. When it gets too long (condition violated), push left to shrink. When valid, record the size and pull right again.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t3">Template</span>Variable Window — The Universal Template</div>
+      <div class="code-block">
+        <div class="code-hdr"><span class="code-lang">Python — Variable Window Template</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">def</span> <span class="fn">variable_window_template</span>(arr, condition):
+    <span class="str">"""
+    Universal variable window template.
+    Time: O(n) — each element added/removed at most once
+    Space: O(1) or O(n) for frequency maps
+    """</span>
+    left = <span class="num">0</span>
+    result = <span class="num">0</span>  <span class="cm"># Could be max_len, min_len, count, etc.</span>
+    window_state = <span class="num">0</span>  <span class="cm"># Sum, count, freq map, etc.</span>
+
+    <span class="kw">for</span> right <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(arr)):
+        <span class="cm"># 1. EXPAND: Include arr[right] in window</span>
+        window_state += arr[right]
+
+        <span class="cm"># 2. SHRINK: While window is invalid, move left</span>
+        <span class="kw">while</span> <span class="kw">not</span> condition(window_state):
+            window_state -= arr[left]
+            left += <span class="num">1</span>
+
+        <span class="cm"># 3. RECORD: Window is valid, update answer</span>
+        result = <span class="kw">max</span>(result, right - left + <span class="num">1</span>)
+
+    <span class="kw">return</span> result
+
+<span class="cm"># ─────────────────────────────────────────
+# VARIANT A: Finding LONGEST valid window
+#   → shrink while INVALID (while loop above)
+# VARIANT B: Finding SMALLEST valid window
+#   → shrink while VALID (record min inside while)
+# ─────────────────────────────────────────</span></pre>
+      </div>
+    </div>
+
+    <!-- INTERACTIVE VARIABLE WINDOW VIZ -->
+    <div class="viz">
+      <div class="viz-title">🔄 VARIABLE WINDOW VISUALIZER — Max Length Subarray ≤ Target Sum</div>
+      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
+        <div><div class="tp-label">Array</div>
+          <input id="vwInput" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:var(--r);font-family:'Inconsolata',monospace;font-size:.83rem;width:240px;outline:none" value="3, 1, 2, 7, 4, 2, 1">
+        </div>
+        <div><div class="tp-label">Max Sum ≤</div>
+          <input id="vwTarget" class="vinput" type="number" value="8">
+        </div>
+        <button class="vbtn grn" onclick="vwInit()">▶ Run</button>
+      </div>
+      <div class="viz-ctrl">
+        <button class="vbtn" onclick="vwStep()">Next Step →</button>
+        <button class="vbtn red" onclick="vwReset()">Reset</button>
+        <button class="vbtn" onclick="vwAuto()">Auto Run ▶▶</button>
+      </div>
+      <div class="win-size-bar">
+        <span class="win-size-label">WINDOW SUM:</span><span class="win-sum-val" id="vwSum">—</span>
+        <span class="win-size-label" style="margin-left:16px">MAX LEN:</span><span class="win-sum-val" id="vwMaxLen" style="color:var(--a4)">—</span>
+        <span class="win-size-label" style="margin-left:16px">L:</span><span class="win-sum-val" id="vwL" style="color:var(--a3);font-size:1.1rem">0</span>
+        <span class="win-size-label" style="margin-left:8px">R:</span><span class="win-sum-val" id="vwR" style="color:var(--a2);font-size:1.1rem">0</span>
+      </div>
+      <div class="arr-row" id="vwArray"></div>
+      <div class="vlog" id="vwLog"><span class="info">Set array and target sum, then press "Run".</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t3">Code</span>Longest Subarray with Sum ≤ K</div>
+      <div class="code-block">
+        <div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">def</span> <span class="fn">longestSubarrayWithSumK</span>(arr, k):
+    <span class="str">"""Find length of longest subarray with sum ≤ k."""</span>
+    left = window_sum = max_len = <span class="num">0</span>
+
+    <span class="kw">for</span> right <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(arr)):
+        window_sum += arr[right]  <span class="cm"># Expand window</span>
+
+        <span class="cm"># Shrink while sum exceeds k</span>
+        <span class="kw">while</span> window_sum > k:
+            window_sum -= arr[left]
+            left += <span class="num">1</span>
+
+        <span class="cm"># Window is valid: update max length</span>
+        max_len = <span class="kw">max</span>(max_len, right - left + <span class="num">1</span>)
+
+    <span class="kw">return</span> max_len
+
+<span class="kw">print</span>(longestSubarrayWithSumK([<span class="num">3</span>,<span class="num">1</span>,<span class="num">2</span>,<span class="num">7</span>,<span class="num">4</span>,<span class="num">2</span>,<span class="num">1</span>], <span class="num">8</span>))  <span class="cm"># 4</span></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t3">Code</span>Longest Substring Without Repeating Characters — LC 3</div>
+      <div class="code-block">
+        <div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">def</span> <span class="fn">lengthOfLongestSubstring</span>(s):
+    <span class="str">"""
+    Longest substring with all unique chars.
+    Time: O(n) | Space: O(min(n, alphabet_size))
+    """</span>
+    char_set = <span class="kw">set</span>()  <span class="cm"># Tracks chars in current window</span>
+    left = max_len = <span class="num">0</span>
+
+    <span class="kw">for</span> right <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(s)):
+        <span class="cm"># Shrink window until no duplicate</span>
+        <span class="kw">while</span> s[right] <span class="kw">in</span> char_set:
+            char_set.remove(s[left])
+            left += <span class="num">1</span>
+
+        char_set.add(s[right])  <span class="cm"># Expand</span>
+        max_len = <span class="kw">max</span>(max_len, right - left + <span class="num">1</span>)
+
+    <span class="kw">return</span> max_len
+
+<span class="cm"># Optimized: use dict for O(1) jump
+# (skip ahead instead of one-by-one shrink)</span>
+<span class="kw">def</span> <span class="fn">lengthOfLongestSubstring_opt</span>(s):
+    last_seen = {}  <span class="cm"># char → last index</span>
+    left = max_len = <span class="num">0</span>
+    <span class="kw">for</span> right, c <span class="kw">in</span> <span class="kw">enumerate</span>(s):
+        <span class="kw">if</span> c <span class="kw">in</span> last_seen <span class="kw">and</span> last_seen[c] >= left:
+            left = last_seen[c] + <span class="num">1</span>  <span class="cm"># Jump left past duplicate</span>
+        last_seen[c] = right
+        max_len = <span class="kw">max</span>(max_len, right - left + <span class="num">1</span>)
+    <span class="kw">return</span> max_len
+
+<span class="kw">print</span>(lengthOfLongestSubstring(<span class="str">"abcabcbb"</span>))  <span class="cm"># 3 ("abc")</span>
+<span class="kw">print</span>(lengthOfLongestSubstring(<span class="str">"pwwkew"</span>))    <span class="cm"># 3 ("wke")</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 4 — TWO POINTERS
+       ============================================================ -->
+  <section class="section" id="s4">
+    <div class="sec-hdr">
+      <span class="sec-num">04</span>
+      <div>
+        <div class="sec-title">Two Pointers — Core Concept</div>
+        <div class="sec-sub">Two variables, one array — eliminate the inner loop</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t4">Concept</span>The Two Pointer Idea</div>
+      <p>Two pointers maintains two index variables to traverse data. There are two main configurations:</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">
+        <div style="background:var(--bg3);border-radius:var(--r);padding:14px;border:1px solid var(--border)">
+          <div style="font-weight:700;margin-bottom:6px;color:var(--a1)">↔ Opposite Ends</div>
+          <div style="font-size:.82rem;color:var(--text2);font-family:'Inconsolata',monospace">[← R &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; L →]<br>Squeeze toward center.<br>For sorted arrays.</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:var(--r);padding:14px;border:1px solid var(--border)">
+          <div style="font-weight:700;margin-bottom:6px;color:var(--a3)">→→ Same Direction</div>
+          <div style="font-size:.82rem;color:var(--text2);font-family:'Inconsolata',monospace">[L → &nbsp; R →]<br>Slow & fast, or window.<br>For unsorted / streamed.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t3">Template</span>Two Sum in Sorted Array — Classic Template</div>
+      <div class="code-block">
+        <div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">def</span> <span class="fn">twoSumSorted</span>(arr, target):
+    <span class="str">"""Find pair summing to target in a sorted array.
+    Time: O(n) | Space: O(1)
+    """</span>
+    left, right = <span class="num">0</span>, <span class="kw">len</span>(arr) - <span class="num">1</span>
+
+    <span class="kw">while</span> left < right:
+        current_sum = arr[left] + arr[right]
+
+        <span class="kw">if</span> current_sum == target:
+            <span class="kw">return</span> [left + <span class="num">1</span>, right + <span class="num">1</span>]  <span class="cm"># 1-indexed</span>
+        <span class="kw">elif</span> current_sum < target:
+            left += <span class="num">1</span>   <span class="cm"># Need bigger → move left right</span>
+        <span class="kw">else</span>:
+            right -= <span class="num">1</span>  <span class="cm"># Too big → move right left</span>
+
+    <span class="kw">return</span> [-<span class="num">1</span>, -<span class="num">1</span>]  <span class="cm"># Not found</span>
+
+<span class="cm"># Why it works (sorted array):
+# If sum < target: arr[left] too small → left++
+# If sum > target: arr[right] too big → right--
+# Each iteration eliminates one element → O(n)</span></pre>
+      </div>
+    </div>
+
+    <!-- TWO POINTER VIZ -->
+    <div class="viz">
+      <div class="viz-title">🎯 TWO POINTER VISUALIZER — Two Sum (Sorted)</div>
+      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
+        <div><div class="tp-label">Sorted Array</div>
+          <input id="tpInput" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:var(--r);font-family:'Inconsolata',monospace;font-size:.83rem;width:260px;outline:none" value="1, 3, 5, 7, 9, 12, 15">
+        </div>
+        <div><div class="tp-label">Target Sum</div>
+          <input id="tpTarget" class="vinput" type="number" value="16">
+        </div>
+        <button class="vbtn grn" onclick="tpInit()">▶ Run</button>
+      </div>
+      <div class="viz-ctrl">
+        <button class="vbtn" onclick="tpStep()">Next Step →</button>
+        <button class="vbtn red" onclick="tpReset()">Reset</button>
+        <button class="vbtn" onclick="tpAuto()">Auto Run ▶▶</button>
+      </div>
+      <div class="win-size-bar">
+        <span class="win-size-label">L + R SUM:</span><span class="win-sum-val" id="tpSum">—</span>
+        <span class="win-size-label" style="margin-left:16px">TARGET:</span><span class="win-sum-val" id="tpTgt" style="color:var(--a4)">—</span>
+      </div>
+      <div class="arr-row" id="tpArray"></div>
+      <div class="vlog" id="tpLog"><span class="info">Set sorted array and target, then press "Run".</span></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 5 — OPPOSITE ENDS
+       ============================================================ -->
+  <section class="section" id="s5">
+    <div class="sec-hdr">
+      <span class="sec-num">05</span>
+      <div>
+        <div class="sec-title">Opposite Ends Pattern</div>
+        <div class="sec-sub">Squeeze from both ends — sorted arrays, palindromes, containers</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t4">Pattern</span>When to Use Opposite Ends</div>
+      <ul>
+        <li>Array is <strong>sorted</strong> (or can be sorted)</li>
+        <li>Problem asks for <strong>pairs</strong> satisfying some condition</li>
+        <li>Problem involves <strong>maximizing/minimizing</strong> a value using two endpoints</li>
+        <li>Key phrases: "Two Sum", "three sum", "container with water", "trapping rain water"</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t3">Code</span>Container With Most Water — LC 11</div>
+      <div class="code-block">
+        <div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">def</span> <span class="fn">maxArea</span>(height):
+    <span class="str">"""
+    Container with most water.
+    Key insight: always move the SHORTER pointer.
+    Moving the taller one can never increase area.
+    Time: O(n) | Space: O(1)
+    """</span>
+    left, right = <span class="num">0</span>, <span class="kw">len</span>(height) - <span class="num">1</span>
+    max_water = <span class="num">0</span>
+
+    <span class="kw">while</span> left < right:
+        width = right - left
+        water = <span class="kw">min</span>(height[left], height[right]) * width
+        max_water = <span class="kw">max</span>(max_water, water)
+
+        <span class="cm"># Move the shorter wall — critical insight!</span>
+        <span class="kw">if</span> height[left] <= height[right]:
+            left += <span class="num">1</span>
+        <span class="kw">else</span>:
+            right -= <span class="num">1</span>
+
+    <span class="kw">return</span> max_water
+
+<span class="kw">print</span>(maxArea([<span class="num">1</span>,<span class="num">8</span>,<span class="num">6</span>,<span class="num">2</span>,<span class="num">5</span>,<span class="num">4</span>,<span class="num">8</span>,<span class="num">3</span>,<span class="num">7</span>]))  <span class="cm"># 49</span></pre>
+      </div>
+      <div class="callout info">
+        <div class="ci">💡</div>
+        <div class="cb">
+          <div class="cb-ttl">Why move the shorter wall?</div>
+          Water height is limited by the <em>shorter</em> wall. If you move the taller wall, the height can only stay the same or decrease, but width decreases too → area must decrease. Moving shorter gives chance to find taller wall.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t3">Code</span>3Sum — LC 15</div>
+      <div class="code-block">
+        <div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">def</span> <span class="fn">threeSum</span>(nums):
+    <span class="str">"""
+    Find all unique triplets summing to 0.
+    Fix one element, use two pointers for the other two.
+    Time: O(n²) | Space: O(1) excluding output
+    """</span>
+    nums.sort()  <span class="cm"># Sort first!</span>
+    result = []
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(nums) - <span class="num">2</span>):
+        <span class="cm"># Skip duplicates for the fixed element</span>
+        <span class="kw">if</span> i > <span class="num">0</span> <span class="kw">and</span> nums[i] == nums[i-<span class="num">1</span>]:
+            <span class="kw">continue</span>
+        <span class="cm"># Early termination: smallest triple already > 0</span>
+        <span class="kw">if</span> nums[i] > <span class="num">0</span>:
+            <span class="kw">break</span>
+
+        left, right = i + <span class="num">1</span>, <span class="kw">len</span>(nums) - <span class="num">1</span>
+
+        <span class="kw">while</span> left < right:
+            total = nums[i] + nums[left] + nums[right]
+
+            <span class="kw">if</span> total == <span class="num">0</span>:
+                result.append([nums[i], nums[left], nums[right]])
+                <span class="cm"># Skip duplicates for left and right</span>
+                <span class="kw">while</span> left < right <span class="kw">and</span> nums[left] == nums[left+<span class="num">1</span>]:
+                    left += <span class="num">1</span>
+                <span class="kw">while</span> left < right <span class="kw">and</span> nums[right] == nums[right-<span class="num">1</span>]:
+                    right -= <span class="num">1</span>
+                left += <span class="num">1</span>; right -= <span class="num">1</span>
+            <span class="kw">elif</span> total < <span class="num">0</span>:
+                left += <span class="num">1</span>
+            <span class="kw">else</span>:
+                right -= <span class="num">1</span>
+
+    <span class="kw">return</span> result
+
+<span class="kw">print</span>(threeSum([-<span class="num">1</span>, <span class="num">0</span>, <span class="num">1</span>, <span class="num">2</span>, -<span class="num">1</span>, -<span class="num">4</span>]))
+<span class="cm"># [[-1,-1,2],[-1,0,1]]</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 6 — SAME DIRECTION
+       ============================================================ -->
+  <section class="section" id="s6">
+    <div class="sec-hdr">
+      <span class="sec-num">06</span>
+      <div>
+        <div class="sec-title">Same Direction Pattern</div>
+        <div class="sec-sub">Both pointers move right — fast/slow, remove duplicates, partition</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t4">Pattern</span>Same-Direction Two Pointers Use Cases</div>
+      <ul>
+        <li><strong>Slow pointer</strong> marks the "write position" or "valid boundary"</li>
+        <li><strong>Fast pointer</strong> scans ahead to find good elements</li>
+        <li>Used for: remove duplicates, remove element, partition arrays, partition linked lists</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t3">Code</span>Remove Duplicates + Move Zeros + Sort Colors</div>
+      <div class="code-block">
+        <div class="code-hdr"><span class="code-lang">Python — Same Direction Templates</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="cm"># ════════════════════════════════════════
+# PATTERN 1: Remove Duplicates from Sorted — LC 26
+# slow points to last written, fast scans ahead
+# ════════════════════════════════════════</span>
+<span class="kw">def</span> <span class="fn">removeDuplicates</span>(nums):
+    <span class="kw">if not</span> nums: <span class="kw">return</span> <span class="num">0</span>
+    slow = <span class="num">0</span>
+    <span class="kw">for</span> fast <span class="kw">in</span> <span class="kw">range</span>(<span class="num">1</span>, <span class="kw">len</span>(nums)):
+        <span class="kw">if</span> nums[fast] != nums[slow]:  <span class="cm"># Found new unique element</span>
+            slow += <span class="num">1</span>
+            nums[slow] = nums[fast]  <span class="cm"># Write it</span>
+    <span class="kw">return</span> slow + <span class="num">1</span>  <span class="cm"># O(n) time, O(1) space</span>
+
+<span class="cm"># ════════════════════════════════════════
+# PATTERN 2: Move Zeros to End — LC 283
+# slow = next write position for non-zeros
+# ════════════════════════════════════════</span>
+<span class="kw">def</span> <span class="fn">moveZeroes</span>(nums):
+    slow = <span class="num">0</span>  <span class="cm"># Next position to write a non-zero</span>
+    <span class="kw">for</span> fast <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(nums)):
+        <span class="kw">if</span> nums[fast] != <span class="num">0</span>:
+            nums[slow], nums[fast] = nums[fast], nums[slow]
+            slow += <span class="num">1</span>
+    <span class="cm"># [0,1,0,3,12] → [1,3,12,0,0]</span>
+
+<span class="cm"># ════════════════════════════════════════
+# PATTERN 3: Sort Colors (Dutch Flag) — LC 75
+# THREE pointers: low, mid, high
+# ════════════════════════════════════════</span>
+<span class="kw">def</span> <span class="fn">sortColors</span>(nums):
+    low = mid = <span class="num">0</span>
+    high = <span class="kw">len</span>(nums) - <span class="num">1</span>
+
+    <span class="kw">while</span> mid <= high:
+        <span class="kw">if</span> nums[mid] == <span class="num">0</span>:
+            nums[low], nums[mid] = nums[mid], nums[low]
+            low += <span class="num">1</span>; mid += <span class="num">1</span>
+        <span class="kw">elif</span> nums[mid] == <span class="num">1</span>:
+            mid += <span class="num">1</span>  <span class="cm"># Already in place</span>
+        <span class="kw">else</span>:  <span class="cm"># nums[mid] == 2</span>
+            nums[mid], nums[high] = nums[high], nums[mid]
+            high -= <span class="num">1</span>  <span class="cm"># Don't increment mid! Not checked yet</span>
+    <span class="cm"># [2,0,2,1,1,0] → [0,0,1,1,2,2]</span></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t3">Code</span>Trapping Rain Water — LC 42 (Hard)</div>
+      <div class="code-block">
+        <div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">def</span> <span class="fn">trap</span>(height):
+    <span class="str">"""
+    Water trapped = min(maxL, maxR) - height[i] for each i.
+    Two pointer avoids O(n) extra space for prefix maxes.
+    Time: O(n) | Space: O(1)
+    """</span>
+    left, right = <span class="num">0</span>, <span class="kw">len</span>(height) - <span class="num">1</span>
+    left_max = right_max = water = <span class="num">0</span>
+
+    <span class="kw">while</span> left < right:
+        <span class="kw">if</span> height[left] <= height[right]:
+            <span class="cm"># Left is bottleneck: water depends on left_max</span>
+            <span class="kw">if</span> height[left] >= left_max:
+                left_max = height[left]
+            <span class="kw">else</span>:
+                water += left_max - height[left]
+            left += <span class="num">1</span>
+        <span class="kw">else</span>:
+            <span class="cm"># Right is bottleneck: water depends on right_max</span>
+            <span class="kw">if</span> height[right] >= right_max:
+                right_max = height[right]
+            <span class="kw">else</span>:
+                water += right_max - height[right]
+            right -= <span class="num">1</span>
+
+    <span class="kw">return</span> water
+
+<span class="kw">print</span>(trap([<span class="num">0</span>,<span class="num">1</span>,<span class="num">0</span>,<span class="num">2</span>,<span class="num">1</span>,<span class="num">0</span>,<span class="num">1</span>,<span class="num">3</span>,<span class="num">2</span>,<span class="num">1</span>,<span class="num">2</span>,<span class="num">1</span>]))  <span class="cm"># 6</span></pre>
+      </div>
+      <div class="dry">
+        <div style="font-weight:700;margin-bottom:8px;font-size:.85rem">Key insight for Two-Pointer Trap:</div>
+        <div class="ds"><span class="ds-n">Rule:</span><span class="ds-a">If height[left] ≤ height[right] → process left side (left_max is definitive)</span></div>
+        <div class="ds"><span class="ds-n">Rule:</span><span class="ds-a">Water at a cell = max(0, min(leftMax, rightMax) - height[i])</span></div>
+        <div class="ds"><span class="ds-n">Why:</span><span class="ds-a">When height[left] ≤ height[right], right boundary is "tall enough", so left_max is the real constraint</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 7 — FREQUENCY MAPS
+       ============================================================ -->
+  <section class="section" id="s7">
+    <div class="sec-hdr">
+      <span class="sec-num">07</span>
+      <div>
+        <div class="sec-title">Frequency Maps in Sliding Window</div>
+        <div class="sec-sub">Combine HashMap with window — solve character/element counting problems</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t1">Concept</span>Why Frequency Maps?</div>
+      <p>Many sliding window problems track <strong>character/element counts</strong> rather than sums. A HashMap (Counter) stores frequencies inside the window. When the window slides, you update the count and check validity.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t3">Code</span>Minimum Window Substring — LC 76 (Hard)</div>
+      <div class="code-block">
+        <div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">from</span> collections <span class="kw">import</span> Counter
+
+<span class="kw">def</span> <span class="fn">minWindow</span>(s, t):
+    <span class="str">"""
+    Minimum window substring containing all chars of t.
+    Time: O(|s| + |t|) | Space: O(|s| + |t|)
+    """</span>
+    <span class="kw">if not</span> t <span class="kw">or not</span> s: <span class="kw">return</span> <span class="str">""</span>
+
+    need = Counter(t)   <span class="cm"># {char: count we still need}</span>
+    missing = <span class="kw">len</span>(t)   <span class="cm"># Total chars still needed</span>
+    best = <span class="str">""</span>
+    left = <span class="num">0</span>
+
+    <span class="kw">for</span> right, c <span class="kw">in</span> <span class="kw">enumerate</span>(s):
+        <span class="cm"># Expand: add s[right] to window</span>
+        need[c] -= <span class="num">1</span>
+        <span class="kw">if</span> need[c] >= <span class="num">0</span>:  <span class="cm"># Was needed (not excess)</span>
+            missing -= <span class="num">1</span>
+
+        <span class="cm"># Shrink: while window is valid (has all chars)</span>
+        <span class="kw">while</span> missing == <span class="num">0</span>:
+            window = s[left:right+<span class="num">1</span>]
+            <span class="kw">if not</span> best <span class="kw">or</span> <span class="kw">len</span>(window) < <span class="kw">len</span>(best):
+                best = window
+
+            need[s[left]] += <span class="num">1</span>
+            <span class="kw">if</span> need[s[left]] > <span class="num">0</span>:  <span class="cm"># Was needed, now missing</span>
+                missing += <span class="num">1</span>
+            left += <span class="num">1</span>
+
+    <span class="kw">return</span> best
+
+<span class="kw">print</span>(minWindow(<span class="str">"ADOBECODEBANC"</span>, <span class="str">"ABC"</span>))  <span class="cm"># "BANC"</span></pre>
+      </div>
+      <div class="dry">
+        <div style="font-weight:700;margin-bottom:6px;font-size:.85rem">Key variables:</div>
+        <div class="ds"><span class="ds-n">need</span><span class="ds-a">How many more of each char we need in window</span></div>
+        <div class="ds"><span class="ds-n">missing</span><span class="ds-a">Total characters still needed (shrink when 0)</span></div>
+        <div class="ds"><span class="ds-n">Expand:</span><span class="ds-a">need[c]−=1, if ≥0 then missing−=1</span></div>
+        <div class="ds"><span class="ds-n">Shrink:</span><span class="ds-a">need[s[left]]+=1, if >0 then missing+=1</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t3">Code</span>Longest Substring with K Distinct Characters</div>
+      <div class="code-block">
+        <div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+
+<span class="kw">def</span> <span class="fn">lengthOfLongestSubstringKDistinct</span>(s, k):
+    <span class="str">"""Time: O(n) | Space: O(k)"""</span>
+    freq = defaultdict(<span class="kw">int</span>)
+    left = max_len = <span class="num">0</span>
+
+    <span class="kw">for</span> right <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(s)):
+        freq[s[right]] += <span class="num">1</span>  <span class="cm"># Add to window</span>
+
+        <span class="cm"># Shrink while more than k distinct chars</span>
+        <span class="kw">while</span> <span class="kw">len</span>(freq) > k:
+            freq[s[left]] -= <span class="num">1</span>
+            <span class="kw">if</span> freq[s[left]] == <span class="num">0</span>:
+                <span class="kw">del</span> freq[s[left]]
+            left += <span class="num">1</span>
+
+        max_len = <span class="kw">max</span>(max_len, right - left + <span class="num">1</span>)
+
+    <span class="kw">return</span> max_len
+
+<span class="kw">print</span>(lengthOfLongestSubstringKDistinct(<span class="str">"eceba"</span>, <span class="num">2</span>))  <span class="cm"># 3 ("ece")</span>
+<span class="kw">print</span>(lengthOfLongestSubstringKDistinct(<span class="str">"aa"</span>, <span class="num">1</span>))     <span class="cm"># 2</span></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t3">Code</span>Find All Anagrams in a String — LC 438</div>
+      <div class="code-block">
+        <div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">from</span> collections <span class="kw">import</span> Counter
+
+<span class="kw">def</span> <span class="fn">findAnagrams</span>(s, p):
+    <span class="str">"""Fixed window of size len(p), compare freq maps.
+    Time: O(n) | Space: O(1) — at most 26 chars"""</span>
+    p_count = Counter(p)
+    window = Counter(s[:<span class="kw">len</span>(p)])
+    result = []
+
+    <span class="kw">if</span> window == p_count:
+        result.append(<span class="num">0</span>)
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(p), <span class="kw">len</span>(s)):
+        <span class="cm"># Add incoming char</span>
+        window[s[i]] += <span class="num">1</span>
+        <span class="cm"># Remove outgoing char</span>
+        outgoing = s[i - <span class="kw">len</span>(p)]
+        window[outgoing] -= <span class="num">1</span>
+        <span class="kw">if</span> window[outgoing] == <span class="num">0</span>:
+            <span class="kw">del</span> window[outgoing]
+
+        <span class="kw">if</span> window == p_count:
+            result.append(i - <span class="kw">len</span>(p) + <span class="num">1</span>)
+
+    <span class="kw">return</span> result
+
+<span class="kw">print</span>(findAnagrams(<span class="str">"cbaebabacd"</span>, <span class="str">"abc"</span>))  <span class="cm"># [0, 6]</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 8 — MONOTONIC DEQUE
+       ============================================================ -->
+  <section class="section" id="s8">
+    <div class="sec-hdr">
+      <span class="sec-num">08</span>
+      <div>
+        <div class="sec-title">Monotonic Deque in Sliding Window</div>
+        <div class="sec-sub">Get window max/min in O(1) — the key to hard sliding window problems</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t1">Concept</span>The Monotonic Deque Idea</div>
+      <p>A <strong>Monotonic Deque</strong> (double-ended queue) maintains indices in order such that their corresponding values are strictly <strong>decreasing</strong> (for max) or <strong>increasing</strong> (for min).</p>
+      <p>When a new element arrives that is larger than elements at the back, we pop those back elements — they can never be the maximum while the new element exists in the window.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t3">Code</span>Sliding Window Maximum — LC 239 (Hard)</div>
+      <div class="code-block">
+        <div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">maxSlidingWindow</span>(nums, k):
+    <span class="str">"""
+    Max in every window of size k.
+    Time: O(n) — each element pushed/popped at most once
+    Space: O(k) — deque stores at most k indices
+    """</span>
+    dq = deque()  <span class="cm"># Stores INDICES, maintains decreasing VALUES</span>
+    result = []
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(nums)):
+        <span class="cm"># 1. Remove indices outside window [i-k+1, i]</span>
+        <span class="kw">while</span> dq <span class="kw">and</span> dq[<span class="num">0</span>] < i - k + <span class="num">1</span>:
+            dq.popleft()
+
+        <span class="cm"># 2. Remove indices with smaller values (useless)</span>
+        <span class="cm">#    They can never be max while nums[i] is in window</span>
+        <span class="kw">while</span> dq <span class="kw">and</span> nums[dq[-<span class="num">1</span>]] < nums[i]:
+            dq.pop()
+
+        <span class="cm"># 3. Add current index</span>
+        dq.append(i)
+
+        <span class="cm"># 4. Record max when window is full</span>
+        <span class="cm">#    Front of deque is always the index of maximum!</span>
+        <span class="kw">if</span> i >= k - <span class="num">1</span>:
+            result.append(nums[dq[<span class="num">0</span>]])
+
+    <span class="kw">return</span> result
+
+<span class="cm"># Example: [1,3,-1,-3,5,3,6,7], k=3
+# Output:  [3, 3, 5, 5, 6, 7]</span>
+<span class="kw">print</span>(maxSlidingWindow([<span class="num">1</span>,<span class="num">3</span>,-<span class="num">1</span>,-<span class="num">3</span>,<span class="num">5</span>,<span class="num">3</span>,<span class="num">6</span>,<span class="num">7</span>], <span class="num">3</span>))</pre>
+      </div>
+      <div class="dry">
+        <div style="font-weight:700;margin-bottom:6px;font-size:.85rem">Dry Run: [1,3,-1,-3,5,3,6,7], k=3</div>
+        <div class="ds"><span class="ds-n">i=0:</span><span class="ds-a">dq=[0], no result yet</span></div>
+        <div class="ds"><span class="ds-n">i=1:</span><span class="ds-a">nums[0]=1 &lt; nums[1]=3 → pop 0. dq=[1]</span></div>
+        <div class="ds"><span class="ds-n">i=2:</span><span class="ds-a">dq=[1,2] (window full) → result=[nums[1]]=3</span><span class="ds-s">max=3</span></div>
+        <div class="ds"><span class="ds-n">i=3:</span><span class="ds-a">nums[3]=-3, dq=[1,2,3] (i-k+1=1, front ok) → result+=[3]</span><span class="ds-s">max=3</span></div>
+        <div class="ds"><span class="ds-n">i=4:</span><span class="ds-a">nums[4]=5 &gt; all → pop 1,2,3. dq=[4] → result+=[5]</span><span class="ds-s">max=5</span></div>
+        <div class="ds"><span class="ds-n">i=5:</span><span class="ds-a">dq=[4,5] (front 4, i-k+1=3, ok) → result+=[5]</span><span class="ds-s">max=5</span></div>
+        <div class="ds"><span class="ds-n">i=6:</span><span class="ds-a">nums[6]=6 &gt; nums[5]=3 → pop 5. dq=[4,6] → result+=[6]</span><span class="ds-s">max=6</span></div>
+        <div class="ds"><span class="ds-n">i=7:</span><span class="ds-a">nums[7]=7 &gt; nums[6]=6 → pop 6,4. dq=[7] → result+=[7]</span><span class="ds-s">max=7 ✅</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 9 — MULTI-POINTER
+       ============================================================ -->
+  <section class="section" id="s9">
+    <div class="sec-hdr">
+      <span class="sec-num">09</span>
+      <div>
+        <div class="sec-title">Multi-Pointer Patterns</div>
+        <div class="sec-sub">3 pointers, fast/slow, and combining patterns</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t3">Code</span>4Sum — Generalized k-Sum</div>
+      <div class="code-block">
+        <div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">def</span> <span class="fn">fourSum</span>(nums, target):
+    <span class="str">"""
+    Find all unique quadruplets summing to target.
+    Fix two elements, two-pointer for remaining two.
+    Time: O(n³) | Space: O(1) excluding output
+    """</span>
+    nums.sort()
+    result = []
+    n = <span class="kw">len</span>(nums)
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(n - <span class="num">3</span>):
+        <span class="kw">if</span> i > <span class="num">0</span> <span class="kw">and</span> nums[i] == nums[i-<span class="num">1</span>]: <span class="kw">continue</span>  <span class="cm"># Skip dup</span>
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="kw">range</span>(i+<span class="num">1</span>, n-<span class="num">2</span>):
+            <span class="kw">if</span> j > i+<span class="num">1</span> <span class="kw">and</span> nums[j] == nums[j-<span class="num">1</span>]: <span class="kw">continue</span>  <span class="cm"># Skip dup</span>
+            left, right = j+<span class="num">1</span>, n-<span class="num">1</span>
+            <span class="kw">while</span> left < right:
+                s = nums[i]+nums[j]+nums[left]+nums[right]
+                <span class="kw">if</span> s == target:
+                    result.append([nums[i],nums[j],nums[left],nums[right]])
+                    <span class="kw">while</span> left<right <span class="kw">and</span> nums[left]==nums[left+<span class="num">1</span>]: left+=<span class="num">1</span>
+                    <span class="kw">while</span> left<right <span class="kw">and</span> nums[right]==nums[right-<span class="num">1</span>]: right-=<span class="num">1</span>
+                    left+=<span class="num">1</span>; right-=<span class="num">1</span>
+                <span class="kw">elif</span> s < target: left+=<span class="num">1</span>
+                <span class="kw">else</span>: right-=<span class="num">1</span>
+    <span class="kw">return</span> result</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t3">Code</span>Longest Repeating Character Replacement — LC 424</div>
+      <div class="code-block">
+        <div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">def</span> <span class="fn">characterReplacement</span>(s, k):
+    <span class="str">"""
+    Longest substring after replacing at most k chars.
+    Key: window_size - max_freq <= k means we can fix it.
+    Time: O(n) | Space: O(26) = O(1)
+    """</span>
+    count = {}
+    left = max_len = max_freq = <span class="num">0</span>
+
+    <span class="kw">for</span> right <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(s)):
+        count[s[right]] = count.get(s[right], <span class="num">0</span>) + <span class="num">1</span>
+        max_freq = <span class="kw">max</span>(max_freq, count[s[right]])
+
+        <span class="cm"># (window size) - (most frequent char) = chars to replace</span>
+        <span class="cm"># If > k, shrink window</span>
+        window_size = right - left + <span class="num">1</span>
+        <span class="kw">if</span> window_size - max_freq > k:
+            count[s[left]] -= <span class="num">1</span>
+            left += <span class="num">1</span>
+
+        max_len = <span class="kw">max</span>(max_len, right - left + <span class="num">1</span>)
+
+    <span class="kw">return</span> max_len
+
+<span class="kw">print</span>(characterReplacement(<span class="str">"AABABBA"</span>, <span class="num">1</span>))  <span class="cm"># 4</span>
+<span class="cm"># Replace one 'B' in "AABA" or "ABBA" to get AAAA/AAAB</span></pre>
+      </div>
+      <div class="callout info">
+        <div class="ci">💡</div>
+        <div class="cb"><div class="cb-ttl">The Key Insight</div><code>window_size - max_freq</code> = number of characters that need replacing. If this exceeds k, the window is invalid. We never shrink max_freq (only update if larger) — this is intentional for performance.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 10 — SHRINKABLE WINDOWS
+       ============================================================ -->
+  <section class="section" id="s10">
+    <div class="sec-hdr">
+      <span class="sec-num">10</span>
+      <div>
+        <div class="sec-title">Shrinkable Windows — Finding Minimums</div>
+        <div class="sec-sub">When you want the smallest valid window instead of the largest</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t1">Concept</span>Longest vs Shortest Window</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Goal</th><th>When to record answer</th><th>Shrink condition</th></tr>
+          <tr><td>Longest window</td><td>After shrinking (window is valid)</td><td>While INVALID</td></tr>
+          <tr><td>Shortest window</td><td>Inside shrink loop (window is valid)</td><td>While VALID</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl"><span class="tag t3">Code</span>Smallest Subarray with Sum ≥ Target — LC 209</div>
+      <div class="code-block">
+        <div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">def</span> <span class="fn">minSubArrayLen</span>(target, nums):
+    <span class="str">"""
+    Minimum length subarray with sum >= target.
+    Key: record answer INSIDE while loop (when valid).
+    Time: O(n) | Space: O(1)
+    """</span>
+    left = window_sum = <span class="num">0</span>
+    min_len = <span class="kw">float</span>(<span class="str">'inf'</span>)
+
+    <span class="kw">for</span> right <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(nums)):
+        window_sum += nums[right]  <span class="cm"># Expand</span>
+
+        <span class="cm"># Shrink while window is VALID (sum >= target)</span>
+        <span class="kw">while</span> window_sum >= target:
+            min_len = <span class="kw">min</span>(min_len, right - left + <span class="num">1</span>)  <span class="cm"># Record!</span>
+            window_sum -= nums[left]
+            left += <span class="num">1</span>
+
+    <span class="kw">return</span> min_len <span class="kw">if</span> min_len != <span class="kw">float</span>(<span class="str">'inf'</span>) <span class="kw">else</span> <span class="num">0</span>
+
+<span class="kw">print</span>(minSubArrayLen(<span class="num">7</span>, [<span class="num">2</span>,<span class="num">3</span>,<span class="num">1</span>,<span class="num">2</span>,<span class="num">4</span>,<span class="num">3</span>]))  <span class="cm"># 2 ([4,3])</span>
+<span class="kw">print</span>(minSubArrayLen(<span class="num">11</span>, [<span class="num">1</span>,<span class="num">1</span>,<span class="num">1</span>,<span class="num">1</span>,<span class="num">1</span>,<span class="num">1</span>,<span class="num">1</span>,<span class="num">1</span>]))  <span class="cm"># 0 (impossible)</span></pre>
+      </div>
+    </div>
+
+    <div class="ibox">
+      <div class="ibox-ttl">🎯 The Two Window Patterns Compared</div>
+      <ul>
+        <li><strong>Max window</strong>: Expand right → shrink left while INVALID → record after while. Example: longest subarray ≤ k.</li>
+        <li><strong>Min window</strong>: Expand right → record inside while VALID → shrink left inside while. Example: smallest subarray ≥ k.</li>
+        <li>The difference is <strong>where you record</strong> — after the while (max) vs inside the while (min).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 11 — COMPLEXITY
+       ============================================================ -->
+  <section class="section" id="s11">
+    <div class="sec-hdr">
+      <span class="sec-num">11</span>
+      <div>
+        <div class="sec-title">Complexity Analysis</div>
+        <div class="sec-sub">Time and space for every pattern — memorize for interviews</div>
+      </div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Pattern</th><th>Time</th><th>Space</th><th>Notes</th></tr>
+        <tr><td>Fixed window (sum/max)</td><td class="good">O(n)</td><td class="good">O(1)</td><td>Add/subtract at each slide</td></tr>
+        <tr><td>Variable window (sum)</td><td class="good">O(n)</td><td class="good">O(1)</td><td>Each element added/removed once</td></tr>
+        <tr><td>Variable window (char count)</td><td class="good">O(n)</td><td class="ok">O(k) or O(26)</td><td>k = distinct chars</td></tr>
+        <tr><td>Two pointers (sorted)</td><td class="good">O(n)</td><td class="good">O(1)</td><td>After O(n log n) sort</td></tr>
+        <tr><td>3Sum</td><td class="ok">O(n²)</td><td class="good">O(1)</td><td>Fix one + two pointers</td></tr>
+        <tr><td>4Sum</td><td class="ok">O(n³)</td><td class="good">O(1)</td><td>Fix two + two pointers</td></tr>
+        <tr><td>Monotonic deque (window max)</td><td class="good">O(n)</td><td class="ok">O(k)</td><td>Each element pushed/popped once</td></tr>
+        <tr><td>Min window substring</td><td class="good">O(n+m)</td><td class="ok">O(m)</td><td>m = len(pattern)</td></tr>
+        <tr><td>Brute force (comparison)</td><td class="bad">O(n²) or O(n·k)</td><td class="good">O(1)</td><td>What we replace</td></tr>
+      </table>
+    </div>
+
+    <div class="callout warn">
+      <div class="ci">⚠️</div>
+      <div class="cb">
+        <div class="cb-ttl">Why variable window is O(n) — not O(n²)</div>
+        Although there's a while loop inside a for loop, each element is added to the window exactly once (right++) and removed at most once (left++). Total operations = 2n = O(n). The inner while loop doesn't add a multiplier!
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 12 — INTERVIEW PROBLEMS
+       ============================================================ -->
+  <section class="section" id="s12">
+    <div class="sec-hdr">
+      <span class="sec-num">12</span>
+      <div>
+        <div class="sec-title">Interview Problems</div>
+        <div class="sec-sub">15 must-know problems with full solutions and pattern ID</div>
+      </div>
+    </div>
+
+    <!-- P1 -->
+    <div class="prob">
+      <div class="prob-hdr">
+        <div class="prob-title">1. Maximum Sum Subarray of Size K</div>
+        <span class="diff d-e">Easy</span>
+      </div>
+      <div class="prob-body">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p1e')">Explain</div><div class="ptab" onclick="st(this,'p1c')">Code</div></div>
+        <div class="ptab-c active" id="p1e"><p><strong>Pattern:</strong> Fixed window. Build first k, slide: add right, remove left.</p><p><strong>Template:</strong> Use fixed window template from Section 2.</p></div>
+        <div class="ptab-c" id="p1c"><div class="code-block"><div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">maxSumK</span>(arr, k):
+    win = <span class="kw">sum</span>(arr[:k]); best = win
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(k, <span class="kw">len</span>(arr)):
+        win += arr[i] - arr[i-k]
+        best = <span class="kw">max</span>(best, win)
+    <span class="kw">return</span> best  <span class="cm"># O(n) time, O(1) space</span></pre></div></div>
+      </div>
+    </div>
+
+    <!-- P2 -->
+    <div class="prob">
+      <div class="prob-hdr">
+        <div class="prob-title">2. Longest Substring Without Repeating Characters</div>
+        <span class="diff d-m">Medium</span>
+        <span style="font-family:'Inconsolata',monospace;font-size:.62rem;color:var(--text3)">LC 3</span>
+      </div>
+      <div class="prob-body">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p2e')">Explain</div><div class="ptab" onclick="st(this,'p2c')">Code</div></div>
+        <div class="ptab-c active" id="p2e"><p><strong>Pattern:</strong> Variable window with HashSet. Shrink when duplicate found.</p><p><strong>Optimization:</strong> Store last seen index → jump left directly instead of one-by-one.</p></div>
+        <div class="ptab-c" id="p2c"><div class="code-block"><div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">lengthOfLongestSubstring</span>(s):
+    seen = {}; left = res = <span class="num">0</span>
+    <span class="kw">for</span> r, c <span class="kw">in</span> <span class="kw">enumerate</span>(s):
+        <span class="kw">if</span> c <span class="kw">in</span> seen <span class="kw">and</span> seen[c] >= left:
+            left = seen[c] + <span class="num">1</span>
+        seen[c] = r
+        res = <span class="kw">max</span>(res, r - left + <span class="num">1</span>)
+    <span class="kw">return</span> res  <span class="cm"># O(n) time+space</span></pre></div></div>
+      </div>
+    </div>
+
+    <!-- P3 -->
+    <div class="prob">
+      <div class="prob-hdr">
+        <div class="prob-title">3. Container With Most Water</div>
+        <span class="diff d-m">Medium</span>
+        <span style="font-family:'Inconsolata',monospace;font-size:.62rem;color:var(--text3)">LC 11</span>
+      </div>
+      <div class="prob-body">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p3e')">Explain</div><div class="ptab" onclick="st(this,'p3c')">Code</div></div>
+        <div class="ptab-c active" id="p3e"><p><strong>Pattern:</strong> Opposite ends two pointers. Always move the shorter wall.</p><p><strong>Why:</strong> Moving the taller wall can never increase the bounded height, and width decreases → area must decrease.</p></div>
+        <div class="ptab-c" id="p3c"><div class="code-block"><div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">maxArea</span>(h):
+    l, r = <span class="num">0</span>, <span class="kw">len</span>(h)-<span class="num">1</span>; res = <span class="num">0</span>
+    <span class="kw">while</span> l < r:
+        res = <span class="kw">max</span>(res, <span class="kw">min</span>(h[l],h[r])*(r-l))
+        <span class="kw">if</span> h[l] <= h[r]: l += <span class="num">1</span>
+        <span class="kw">else</span>: r -= <span class="num">1</span>
+    <span class="kw">return</span> res  <span class="cm"># O(n) time, O(1) space</span></pre></div></div>
+      </div>
+    </div>
+
+    <!-- P4 -->
+    <div class="prob">
+      <div class="prob-hdr">
+        <div class="prob-title">4. 3Sum</div>
+        <span class="diff d-m">Medium</span>
+        <span style="font-family:'Inconsolata',monospace;font-size:.62rem;color:var(--text3)">LC 15</span>
+      </div>
+      <div class="prob-body">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p4e')">Explain</div></div>
+        <div class="ptab-c active" id="p4e"><p><strong>Pattern:</strong> Sort + fix i + two pointers for [i+1..n-1]. Skip duplicates at all three levels.</p><p>Full code in Section 5. Time: O(n²), Space: O(1).</p></div>
+      </div>
+    </div>
+
+    <!-- P5 -->
+    <div class="prob">
+      <div class="prob-hdr">
+        <div class="prob-title">5. Minimum Window Substring</div>
+        <span class="diff d-h">Hard</span>
+        <span style="font-family:'Inconsolata',monospace;font-size:.62rem;color:var(--text3)">LC 76</span>
+      </div>
+      <div class="prob-body">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p5e')">Explain</div></div>
+        <div class="ptab-c active" id="p5e"><p><strong>Pattern:</strong> Variable window (shrink for min) + frequency map. Track <code>missing</code> counter to check validity in O(1).</p><p>Full code in Section 7. Time: O(n+m), Space: O(n+m).</p></div>
+      </div>
+    </div>
+
+    <!-- P6 -->
+    <div class="prob">
+      <div class="prob-hdr">
+        <div class="prob-title">6. Sliding Window Maximum</div>
+        <span class="diff d-h">Hard</span>
+        <span style="font-family:'Inconsolata',monospace;font-size:.62rem;color:var(--text3)">LC 239</span>
+      </div>
+      <div class="prob-body">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p6e')">Explain</div></div>
+        <div class="ptab-c active" id="p6e"><p><strong>Pattern:</strong> Monotonic decreasing deque. Store indices. Front = max. See Section 8 for full solution + dry run.</p></div>
+      </div>
+    </div>
+
+    <!-- P7 -->
+    <div class="prob">
+      <div class="prob-hdr">
+        <div class="prob-title">7. Trapping Rain Water</div>
+        <span class="diff d-h">Hard</span>
+        <span style="font-family:'Inconsolata',monospace;font-size:.62rem;color:var(--text3)">LC 42</span>
+      </div>
+      <div class="prob-body">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p7e')">Explain</div></div>
+        <div class="ptab-c active" id="p7e"><p><strong>Pattern:</strong> Opposite-ends two pointers. Process the smaller side. Water = left_max/right_max - height[i].</p><p>Full code in Section 6. O(n) time, O(1) space.</p></div>
+      </div>
+    </div>
+
+    <!-- P8 -->
+    <div class="prob">
+      <div class="prob-hdr">
+        <div class="prob-title">8. Permutation in String</div>
+        <span class="diff d-m">Medium</span>
+        <span style="font-family:'Inconsolata',monospace;font-size:.62rem;color:var(--text3)">LC 567</span>
+      </div>
+      <div class="prob-body">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p8e')">Explain</div><div class="ptab" onclick="st(this,'p8c')">Code</div></div>
+        <div class="ptab-c active" id="p8e"><p><strong>Pattern:</strong> Fixed window of len(p1) + frequency map. Check if window freq matches p1 freq.</p></div>
+        <div class="ptab-c" id="p8c"><div class="code-block"><div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><span class="kw">from</span> collections <span class="kw">import</span> Counter
+<span class="kw">def</span> <span class="fn">checkInclusion</span>(p, s):
+    need = Counter(p)
+    window = Counter(s[:<span class="kw">len</span>(p)])
+    <span class="kw">if</span> window == need: <span class="kw">return True</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(p), <span class="kw">len</span>(s)):
+        window[s[i]] += <span class="num">1</span>
+        out = s[i - <span class="kw">len</span>(p)]
+        window[out] -= <span class="num">1</span>
+        <span class="kw">if not</span> window[out]: <span class="kw">del</span> window[out]
+        <span class="kw">if</span> window == need: <span class="kw">return True</span>
+    <span class="kw">return False</span>  <span class="cm"># O(n) time</span></pre></div></div>
+      </div>
+    </div>
+
+    <!-- P9 -->
+    <div class="prob">
+      <div class="prob-hdr">
+        <div class="prob-title">9. Longest Repeating Character Replacement</div>
+        <span class="diff d-m">Medium</span>
+        <span style="font-family:'Inconsolata',monospace;font-size:.62rem;color:var(--text3)">LC 424</span>
+      </div>
+      <div class="prob-body">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p9e')">Explain</div></div>
+        <div class="ptab-c active" id="p9e"><p><strong>Pattern:</strong> Variable window + freq map. Key: <code>window_size - max_freq ≤ k</code>.</p><p>Full code in Section 9. O(n) time, O(26)=O(1) space.</p></div>
+      </div>
+    </div>
+
+    <!-- P10 -->
+    <div class="prob">
+      <div class="prob-hdr">
+        <div class="prob-title">10. Subarray Product Less Than K</div>
+        <span class="diff d-m">Medium</span>
+        <span style="font-family:'Inconsolata',monospace;font-size:.62rem;color:var(--text3)">LC 713</span>
+      </div>
+      <div class="prob-body">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p10e')">Explain</div><div class="ptab" onclick="st(this,'p10c')">Code</div></div>
+        <div class="ptab-c active" id="p10e"><p><strong>Pattern:</strong> Variable window with product. At each right, the number of valid subarrays ending at right = window size (right - left + 1).</p></div>
+        <div class="ptab-c" id="p10c"><div class="code-block"><div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">numSubarrayProductLessThanK</span>(nums, k):
+    <span class="kw">if</span> k <= <span class="num">1</span>: <span class="kw">return</span> <span class="num">0</span>
+    left = count = <span class="num">0</span>; prod = <span class="num">1</span>
+    <span class="kw">for</span> right <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(nums)):
+        prod *= nums[right]
+        <span class="kw">while</span> prod >= k:
+            prod //= nums[left]; left += <span class="num">1</span>
+        count += right - left + <span class="num">1</span>  <span class="cm"># Subarrays ending at right</span>
+    <span class="kw">return</span> count  <span class="cm"># O(n) time, O(1) space</span></pre></div></div>
+      </div>
+    </div>
+
+    <!-- P11 -->
+    <div class="prob">
+      <div class="prob-hdr">
+        <div class="prob-title">11. Find All Anagrams in String</div>
+        <span class="diff d-m">Medium</span>
+        <span style="font-family:'Inconsolata',monospace;font-size:.62rem;color:var(--text3)">LC 438</span>
+      </div>
+      <div class="prob-body">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p11e')">Explain</div></div>
+        <div class="ptab-c active" id="p11e"><p><strong>Pattern:</strong> Fixed window = len(p) + Counter comparison. O(n) time. Full code in Section 7.</p></div>
+      </div>
+    </div>
+
+    <!-- P12 -->
+    <div class="prob">
+      <div class="prob-hdr">
+        <div class="prob-title">12. Minimum Size Subarray Sum</div>
+        <span class="diff d-m">Medium</span>
+        <span style="font-family:'Inconsolata',monospace;font-size:.62rem;color:var(--text3)">LC 209</span>
+      </div>
+      <div class="prob-body">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p12e')">Explain</div></div>
+        <div class="ptab-c active" id="p12e"><p><strong>Pattern:</strong> Shrinkable window (find minimum). Record inside while loop. Full code in Section 10.</p></div>
+      </div>
+    </div>
+
+    <!-- P13 -->
+    <div class="prob">
+      <div class="prob-hdr">
+        <div class="prob-title">13. Two Sum II — Input Array Is Sorted</div>
+        <span class="diff d-m">Medium</span>
+        <span style="font-family:'Inconsolata',monospace;font-size:.62rem;color:var(--text3)">LC 167</span>
+      </div>
+      <div class="prob-body">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p13e')">Explain</div></div>
+        <div class="ptab-c active" id="p13e"><p><strong>Pattern:</strong> Classic opposite-ends two pointers. Sum &lt; target → left++. Sum &gt; target → right--. O(n) time, O(1) space.</p></div>
+      </div>
+    </div>
+
+    <!-- P14 -->
+    <div class="prob">
+      <div class="prob-hdr">
+        <div class="prob-title">14. Fruits Into Baskets</div>
+        <span class="diff d-m">Medium</span>
+        <span style="font-family:'Inconsolata',monospace;font-size:.62rem;color:var(--text3)">LC 904</span>
+      </div>
+      <div class="prob-body">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p14e')">Explain</div><div class="ptab" onclick="st(this,'p14c')">Code</div></div>
+        <div class="ptab-c active" id="p14e"><p><strong>Pattern:</strong> Longest subarray with at most 2 distinct values. Same as "K distinct" with k=2.</p></div>
+        <div class="ptab-c" id="p14c"><div class="code-block"><div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">totalFruit</span>(fruits):
+    basket = {}; left = res = <span class="num">0</span>
+    <span class="kw">for</span> right, f <span class="kw">in</span> <span class="kw">enumerate</span>(fruits):
+        basket[f] = basket.get(f, <span class="num">0</span>) + <span class="num">1</span>
+        <span class="kw">while</span> <span class="kw">len</span>(basket) > <span class="num">2</span>:
+            basket[fruits[left]] -= <span class="num">1</span>
+            <span class="kw">if not</span> basket[fruits[left]]: <span class="kw">del</span> basket[fruits[left]]
+            left += <span class="num">1</span>
+        res = <span class="kw">max</span>(res, right - left + <span class="num">1</span>)
+    <span class="kw">return</span> res  <span class="cm"># O(n) time, O(1) space</span></pre></div></div>
+      </div>
+    </div>
+
+    <!-- P15 -->
+    <div class="prob">
+      <div class="prob-hdr">
+        <div class="prob-title">15. Max Consecutive Ones III</div>
+        <span class="diff d-m">Medium</span>
+        <span style="font-family:'Inconsolata',monospace;font-size:.62rem;color:var(--text3)">LC 1004</span>
+      </div>
+      <div class="prob-body">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p15e')">Explain</div><div class="ptab" onclick="st(this,'p15c')">Code</div></div>
+        <div class="ptab-c active" id="p15e"><p><strong>Pattern:</strong> Same as char replacement but for binary. Longest window with at most k zeros (can flip).</p></div>
+        <div class="ptab-c" id="p15c"><div class="code-block"><div class="code-hdr"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">longestOnes</span>(nums, k):
+    left = zeros = res = <span class="num">0</span>
+    <span class="kw">for</span> right <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(nums)):
+        <span class="kw">if</span> nums[right] == <span class="num">0</span>: zeros += <span class="num">1</span>
+        <span class="kw">while</span> zeros > k:
+            <span class="kw">if</span> nums[left] == <span class="num">0</span>: zeros -= <span class="num">1</span>
+            left += <span class="num">1</span>
+        res = <span class="kw">max</span>(res, right - left + <span class="num">1</span>)
+    <span class="kw">return</span> res  <span class="cm"># O(n) time, O(1) space</span></pre></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 13 — CHEAT SHEET
+       ============================================================ -->
+  <section class="section" id="s13">
+    <div class="sec-hdr">
+      <span class="sec-num">13</span>
+      <div>
+        <div class="sec-title">Cheat Sheet</div>
+        <div class="sec-sub">Everything for your interview — one screen</div>
+      </div>
+    </div>
+
+    <div class="cheat-grid">
+      <div class="cheat-item">
+        <div class="cheat-ttl">🪟 Fixed Window Template</div>
+        <div class="code-block" style="margin:0"><pre style="font-size:.7rem;padding:11px">win = <span class="kw">sum</span>(arr[:k])
+res = win
+<span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(k, n):
+  win += arr[i] - arr[i-k]
+  res = <span class="kw">max</span>(res, win)
+<span class="kw">return</span> res  <span class="cm"># O(n), O(1)</span></pre></div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-ttl">📐 Variable Window (Max Length)</div>
+        <div class="code-block" style="margin:0"><pre style="font-size:.7rem;padding:11px">left = state = res = <span class="num">0</span>
+<span class="kw">for</span> right <span class="kw">in</span> <span class="kw">range</span>(n):
+  state += arr[right]      <span class="cm"># expand</span>
+  <span class="kw">while</span> invalid(state):   <span class="cm"># shrink</span>
+    state -= arr[left]
+    left += <span class="num">1</span>
+  res = <span class="kw">max</span>(res, r-l+<span class="num">1</span>)
+<span class="kw">return</span> res</pre></div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-ttl">📏 Variable Window (Min Length)</div>
+        <div class="code-block" style="margin:0"><pre style="font-size:.7rem;padding:11px">left = res = <span class="num">0</span>; state=<span class="num">0</span>
+<span class="kw">for</span> right <span class="kw">in</span> <span class="kw">range</span>(n):
+  state += arr[right]
+  <span class="kw">while</span> valid(state):   <span class="cm"># shrink</span>
+    res = <span class="kw">min</span>(res, r-l+<span class="num">1</span>)
+    state -= arr[left]
+    left += <span class="num">1</span>
+<span class="kw">return</span> res</pre></div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-ttl">↔ Two Pointers (Opposite Ends)</div>
+        <div class="code-block" style="margin:0"><pre style="font-size:.7rem;padding:11px">l, r = <span class="num">0</span>, n-<span class="num">1</span>
+<span class="kw">while</span> l < r:
+  s = arr[l] + arr[r]
+  <span class="kw">if</span> s == target: found!
+  <span class="kw">elif</span> s < target: l+=<span class="num">1</span>
+  <span class="kw">else</span>: r-=<span class="num">1</span>
+<span class="cm"># Requires sorted array</span></pre></div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-ttl">⚡ Monotonic Deque (Window Max)</div>
+        <div class="code-block" style="margin:0"><pre style="font-size:.7rem;padding:11px"><span class="kw">from</span> collections <span class="kw">import</span> deque
+dq = deque()
+<span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(n):
+  <span class="kw">while</span> dq <span class="kw">and</span> dq[<span class="num">0</span>]<i-k+<span class="num">1</span>: dq.popleft()
+  <span class="kw">while</span> dq <span class="kw">and</span> a[dq[-<span class="num">1</span>]]<a[i]: dq.pop()
+  dq.append(i)
+  <span class="kw">if</span> i>=k-<span class="num">1</span>: res.append(a[dq[<span class="num">0</span>]])</pre></div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-ttl">🎯 Pattern Recognition</div>
+        <ul>
+          <li>"Max/min subarray of size k" → Fixed</li>
+          <li>"Longest with condition" → Variable max</li>
+          <li>"Shortest with condition" → Variable min</li>
+          <li>"Two numbers summing to k" (sorted) → Opposite ends</li>
+          <li>"Window max/min" → Monotonic deque</li>
+          <li>"Anagram / permutation" → Fixed + Counter</li>
+          <li>"At most k distinct" → Variable + hashmap</li>
+        </ul>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-ttl">📊 Complexity Summary</div>
+        <ul>
+          <li>All sliding window: <strong>O(n) time</strong></li>
+          <li>Fixed window space: <strong>O(1)</strong></li>
+          <li>Variable (sum): <strong>O(1) space</strong></li>
+          <li>Variable (chars): <strong>O(k) space</strong></li>
+          <li>Two pointers sorted: <strong>O(n), O(1)</strong></li>
+          <li>3Sum: <strong>O(n²) time, O(1) space</strong></li>
+          <li>Monotonic deque: <strong>O(n), O(k)</strong></li>
+        </ul>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-ttl">⚠️ Common Mistakes</div>
+        <ul>
+          <li>Using nested loops when window applies</li>
+          <li>Forgetting to delete key from Counter when freq=0</li>
+          <li>Wrong shrink condition (invalid vs valid)</li>
+          <li>3Sum: not skipping duplicates → wrong output</li>
+          <li>Variable window: recording outside shrink = max; inside = min</li>
+          <li>Monotonic deque: forgetting to store INDICES not values</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ibox">
+      <div class="ibox-ttl">🎯 Interview Phrases That Impress</div>
+      <ul>
+        <li>"I'll use a sliding window to reduce from O(n·k) to O(n) — each element is added and removed at most once."</li>
+        <li>"Since the array is sorted, two pointers give O(n) vs O(n²) for the brute force."</li>
+        <li>"I'll track a missing counter to check window validity in O(1) instead of comparing full maps."</li>
+        <li>"A monotonic decreasing deque maintains the maximum of the window — front is always the current max."</li>
+        <li>"For minimum window, I record inside the while loop when the window is valid and shrink it."</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 14 — ROADMAP
+       ============================================================ -->
+  <section class="section" id="s14">
+    <div class="sec-hdr">
+      <span class="sec-num">14</span>
+      <div>
+        <div class="sec-title">7-Day Mastery Roadmap</div>
+        <div class="sec-sub">Go from zero to solving hard problems in one week</div>
+      </div>
+    </div>
+
+    <div class="roadmap">
+      <div class="rm-day">
+        <div class="rm-dot" style="border-color:var(--a3)">D1</div>
+        <div class="rm-body">
+          <div class="rm-day-ttl">Day 1 — Fixed Window <span class="badge b-e">Beginner</span></div>
+          <ul class="rm-list">
+            <li>Read Sections 1–2. Understand why sliding window beats brute force.</li>
+            <li>Memorize fixed window template. Code it without looking 3 times.</li>
+            <li>Use the fixed window visualizer with 5 different arrays.</li>
+            <li>Solve: Max sum subarray of size K (Section 2).</li>
+            <li>Solve: First negative in every window of size K.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="rm-day">
+        <div class="rm-dot" style="border-color:var(--a1)">D2</div>
+        <div class="rm-body">
+          <div class="rm-day-ttl">Day 2 — Variable Window <span class="badge b-e">Beginner</span></div>
+          <ul class="rm-list">
+            <li>Read Section 3. Understand expand/shrink logic.</li>
+            <li>Memorize both variable window templates (max length + min length).</li>
+            <li>Solve: LC 3 — Longest Substring Without Repeating Characters.</li>
+            <li>Solve: LC 209 — Minimum Size Subarray Sum.</li>
+            <li>Trace through the variable window visualizer with different targets.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="rm-day">
+        <div class="rm-dot" style="border-color:var(--a4)">D3</div>
+        <div class="rm-body">
+          <div class="rm-day-ttl">Day 3 — Two Pointers (Opposite Ends) <span class="badge b-m">Intermediate</span></div>
+          <ul class="rm-list">
+            <li>Read Sections 4–5. Understand when sorted array → two pointers.</li>
+            <li>Solve: LC 167 — Two Sum II (sorted array).</li>
+            <li>Solve: LC 11 — Container With Most Water.</li>
+            <li>Solve: LC 15 — 3Sum (hardest so far — handle duplicates!)</li>
+            <li>Practice explaining "why move the shorter wall" out loud.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="rm-day">
+        <div class="rm-dot" style="border-color:var(--a2)">D4</div>
+        <div class="rm-body">
+          <div class="rm-day-ttl">Day 4 — Frequency Maps <span class="badge b-m">Intermediate</span></div>
+          <ul class="rm-list">
+            <li>Read Section 7. Understand Counter + window pattern.</li>
+            <li>Solve: LC 438 — Find All Anagrams in a String.</li>
+            <li>Solve: LC 567 — Permutation in String.</li>
+            <li>Solve: LC 904 — Fruits Into Baskets (at most 2 distinct).</li>
+            <li>Solve: Longest Substring with K Distinct Characters.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="rm-day">
+        <div class="rm-dot" style="border-color:var(--a5)">D5</div>
+        <div class="rm-body">
+          <div class="rm-day-ttl">Day 5 — Hard Problems <span class="badge b-h">Advanced</span></div>
+          <ul class="rm-list">
+            <li>Read Section 8. Trace monotonic deque by hand for [1,3,-1,-3,5,3,6,7], k=3.</li>
+            <li>Solve: LC 239 — Sliding Window Maximum (hard — key problem!).</li>
+            <li>Solve: LC 76 — Minimum Window Substring (hardest pattern).</li>
+            <li>Solve: LC 42 — Trapping Rain Water.</li>
+            <li>Solve: LC 424 — Longest Repeating Character Replacement.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="rm-day">
+        <div class="rm-dot" style="border-color:#ffd700">D6</div>
+        <div class="rm-body">
+          <div class="rm-day-ttl">Day 6 — Mixed Practice <span class="badge b-h">Advanced</span></div>
+          <ul class="rm-list">
+            <li>Solve: LC 713 — Subarray Product Less Than K.</li>
+            <li>Solve: LC 1004 — Max Consecutive Ones III.</li>
+            <li>Solve: LC 18 — 4Sum.</li>
+            <li>Solve: 3 random medium problems from LeetCode "Sliding Window" tag without hints.</li>
+            <li>Review all templates from Section 13 cheat sheet.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="rm-day">
+        <div class="rm-dot" style="border-color:var(--a3)">D7</div>
+        <div class="rm-body">
+          <div class="rm-day-ttl">Day 7 — Mock Interview <span class="badge b-h">Interview</span></div>
+          <ul class="rm-list">
+            <li>Read Cheat Sheet — 20 minutes, no code.</li>
+            <li>Code fixed + variable + two-pointer templates from memory in &lt;3 min each.</li>
+            <li>Solve 3 unseen problems with 35-minute timer. No hints.</li>
+            <li>Explain your pattern recognition process out loud for each problem.</li>
+            <li>Final check: can you identify which of the 7 patterns applies from problem description?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout ok">
+      <div class="ci">🏆</div>
+      <div class="cb">
+        <div class="cb-ttl">You're Interview-Ready When You Can...</div>
+        <ul style="margin:0;padding-left:16px">
+          <li>Identify fixed vs variable window from the problem statement alone</li>
+          <li>Decide "opposite ends vs same direction" two pointers instantly</li>
+          <li>Code all 3 templates from memory without reference</li>
+          <li>Explain O(n) amortized complexity of variable window confidently</li>
+          <li>Know when to use monotonic deque (window max/min with O(n))</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <div class="ci">🚫</div>
+      <div class="cb">
+        <div class="cb-ttl">When NOT to Use Sliding Window / Two Pointers</div>
+        <ul style="margin:0;padding-left:16px">
+          <li><strong>Non-contiguous</strong> subsets → use DP or backtracking</li>
+          <li><strong>Unsorted array + Two Sum</strong> → use HashMap O(n)</li>
+          <li><strong>2D grid problems</strong> → usually BFS/DFS</li>
+          <li><strong>Need to track order of events</strong> → use stack or queue</li>
+          <li><strong>Overlapping subproblems</strong> → dynamic programming</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div>🪟 Sliding Window & Two Pointers — Complete DSA Course</div>
+    <div style="margin-top:5px">Two patterns. Hundreds of problems. Master them both.</div>
+  </footer>
+</main>
+</div>
+
+<script>
+/* ────────────────────────────────────
+   THEME / SIDEBAR / UTILS
+──────────────────────────────────── */
+function toggleTheme(){
+  const h=document.documentElement;
+  h.setAttribute('data-theme',h.getAttribute('data-theme')==='dark'?'light':'dark');
+}
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('show')}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
+function goTo(id){
+  document.getElementById(id).scrollIntoView({behavior:'smooth'});
+  document.querySelectorAll('.sb-link').forEach(n=>n.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  if(window.innerWidth<=768) closeSidebar();
+}
+function copyCode(btn){
+  const code=btn.closest('.code-block').querySelector('pre').innerText;
+  navigator.clipboard.writeText(code).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',1800)});
+}
+function cq(btn,result,id){
+  btn.closest('.quiz-opts').querySelectorAll('.qopt').forEach(o=>o.disabled=true);
+  const fb=document.getElementById(id);
+  if(result==='correct'){btn.classList.add('correct');fb.className='quiz-fb show ok'}
+  else{btn.classList.add('wrong');fb.className='quiz-fb show no';fb.textContent='❌ Not quite — review the section above for the correct answer.'}
+}
+function st(tab,cid){
+  const body=tab.closest('.prob-body');
+  body.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+  body.querySelectorAll('.ptab-c').forEach(c=>c.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById(cid).classList.add('active');
+}
+
+/* ────────────────────────────────────
+   FIXED WINDOW VISUALIZER
+──────────────────────────────────── */
+let fwArr=[],fwK=3,fwPos=0,fwWin=0,fwMax=0,fwInterval=null,fwReady=false;
+
+function fwBuildCells(){
+  const el=document.getElementById('fwArray');el.innerHTML='';
+  fwArr.forEach((v,i)=>{
+    const cell=document.createElement('div');cell.className='arr-cell';
+    const val=document.createElement('div');val.className='cell-val';val.textContent=v;val.id='fw'+i;
+    const idx=document.createElement('div');idx.className='cell-idx';idx.textContent=i;
+    cell.appendChild(val);cell.appendChild(idx);el.appendChild(cell);
+  });
+}
+function fwHighlight(left,right){
+  fwArr.forEach((_,i)=>{
+    const c=document.getElementById('fw'+i);if(!c)return;
+    c.className='cell-val';
+    if(i>=left&&i<=right) c.className='cell-val in-win';
+    if(i===left) c.className='cell-val ptr-l';
+    if(i===right) c.className='cell-val ptr-r';
+    if(i>=left&&i<=right&&i!==left&&i!==right) c.className='cell-val in-win';
+  });
+}
+function fwLog(msg,t='info'){document.getElementById('fwLog').innerHTML=`<span class="${t}">${msg}</span>`}
+function fwInit(){
+  clearInterval(fwInterval);
+  try{fwArr=document.getElementById('fwInput').value.split(',').map(x=>parseInt(x.trim())).filter(x=>!isNaN(x));}catch(e){return}
+  fwK=parseInt(document.getElementById('fwK').value)||3;
+  if(fwArr.length<fwK){fwLog('Array too short for window size k','err');return}
+  fwPos=fwK-1;fwReady=true;
+  fwWin=fwArr.slice(0,fwK).reduce((a,b)=>a+b,0);
+  fwMax=fwWin;
+  document.getElementById('fwSum').textContent=fwWin;
+  document.getElementById('fwMax').textContent=fwMax;
+  fwBuildCells();fwHighlight(0,fwK-1);
+  fwLog(`Initial window [0..${fwK-1}] sum=${fwWin}`,'ok');
+}
+function fwStep(){
+  if(!fwReady){fwLog('Press "Run" first','err');return}
+  if(fwPos>=fwArr.length-1){fwLog(`✅ Done! Max sum = ${fwMax}`,'ok');clearInterval(fwInterval);return}
+  fwPos++;
+  const left=fwPos-fwK+1;
+  fwWin=fwWin+fwArr[fwPos]-fwArr[fwPos-fwK];
+  fwMax=Math.max(fwMax,fwWin);
+  document.getElementById('fwSum').textContent=fwWin;
+  document.getElementById('fwMax').textContent=fwMax;
+  fwHighlight(left,fwPos);
+  fwLog(`i=${fwPos}: +arr[${fwPos}]=${fwArr[fwPos]}, −arr[${fwPos-fwK}]=${fwArr[fwPos-fwK]}, sum=${fwWin}`, fwWin===fwMax?'ok':'info');
+}
+function fwReset(){clearInterval(fwInterval);fwReady=false;document.getElementById('fwSum').textContent='—';document.getElementById('fwMax').textContent='—';document.getElementById('fwArray').innerHTML='';document.getElementById('fwLog').innerHTML='<span class="info">Reset. Press "Run" to reinitialize.</span>'}
+function fwAuto(){fwInit();if(!fwReady)return;fwInterval=setInterval(()=>{if(fwPos>=fwArr.length-1){clearInterval(fwInterval);return}fwStep()},700)}
+
+/* ────────────────────────────────────
+   VARIABLE WINDOW VISUALIZER
+──────────────────────────────────── */
+let vwArr=[],vwTarget=8,vwL=0,vwR=-1,vwSum=0,vwMaxLen=0,vwInterval=null,vwReady=false;
+
+function vwBuildCells(){
+  const el=document.getElementById('vwArray');el.innerHTML='';
+  vwArr.forEach((v,i)=>{
+    const cell=document.createElement('div');cell.className='arr-cell';
+    const val=document.createElement('div');val.className='cell-val';val.textContent=v;val.id='vw'+i;
+    const idx=document.createElement('div');idx.className='cell-idx';idx.textContent=i;
+    cell.appendChild(val);cell.appendChild(idx);el.appendChild(cell);
+  });
+}
+function vwHighlight(){
+  vwArr.forEach((_,i)=>{
+    const c=document.getElementById('vw'+i);if(!c)return;
+    c.className='cell-val';
+    if(i>=vwL&&i<=vwR){
+      if(i===vwL) c.className='cell-val ptr-l';
+      else if(i===vwR) c.className='cell-val ptr-r';
+      else c.className='cell-val in-win';
+    }
+  });
+  document.getElementById('vwL').textContent=vwL;
+  document.getElementById('vwR').textContent=Math.max(vwR,0);
+  document.getElementById('vwSum').textContent=vwSum>0?vwSum:'—';
+  document.getElementById('vwMaxLen').textContent=vwMaxLen||'—';
+}
+function vwLog(msg,t='info'){document.getElementById('vwLog').innerHTML=`<span class="${t}">${msg}</span>`}
+function vwInit(){
+  clearInterval(vwInterval);
+  try{vwArr=document.getElementById('vwInput').value.split(',').map(x=>parseInt(x.trim())).filter(x=>!isNaN(x))}catch(e){return}
+  vwTarget=parseInt(document.getElementById('vwTarget').value)||8;
+  vwL=0;vwR=-1;vwSum=0;vwMaxLen=0;vwReady=true;
+  vwBuildCells();vwHighlight();
+  vwLog(`Target ≤ ${vwTarget}. Press "Next Step".`,'info');
+}
+function vwStep(){
+  if(!vwReady){vwLog('Press "Run" first','err');return}
+  if(vwR>=vwArr.length-1){vwLog(`✅ Done! Max valid length = ${vwMaxLen}`,'ok');clearInterval(vwInterval);return}
+  vwR++;
+  vwSum+=vwArr[vwR];
+  let shrunk=false;
+  while(vwSum>vwTarget&&vwL<=vwR){vwSum-=vwArr[vwL];vwL++;shrunk=true}
+  const len=vwR-vwL+1;
+  vwMaxLen=Math.max(vwMaxLen,len);
+  vwHighlight();
+  const msg=`R→${vwR}(+${vwArr[vwR]})${shrunk?`, shrink L→${vwL}`:''}, sum=${vwSum}, len=${len}`;
+  vwLog(msg,vwSum<=vwTarget?'ok':'err');
+}
+function vwReset(){clearInterval(vwInterval);vwReady=false;document.getElementById('vwArray').innerHTML='';document.getElementById('vwSum').textContent='—';document.getElementById('vwMaxLen').textContent='—';vwLog('Reset.','info')}
+function vwAuto(){vwInit();if(!vwReady)return;vwInterval=setInterval(()=>{if(vwR>=vwArr.length-1){clearInterval(vwInterval);return}vwStep()},700)}
+
+/* ────────────────────────────────────
+   TWO POINTER VISUALIZER (Two Sum)
+──────────────────────────────────── */
+let tpArr=[],tpTarget=16,tpL=0,tpR=0,tpDone=false,tpInterval=null,tpReady=false;
+
+function tpBuildCells(){
+  const el=document.getElementById('tpArray');el.innerHTML='';
+  tpArr.forEach((v,i)=>{
+    const cell=document.createElement('div');cell.className='arr-cell';
+    const val=document.createElement('div');val.className='cell-val';val.textContent=v;val.id='tp'+i;
+    const idx=document.createElement('div');idx.className='cell-idx';idx.textContent=i;
+    cell.appendChild(val);cell.appendChild(idx);el.appendChild(cell);
+  });
+}
+function tpHighlight(){
+  tpArr.forEach((_,i)=>{
+    const c=document.getElementById('tp'+i);if(!c)return;
+    c.className='cell-val';
+    if(i===tpL&&i===tpR) c.className='cell-val both';
+    else if(i===tpL) c.className='cell-val ptr-l';
+    else if(i===tpR) c.className='cell-val ptr-r';
+  });
+  const s=tpL<=tpR?tpArr[tpL]+tpArr[tpR]:'—';
+  document.getElementById('tpSum').textContent=s;
+  document.getElementById('tpTgt').textContent=tpTarget;
+}
+function tpLog(msg,t='info'){document.getElementById('tpLog').innerHTML=`<span class="${t}">${msg}</span>`}
+function tpInit(){
+  clearInterval(tpInterval);
+  try{tpArr=document.getElementById('tpInput').value.split(',').map(x=>parseInt(x.trim())).filter(x=>!isNaN(x))}catch(e){return}
+  tpTarget=parseInt(document.getElementById('tpTarget').value)||16;
+  tpArr.sort((a,b)=>a-b);
+  tpL=0;tpR=tpArr.length-1;tpDone=false;tpReady=true;
+  tpBuildCells();tpHighlight();
+  tpLog(`Sorted: [${tpArr}]. Target=${tpTarget}. L=0 (green), R=${tpArr.length-1} (red).`,'info');
+}
+function tpStep(){
+  if(!tpReady){tpLog('Press "Run" first','err');return}
+  if(tpDone||tpL>=tpR){tpLog('No pair found!','err');clearInterval(tpInterval);return}
+  const s=tpArr[tpL]+tpArr[tpR];
+  if(s===tpTarget){
+    tpLog(`✅ Found! arr[${tpL}]=${tpArr[tpL]} + arr[${tpR}]=${tpArr[tpR]} = ${tpTarget}`,'ok');
+    document.getElementById('tp'+tpL).className='cell-val answer';
+    document.getElementById('tp'+tpR).className='cell-val answer';
+    tpDone=true;clearInterval(tpInterval);return;
+  } else if(s<tpTarget){
+    tpLog(`Sum=${s} < target=${tpTarget} → move L right (need bigger)`,'info');
+    tpL++;
+  } else {
+    tpLog(`Sum=${s} > target=${tpTarget} → move R left (need smaller)`,'info');
+    tpR--;
+  }
+  if(tpL>=tpR){tpLog('No valid pair found','err');clearInterval(tpInterval);return}
+  tpHighlight();
+}
+function tpReset(){clearInterval(tpInterval);tpReady=false;document.getElementById('tpArray').innerHTML='';tpLog('Reset.','info')}
+function tpAuto(){tpInit();if(!tpReady)return;tpInterval=setInterval(()=>{if(tpDone||tpL>=tpR){clearInterval(tpInterval);return}tpStep()},800)}
+
+/* ────────────────────────────────────
+   PROGRESS
+──────────────────────────────────── */
+function updateProgress(){
+  const secs=document.querySelectorAll('.section');
+  let vis=0;const sc=window.scrollY+window.innerHeight;
+  secs.forEach(s=>{if(s.offsetTop<sc-100)vis++});
+  document.getElementById('progressFill').style.width=Math.min(100,Math.round(vis/secs.length*100))+'%';
+}
+function updateNav(){
+  const secs=document.querySelectorAll('.section');
+  const links=document.querySelectorAll('.sb-link');
+  let aid='';
+  secs.forEach(s=>{if(s.offsetTop<=window.scrollY+200)aid=s.id});
+  links.forEach(l=>{
+    l.classList.remove('active');
+    const oc=l.getAttribute('onclick');
+    if(oc&&oc.includes(aid))l.classList.add('active');
+  });
+}
+window.addEventListener('scroll',()=>{updateProgress();updateNav()});
+window.addEventListener('load',()=>{});
+</script>
+</body>
+</html>

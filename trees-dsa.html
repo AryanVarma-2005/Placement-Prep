@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trees Mastery — Complete DSA Course</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800;900&family=Source+Code+Pro:wght@400;500;600&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:     #0a0c10;
+  --bg2:    #10131a;
+  --bg3:    #171b24;
+  --bg4:    #1f2430;
+  --border: #262d3d;
+  --a1:     #64ffda;  /* teal */
+  --a2:     #ff6b9d;  /* pink */
+  --a3:     #ffd166;  /* yellow */
+  --a4:     #a78bfa;  /* purple */
+  --a5:     #38bdf8;  /* sky */
+  --text:   #e2e8f5;
+  --text2:  #7d8fad;
+  --text3:  #3d4d66;
+  --codebg: #080b12;
+  --sw:     278px;
+  --r:      8px;
+}
+[data-theme="light"] {
+  --bg:#f1f4f9;--bg2:#fff;--bg3:#e8ecf4;--bg4:#dde3f0;
+  --border:#c8d0e4;--text:#0f1520;--text2:#4a5a7a;--text3:#9aaac0;--codebg:#0f1520;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Merriweather',Georgia,serif;background:var(--bg);color:var(--text);line-height:1.76;overflow-x:hidden;transition:background .25s,color .25s}
+::selection{background:var(--a1);color:#000}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--a1);border-radius:2px}
+
+/* LAYOUT */
+.shell{display:flex;min-height:100vh}
+.sidebar{width:var(--sw);background:var(--bg2);border-right:1px solid var(--border);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;display:flex;flex-direction:column;transition:transform .3s}
+.sb-top{padding:22px 18px 15px;border-bottom:1px solid var(--border)}
+.sb-icon{font-size:2.2rem;display:block;margin-bottom:7px;line-height:1}
+.sb-title{font-family:'Raleway',sans-serif;font-size:1.08rem;font-weight:900;letter-spacing:-.3px;line-height:1.2}
+.sb-title .hl{color:var(--a1)}
+.sb-sub{font-family:'Source Code Pro',monospace;font-size:.59rem;letter-spacing:3px;text-transform:uppercase;color:var(--text3);margin-top:4px}
+.sb-nav{padding:9px 0;flex:1}
+.ngrp{font-family:'Source Code Pro',monospace;font-size:.57rem;letter-spacing:3px;text-transform:uppercase;color:var(--text3);padding:10px 18px 3px}
+.nl{display:flex;align-items:center;gap:9px;padding:7px 18px;font-family:'Raleway',sans-serif;font-size:.8rem;font-weight:600;color:var(--text2);cursor:pointer;border-left:2px solid transparent;transition:all .15s}
+.nl:hover{color:var(--text);background:var(--bg3);border-left-color:var(--a1)}
+.nl.active{color:var(--a1);border-left-color:var(--a1);background:var(--bg3)}
+.nl .n{font-family:'Source Code Pro',monospace;font-size:.6rem;color:var(--text3);min-width:20px}
+.sb-foot{padding:13px 18px;border-top:1px solid var(--border)}
+.pl{font-family:'Source Code Pro',monospace;font-size:.58rem;letter-spacing:1px;color:var(--text3);margin-bottom:5px}
+.pb{height:3px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.pf{height:100%;background:linear-gradient(90deg,var(--a1),var(--a4));width:0%;transition:width .5s}
+
+.main{margin-left:var(--sw);flex:1;max-width:940px;padding:0 44px 100px}
+.topbar{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--border);padding:12px 44px;margin:0 -44px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(10px)}
+.bc{font-family:'Source Code Pro',monospace;font-size:.68rem;color:var(--text3)}
+.tbtns{display:flex;gap:8px}
+.pill{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:5px 13px;border-radius:20px;cursor:pointer;font-family:'Raleway',sans-serif;font-size:.74rem;font-weight:700;transition:all .2s}
+.pill:hover{border-color:var(--a1);color:var(--a1)}
+.hbg{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer}
+
+/* HERO */
+.hero{padding:52px 0 40px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;right:-10px;top:0;font-family:'Raleway',sans-serif;font-weight:900;font-size:13rem;line-height:1;color:var(--border);pointer-events:none;opacity:.35;user-select:none;letter-spacing:-8px}
+.hchip{display:inline-flex;align-items:center;gap:6px;font-family:'Source Code Pro',monospace;font-size:.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--a1);background:rgba(100,255,218,.07);border:1px solid rgba(100,255,218,.2);padding:3px 11px;border-radius:3px;margin-bottom:16px}
+.hero h2{font-family:'Raleway',sans-serif;font-size:clamp(2.5rem,6vw,4.5rem);font-weight:900;letter-spacing:-2px;line-height:1.05;margin-bottom:13px}
+.hero h2 .hl{color:var(--a1)}
+.hlead{font-size:.97rem;color:var(--text2);max-width:560px;margin-bottom:26px}
+.hstats{display:flex;gap:28px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;gap:2px}
+.sn{font-family:'Raleway',sans-serif;font-size:2.3rem;font-weight:900;color:var(--a1);line-height:1}
+.sl{font-family:'Source Code Pro',monospace;font-size:.58rem;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
+
+/* SECTIONS */
+.section{margin-bottom:70px;scroll-margin-top:70px}
+.shdr{display:flex;align-items:flex-start;gap:12px;margin-bottom:24px;padding-bottom:15px;border-bottom:1px solid var(--border)}
+.snum{font-family:'Source Code Pro',monospace;font-size:.6rem;letter-spacing:2px;color:var(--a1);background:rgba(100,255,218,.07);border:1px solid rgba(100,255,218,.18);padding:3px 8px;border-radius:3px;margin-top:6px;white-space:nowrap}
+.stitle{font-family:'Raleway',sans-serif;font-size:clamp(1.5rem,3.5vw,2.1rem);font-weight:900;letter-spacing:-1px;line-height:1.1}
+.ssub{color:var(--text2);margin-top:4px;font-size:.88rem}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:15px}
+.cttl{font-family:'Raleway',sans-serif;font-size:.93rem;font-weight:800;margin-bottom:11px;display:flex;align-items:center;gap:8px}
+.tag{font-family:'Source Code Pro',monospace;font-size:.56rem;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:2px;font-weight:400}
+.t1{background:rgba(100,255,218,.1);color:var(--a1)}
+.t2{background:rgba(255,107,157,.1);color:var(--a2)}
+.t3{background:rgba(255,209,102,.09);color:var(--a3)}
+.t4{background:rgba(167,139,250,.1);color:var(--a4)}
+.t5{background:rgba(56,189,248,.1);color:var(--a5)}
+
+/* CALLOUTS */
+.callout{padding:13px 17px;border-radius:var(--r);margin:13px 0;border-left:3px solid;display:flex;gap:11px;align-items:flex-start}
+.ci{font-size:1.05rem;margin-top:2px;flex-shrink:0}.cb{flex:1}
+.cbt{font-family:'Raleway',sans-serif;font-size:.81rem;font-weight:800;margin-bottom:3px}
+.callout.info{background:rgba(100,255,218,.05);border-color:var(--a1)}
+.callout.warn{background:rgba(255,107,157,.05);border-color:var(--a2)}
+.callout.tip{background:rgba(255,209,102,.05);border-color:var(--a3)}
+.callout.gold{background:rgba(255,215,0,.05);border-color:#ffd700}
+.callout.ok{background:rgba(100,255,218,.05);border-color:var(--a1)}
+
+/* CODE */
+.cb2{position:relative;margin:13px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border)}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:7px 13px;background:var(--bg3);border-bottom:1px solid var(--border)}
+.cl{font-family:'Source Code Pro',monospace;font-size:.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--a1)}
+.cpb{background:none;border:1px solid var(--border);color:var(--text3);padding:2px 8px;border-radius:2px;cursor:pointer;font-family:'Source Code Pro',monospace;font-size:.58rem;transition:all .18s}
+.cpb:hover{color:var(--text);border-color:var(--a1)}
+pre{background:var(--codebg);padding:17px;overflow-x:auto;margin:0;font-family:'Source Code Pro',monospace;font-size:.8rem;line-height:1.72}
+.kw{color:#c792ea}.fn{color:#64ffda}.str{color:#a8ff78}.num{color:#f78c6c}.cm{color:#3a4d3a;font-style:italic}.cls{color:#ffcb6b}.bl{color:#ff5370}.self{color:#82aaff}
+
+/* TABLES */
+.tw{overflow-x:auto;margin:13px 0;border-radius:var(--r);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;background:var(--bg2)}
+th{background:var(--bg3);padding:10px 14px;text-align:left;font-family:'Raleway',sans-serif;font-size:.76rem;font-weight:800;border-bottom:1px solid var(--border)}
+td{padding:9px 14px;border-bottom:1px solid var(--border);font-size:.84rem;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg3)}
+.g{color:var(--a1);font-weight:600}.b{color:var(--a2);font-weight:600}.ok{color:var(--a3);font-weight:600}
+
+/* VIZ */
+.viz{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:16px 0}
+.vtitle{font-family:'Raleway',sans-serif;font-size:1rem;font-weight:800;color:var(--text2);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.vctl{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.vbtn{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:7px 15px;border-radius:var(--r);cursor:pointer;font-family:'Raleway',sans-serif;font-size:.76rem;font-weight:700;transition:all .18s}
+.vbtn:hover{background:var(--a1);border-color:var(--a1);color:#000}
+.vbtn.red:hover{background:var(--a2);border-color:var(--a2);color:#fff}
+.vbtn.yl:hover{background:var(--a3);border-color:var(--a3);color:#000}
+.vinput{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:6px 11px;border-radius:var(--r);font-family:'Source Code Pro',monospace;font-size:.8rem;width:80px;outline:none}
+.vinput:focus{border-color:var(--a1)}
+.vlog{margin-top:11px;padding:9px 13px;background:var(--bg);border-radius:var(--r);font-family:'Source Code Pro',monospace;font-size:.74rem;color:var(--text2);min-height:33px;border:1px solid var(--border)}
+.vok{color:var(--a1)}.verr{color:var(--a2)}.vinf{color:var(--a5)}
+
+/* TREE CANVAS */
+.tree-canvas-wrap{overflow:auto;min-height:220px;background:var(--bg);border-radius:var(--r);border:1px dashed var(--border);padding:10px}
+canvas.tree-canvas{display:block}
+
+/* DRY RUN */
+.dry{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:14px 17px;margin:10px 0;font-family:'Source Code Pro',monospace;font-size:.77rem;line-height:1.82}
+.ds{display:flex;gap:10px;margin-bottom:2px;align-items:flex-start}
+.dsn{color:var(--text3);min-width:28px}.dsa{color:var(--text);flex:1}.dss{color:var(--a1);white-space:nowrap;margin-left:auto}
+
+/* TRAVERSAL VIZ */
+.trav-nodes{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;align-items:center}
+.tnode{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border:2px solid var(--border);background:var(--bg3);border-radius:50%;font-family:'Source Code Pro',monospace;font-size:.9rem;font-weight:700;transition:all .35s;cursor:default;flex-shrink:0}
+.tnode.visited{border-color:var(--a1);background:rgba(100,255,218,.15);color:var(--a1)}
+.tnode.current{border-color:var(--a3);background:rgba(255,209,102,.15);color:var(--a3);transform:scale(1.2)}
+.tnode.instack{border-color:var(--a4);background:rgba(167,139,250,.12);color:var(--a4)}
+.torder{font-family:'Source Code Pro',monospace;font-size:.8rem;margin-top:8px;color:var(--text2)}
+.torder .item{display:inline-block;background:var(--a1);color:#000;padding:2px 8px;border-radius:3px;margin:2px;font-weight:700;font-size:.75rem}
+
+/* QUIZ */
+.quiz{background:linear-gradient(135deg,rgba(100,255,218,.03),rgba(167,139,250,.04));border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:20px 0}
+.qttl{font-family:'Raleway',sans-serif;font-size:.86rem;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.qq{font-size:.88rem;color:var(--text);margin-bottom:12px;font-style:italic}
+.qopts{display:flex;flex-direction:column;gap:6px}
+.qopt{background:var(--bg2);border:1px solid var(--border);padding:9px 14px;border-radius:var(--r);cursor:pointer;font-size:.8rem;font-weight:500;text-align:left;color:var(--text2);transition:all .18s;font-family:'Raleway',sans-serif}
+.qopt:hover{border-color:var(--a1);color:var(--text)}
+.qopt.correct{border-color:var(--a1);background:rgba(100,255,218,.08);color:var(--a1)}
+.qopt.wrong{border-color:var(--a2);background:rgba(255,107,157,.08);color:var(--a2)}
+.qfb{margin-top:10px;padding:8px 12px;border-radius:var(--r);font-size:.81rem;display:none}
+.qfb.show{display:block}
+.qfb.ok{background:rgba(100,255,218,.06);color:var(--a1);border-left:2px solid var(--a1)}
+.qfb.no{background:rgba(255,107,157,.06);color:var(--a2);border-left:2px solid var(--a2)}
+
+/* DEEP DIVE */
+.deep{border:1px solid var(--border);border-radius:var(--r);margin:13px 0;overflow:hidden}
+.dhdr{padding:12px 17px;background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:'Raleway',sans-serif;font-size:.84rem;font-weight:800;user-select:none;transition:background .18s}
+.dhdr:hover{background:var(--bg4)}
+.darr{transition:transform .3s;color:var(--text3)}
+.deep.open .darr{transform:rotate(180deg)}
+.dbdy{display:none;padding:17px;border-top:1px solid var(--border)}
+.deep.open .dbdy{display:block}
+
+/* PROBLEMS */
+.prob{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px}
+.phdr{padding:13px 17px;background:var(--bg3);display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.ptitle{font-family:'Raleway',sans-serif;font-size:.88rem;font-weight:800;flex:1}
+.diff{font-family:'Source Code Pro',monospace;font-size:.57rem;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:20px}
+.de{background:rgba(100,255,218,.12);color:var(--a1)}.dm{background:rgba(255,209,102,.12);color:var(--a3)}.dh{background:rgba(255,107,157,.12);color:var(--a2)}
+.pbody{padding:17px}
+.ptabs{display:flex;gap:2px;margin-bottom:13px;border-bottom:1px solid var(--border)}
+.ptab{font-family:'Raleway',sans-serif;font-size:.74rem;font-weight:700;padding:6px 12px;cursor:pointer;border-bottom:2px solid transparent;color:var(--text3);transition:all .18s;margin-bottom:-1px}
+.ptab:hover{color:var(--text)}.ptab.active{border-bottom-color:var(--a1);color:var(--a1)}
+.ptc{display:none}.ptc.active{display:block}
+
+/* COMPLEXITY */
+.cxrow{display:flex;gap:9px;flex-wrap:wrap;margin:10px 0}
+.cx{display:flex;flex-direction:column;align-items:center;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:8px 13px;gap:2px;min-width:85px}
+.cxop{font-family:'Source Code Pro',monospace;font-size:.58rem;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.cxv{font-family:'Source Code Pro',monospace;font-size:.92rem;font-weight:700}
+.o1 .cxv{color:var(--a1)}.on .cxv{color:var(--a3)}.ologn .cxv{color:var(--a5)}.on2 .cxv{color:var(--a2)}
+
+/* PATTERNS */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:12px;margin:13px 0}
+.pc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:15px;transition:all .18s;cursor:default}
+.pc:hover{border-color:var(--a1);transform:translateY(-2px)}
+.pi{font-size:1.6rem;margin-bottom:7px}
+.pn{font-family:'Raleway',sans-serif;font-size:.84rem;font-weight:800;margin-bottom:4px}
+.pd{font-size:.75rem;color:var(--text2)}
+
+/* ROADMAP */
+.roadmap{position:relative;padding:8px 0}
+.roadmap::before{content:'';position:absolute;left:22px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--a1),var(--a4),var(--a2))}
+.rday{display:flex;gap:16px;margin-bottom:20px;position:relative}
+.rdot{width:46px;height:46px;border-radius:50%;background:var(--bg2);border:2px solid var(--a1);display:flex;align-items:center;justify-content:center;font-family:'Raleway',sans-serif;font-size:.72rem;font-weight:900;flex-shrink:0;z-index:1;color:var(--a1)}
+.rbody{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 17px;margin-top:6px}
+.rttl{font-family:'Raleway',sans-serif;font-size:.86rem;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.badge{font-size:.58rem;padding:2px 7px;border-radius:20px;font-family:'Source Code Pro',monospace;letter-spacing:1px;text-transform:uppercase}
+.be{background:rgba(100,255,218,.1);color:var(--a1)}.bm{background:rgba(255,209,102,.1);color:var(--a3)}.bh{background:rgba(255,107,157,.1);color:var(--a2)}
+.rlist{list-style:none;display:flex;flex-direction:column;gap:3px}
+.rlist li{font-size:.82rem;color:var(--text2);display:flex;gap:7px;align-items:flex-start}
+.rlist li::before{content:'›';color:var(--a1);font-weight:700}
+
+/* CHEAT */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:13px;margin:13px 0}
+.ci2{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.cit{font-family:'Raleway',sans-serif;font-size:.78rem;font-weight:800;margin-bottom:8px;color:var(--a1)}
+.ci2 p,.ci2 li{font-size:.79rem;color:var(--text2);line-height:1.55}
+.ci2 ul{list-style:none;padding:0}
+.ci2 ul li::before{content:'› ';color:var(--a1)}
+
+/* INTERVIEW BOX */
+.ibox{background:rgba(255,215,0,.04);border:1px solid rgba(255,215,0,.2);border-radius:var(--r);padding:17px 20px;margin:16px 0}
+.iboxt{font-family:'Raleway',sans-serif;font-size:.86rem;font-weight:800;color:#ffd700;margin-bottom:9px;display:flex;align-items:center;gap:7px}
+.ibox ul{padding-left:14px}
+.ibox li{font-size:.84rem;color:var(--text2);margin-bottom:4px}
+
+/* MISC */
+p{margin-bottom:10px}p:last-child{margin-bottom:0}
+strong{color:var(--text)}ul,ol{padding-left:17px;margin-bottom:10px}
+li{margin-bottom:3px;font-size:.88rem}
+.footer{text-align:center;padding:38px 0;border-top:1px solid var(--border);margin-top:58px;font-family:'Source Code Pro',monospace;font-size:.68rem;color:var(--text3)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99}
+.overlay.show{display:block}
+
+/* BST VIZ specific */
+.bst-result{font-family:'Source Code Pro',monospace;font-size:.8rem;margin-top:8px;color:var(--text2);min-height:28px}
+
+@media(max-width:768px){
+  :root{--sw:0px}
+  .sidebar{transform:translateX(-278px);width:278px}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding:0 16px 60px}
+  .topbar{padding:12px 16px;margin:0 -16px}
+  .hbg{display:block}
+  .hero-bg{display:none}
+  .cgrid,.pgrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="overlay" id="overlay" onclick="closeSb()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-top">
+    <span class="sb-icon">🌳</span>
+    <div class="sb-title">Trees <span class="hl">Mastery</span></div>
+    <div class="sb-sub">Complete DSA Course</div>
+  </div>
+  <nav class="sb-nav">
+    <div class="ngrp">Foundations</div>
+    <a class="nl active" onclick="gt('s1')"><span class="n">01</span>Introduction</a>
+    <a class="nl" onclick="gt('s2')"><span class="n">02</span>Binary Trees</a>
+    <a class="nl" onclick="gt('s3')"><span class="n">03</span>Tree Traversals</a>
+    <a class="nl" onclick="gt('s4')"><span class="n">04</span>BST</a>
+    <div class="ngrp">Core Patterns</div>
+    <a class="nl" onclick="gt('s5')"><span class="n">05</span>Height & Depth</a>
+    <a class="nl" onclick="gt('s6')"><span class="n">06</span>Path Problems</a>
+    <a class="nl" onclick="gt('s7')"><span class="n">07</span>Lowest Common Ancestor</a>
+    <a class="nl" onclick="gt('s8')"><span class="n">08</span>Level Order / BFS</a>
+    <div class="ngrp">Advanced</div>
+    <a class="nl" onclick="gt('s9')"><span class="n">09</span>AVL & Balanced Trees</a>
+    <a class="nl" onclick="gt('s10')"><span class="n">10</span>Trie</a>
+    <a class="nl" onclick="gt('s11')"><span class="n">11</span>Segment Tree</a>
+    <a class="nl" onclick="gt('s12')"><span class="n">12</span>Advanced Patterns</a>
+    <div class="ngrp">Interview Prep</div>
+    <a class="nl" onclick="gt('s13')"><span class="n">13</span>Interview Problems</a>
+    <a class="nl" onclick="gt('s14')"><span class="n">14</span>Cheat Sheet & Roadmap</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="pl">Progress</div>
+    <div class="pb"><div class="pf" id="pf"></div></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="hbg" onclick="openSb()">☰</button>
+      <div class="bc">trees-mastery / complete-course</div>
+    </div>
+    <div class="tbtns"><button class="pill" onclick="toggleTheme()">🌓 Theme</button></div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-bg">🌳</div>
+    <div class="hchip">🌳 Interview-Ready in 7 Days</div>
+    <h2>MASTER <span class="hl">TREES</span><br>DATA STRUCTURE</h2>
+    <p class="hlead">Binary trees, BSTs, AVL, Tries, Segment Trees — every traversal, every pattern, every interview problem. Built from the roots up.</p>
+    <div class="hstats">
+      <div class="stat"><span class="sn">14</span><span class="sl">Sections</span></div>
+      <div class="stat"><span class="sn">15+</span><span class="sl">Problems</span></div>
+      <div class="stat"><span class="sn">30+</span><span class="sl">Code Examples</span></div>
+      <div class="stat"><span class="sn">7</span><span class="sl">Day Plan</span></div>
+    </div>
+  </div>
+
+  <!-- ===== S1: INTRODUCTION ===== -->
+  <section class="section" id="s1">
+    <div class="shdr"><span class="snum">01</span>
+      <div><div class="stitle">Introduction to Trees</div><div class="ssub">What trees are, why they matter, and the vocabulary you need</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Concept</span>What is a Tree?</div>
+      <p>A <strong>tree</strong> is a hierarchical data structure consisting of <strong>nodes</strong> connected by <strong>edges</strong>. Every tree has exactly one <strong>root</strong> node (the top), and every non-root node has exactly one <strong>parent</strong>. Nodes with no children are called <strong>leaves</strong>.</p>
+      <p>Unlike linked lists (linear), trees branch — one node can connect to many children. This branching gives trees O(log n) search in balanced cases vs O(n) for linear structures.</p>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Vocabulary</span>Essential Tree Terms</div>
+      <div class="tw"><table>
+        <tr><th>Term</th><th>Definition</th><th>Example</th></tr>
+        <tr><td><strong>Root</strong></td><td>Top node, has no parent</td><td>Node A in a tree</td></tr>
+        <tr><td><strong>Leaf</strong></td><td>Node with no children</td><td>Nodes at bottom level</td></tr>
+        <tr><td><strong>Height</strong></td><td>Longest path from node to a leaf</td><td>Root height = tree height</td></tr>
+        <tr><td><strong>Depth</strong></td><td>Distance from root to a node</td><td>Root depth = 0</td></tr>
+        <tr><td><strong>Level</strong></td><td>Set of nodes at same depth</td><td>Level 0 = {root}</td></tr>
+        <tr><td><strong>Subtree</strong></td><td>A node and all its descendants</td><td>Left subtree of root</td></tr>
+        <tr><td><strong>Degree</strong></td><td>Number of children a node has</td><td>Binary tree: max degree 2</td></tr>
+        <tr><td><strong>Ancestor</strong></td><td>Any node on path from root to node</td><td>Root is ancestor of all</td></tr>
+      </table></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Types</span>Tree Types Overview</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:11px;margin-top:8px">
+        <div style="background:var(--bg3);border-radius:var(--r);padding:13px;border:1px solid var(--border)"><div style="font-size:1.5rem;margin-bottom:5px">🌲</div><div style="font-family:'Raleway',sans-serif;font-size:.8rem;font-weight:800;margin-bottom:3px">Binary Tree</div><div style="font-size:.75rem;color:var(--text2)">Each node has ≤ 2 children. Foundation of everything.</div></div>
+        <div style="background:var(--bg3);border-radius:var(--r);padding:13px;border:1px solid var(--border)"><div style="font-size:1.5rem;margin-bottom:5px">🔍</div><div style="font-family:'Raleway',sans-serif;font-size:.8rem;font-weight:800;margin-bottom:3px">BST</div><div style="font-size:.75rem;color:var(--text2)">Left &lt; root &lt; right. O(log n) search.</div></div>
+        <div style="background:var(--bg3);border-radius:var(--r);padding:13px;border:1px solid var(--border)"><div style="font-size:1.5rem;margin-bottom:5px">⚖️</div><div style="font-family:'Raleway',sans-serif;font-size:.8rem;font-weight:800;margin-bottom:3px">AVL Tree</div><div style="font-size:.75rem;color:var(--text2)">Self-balancing BST. Height diff ≤ 1.</div></div>
+        <div style="background:var(--bg3);border-radius:var(--r);padding:13px;border:1px solid var(--border)"><div style="font-size:1.5rem;margin-bottom:5px">📝</div><div style="font-family:'Raleway',sans-serif;font-size:.8rem;font-weight:800;margin-bottom:3px">Trie</div><div style="font-size:.75rem;color:var(--text2)">Prefix tree. Store strings efficiently.</div></div>
+        <div style="background:var(--bg3);border-radius:var(--r);padding:13px;border:1px solid var(--border)"><div style="font-size:1.5rem;margin-bottom:5px">📊</div><div style="font-family:'Raleway',sans-serif;font-size:.8rem;font-weight:800;margin-bottom:3px">Segment Tree</div><div style="font-size:.75rem;color:var(--text2)">Range queries in O(log n).</div></div>
+        <div style="background:var(--bg3);border-radius:var(--r);padding:13px;border:1px solid var(--border)"><div style="font-size:1.5rem;margin-bottom:5px">🔺</div><div style="font-family:'Raleway',sans-serif;font-size:.8rem;font-weight:800;margin-bottom:3px">Heap</div><div style="font-size:.75rem;color:var(--text2)">Complete binary tree. Min/max at root.</div></div>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <div class="ci">🧠</div>
+      <div class="cb"><div class="cbt">Height vs Depth — Always Confused?</div>
+        <strong>Depth</strong> measures from the <em>top down</em> (root = 0). <strong>Height</strong> measures from the <em>bottom up</em> (leaf = 0). A single-node tree has height 0 and depth 0. Always clarify in interviews!
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="qttl">⚡ Quick Check</div>
+      <div class="qq">For a complete binary tree with n nodes, what is the height?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,'wrong','q1')">O(n)</button>
+        <button class="qopt" onclick="cq(this,'correct','q1')">O(log n)</button>
+        <button class="qopt" onclick="cq(this,'wrong','q1')">O(n²)</button>
+        <button class="qopt" onclick="cq(this,'wrong','q1')">O(1)</button>
+      </div>
+      <div class="qfb" id="q1">✅ O(log n)! At each level, the number of nodes doubles. Level k has 2^k nodes, so n nodes → height ≈ log₂(n). This is why balanced trees give O(log n) operations!</div>
+    </div>
+  </section>
+
+  <!-- ===== S2: BINARY TREES ===== -->
+  <section class="section" id="s2">
+    <div class="shdr"><span class="snum">02</span>
+      <div><div class="stitle">Binary Trees</div><div class="ssub">Build, traverse, and understand the fundamental tree structure</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Implementation</span>Binary Tree Node & Construction</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="kw">class</span> <span class="cls">TreeNode</span>:
+    <span class="str">"""Standard binary tree node — memorize this."""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>, val=<span class="num">0</span>, left=<span class="bl">None</span>, right=<span class="bl">None</span>):
+        <span class="self">self</span>.val = val
+        <span class="self">self</span>.left = left
+        <span class="self">self</span>.right = right
+
+<span class="cm"># Build tree manually</span>
+root = <span class="cls">TreeNode</span>(<span class="num">1</span>)
+root.left  = <span class="cls">TreeNode</span>(<span class="num">2</span>)
+root.right = <span class="cls">TreeNode</span>(<span class="num">3</span>)
+root.left.left  = <span class="cls">TreeNode</span>(<span class="num">4</span>)
+root.left.right = <span class="cls">TreeNode</span>(<span class="num">5</span>)
+root.right.right = <span class="cls">TreeNode</span>(<span class="num">6</span>)
+<span class="cm">#         1
+#        / \
+#       2   3
+#      / \   \
+#     4   5   6</span>
+
+<span class="cm"># Build from level-order array (LeetCode style)</span>
+<span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">build_tree</span>(vals):
+    <span class="str">"""Build tree from LeetCode-style array, None = missing."""</span>
+    <span class="kw">if not</span> vals <span class="kw">or</span> vals[<span class="num">0</span>] <span class="kw">is None</span>: <span class="kw">return None</span>
+    root = <span class="cls">TreeNode</span>(vals[<span class="num">0</span>])
+    q = deque([root]); i = <span class="num">1</span>
+    <span class="kw">while</span> q <span class="kw">and</span> i < <span class="kw">len</span>(vals):
+        node = q.popleft()
+        <span class="kw">if</span> i < <span class="kw">len</span>(vals) <span class="kw">and</span> vals[i] <span class="kw">is not None</span>:
+            node.left = <span class="cls">TreeNode</span>(vals[i]); q.append(node.left)
+        i += <span class="num">1</span>
+        <span class="kw">if</span> i < <span class="kw">len</span>(vals) <span class="kw">and</span> vals[i] <span class="kw">is not None</span>:
+            node.right = <span class="cls">TreeNode</span>(vals[i]); q.append(node.right)
+        i += <span class="num">1</span>
+    <span class="kw">return</span> root
+
+tree = build_tree([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>,<span class="bl">None</span>,<span class="num">6</span>])</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Types</span>Special Binary Tree Types</div>
+      <div class="tw"><table>
+        <tr><th>Type</th><th>Property</th><th>Use Case</th></tr>
+        <tr><td><strong>Full Binary Tree</strong></td><td>Every node has 0 or 2 children</td><td>Expression trees</td></tr>
+        <tr><td><strong>Complete Binary Tree</strong></td><td>All levels filled except last (left-filled)</td><td>Heaps</td></tr>
+        <tr><td><strong>Perfect Binary Tree</strong></td><td>All internal nodes have 2 children, all leaves same level</td><td>Theoretical</td></tr>
+        <tr><td><strong>Balanced Binary Tree</strong></td><td>Height of left and right subtrees differ by ≤ 1</td><td>AVL, Red-Black</td></tr>
+        <tr><td><strong>Degenerate (Skewed)</strong></td><td>Every node has only one child (like a linked list)</td><td>Worst-case BST</td></tr>
+      </table></div>
+    </div>
+  </section>
+
+  <!-- ===== S3: TRAVERSALS ===== -->
+  <section class="section" id="s3">
+    <div class="shdr"><span class="snum">03</span>
+      <div><div class="stitle">Tree Traversals</div><div class="ssub">Inorder, Preorder, Postorder, Level-Order — all 4 with visual animations</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Concept</span>The 4 Traversal Orders</div>
+      <p>Traversal = visiting every node exactly once. The order in which you visit determines the traversal type. Think of it as when you <em>process</em> the current node relative to its children.</p>
+      <div class="dry">
+        <div class="ds"><span class="dsn">In:</span><span class="dsa">Left → Root → Right</span><span class="dss">BST sorted order</span></div>
+        <div class="ds"><span class="dsn">Pre:</span><span class="dsa">Root → Left → Right</span><span class="dss">serialize tree, copy tree</span></div>
+        <div class="ds"><span class="dsn">Post:</span><span class="dsa">Left → Right → Root</span><span class="dss">delete tree, evaluate expr</span></div>
+        <div class="ds"><span class="dsn">Level:</span><span class="dsa">BFS level by level</span><span class="dss">shortest path, level-wise ops</span></div>
+      </div>
+    </div>
+
+    <!-- TRAVERSAL VIZ -->
+    <div class="viz">
+      <div class="vtitle">🎮 TRAVERSAL VISUALIZER — Tree: 1→[2,3]→[4,5,null,6]</div>
+      <div class="vctl">
+        <button class="vbtn" onclick="runTrav('inorder')">Inorder (L→N→R)</button>
+        <button class="vbtn yl" onclick="runTrav('preorder')">Preorder (N→L→R)</button>
+        <button class="vbtn red" onclick="runTrav('postorder')">Postorder (L→R→N)</button>
+        <button class="vbtn" style="border-color:var(--a4)" onclick="runTrav('level')">Level Order</button>
+        <button class="vbtn" onclick="resetTrav()">Reset</button>
+      </div>
+      <div style="margin-bottom:8px;font-size:.78rem;color:var(--text3);font-family:'Source Code Pro',monospace">Tree nodes (click traversal button to animate):</div>
+      <div class="trav-nodes" id="travNodes"></div>
+      <div class="torder" id="travOrder"></div>
+      <div class="vlog" id="travLog"><span class="vinf">Choose a traversal type above to see the order.</span></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>All Traversals — Recursive & Iterative</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python — All Traversals</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># ═══════════════════════════════════════════
+# RECURSIVE — clean but uses O(h) call stack
+# ═══════════════════════════════════════════</span>
+<span class="kw">def</span> <span class="fn">inorder</span>(root):       <span class="cm"># L → N → R</span>
+    <span class="kw">if not</span> root: <span class="kw">return</span> []
+    <span class="kw">return</span> inorder(root.left) + [root.val] + inorder(root.right)
+
+<span class="kw">def</span> <span class="fn">preorder</span>(root):      <span class="cm"># N → L → R</span>
+    <span class="kw">if not</span> root: <span class="kw">return</span> []
+    <span class="kw">return</span> [root.val] + preorder(root.left) + preorder(root.right)
+
+<span class="kw">def</span> <span class="fn">postorder</span>(root):     <span class="cm"># L → R → N</span>
+    <span class="kw">if not</span> root: <span class="kw">return</span> []
+    <span class="kw">return</span> postorder(root.left) + postorder(root.right) + [root.val]
+
+<span class="cm"># ═══════════════════════════════════════════
+# ITERATIVE — avoids recursion limit
+# ═══════════════════════════════════════════</span>
+<span class="kw">def</span> <span class="fn">inorder_iterative</span>(root):
+    result, stack, cur = [], [], root
+    <span class="kw">while</span> cur <span class="kw">or</span> stack:
+        <span class="kw">while</span> cur:               <span class="cm"># Go all the way left</span>
+            stack.append(cur)
+            cur = cur.left
+        cur = stack.pop()         <span class="cm"># Process node</span>
+        result.append(cur.val)
+        cur = cur.right           <span class="cm"># Move right</span>
+    <span class="kw">return</span> result
+
+<span class="kw">def</span> <span class="fn">preorder_iterative</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span> []
+    result, stack = [], [root]
+    <span class="kw">while</span> stack:
+        node = stack.pop()
+        result.append(node.val)   <span class="cm"># Process before children</span>
+        <span class="kw">if</span> node.right: stack.append(node.right)  <span class="cm"># Right first (LIFO)</span>
+        <span class="kw">if</span> node.left:  stack.append(node.left)
+    <span class="kw">return</span> result
+
+<span class="kw">def</span> <span class="fn">postorder_iterative</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span> []
+    result, stack = [], [root]
+    <span class="kw">while</span> stack:
+        node = stack.pop()
+        result.append(node.val)
+        <span class="kw">if</span> node.left:  stack.append(node.left)   <span class="cm"># Left first this time</span>
+        <span class="kw">if</span> node.right: stack.append(node.right)
+    <span class="kw">return</span> result[::-<span class="num">1</span>]  <span class="cm"># Reverse preorder variant</span>
+
+<span class="cm"># ═══════════════════════════════════════════
+# LEVEL ORDER — BFS with queue
+# ═══════════════════════════════════════════</span>
+<span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">levelOrder</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span> []
+    result, q = [], deque([root])
+    <span class="kw">while</span> q:
+        level = []
+        <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(q)):   <span class="cm"># Process entire level</span>
+            node = q.popleft()
+            level.append(node.val)
+            <span class="kw">if</span> node.left:  q.append(node.left)
+            <span class="kw">if</span> node.right: q.append(node.right)
+        result.append(level)
+    <span class="kw">return</span> result</pre></div>
+    </div>
+
+    <div class="callout info">
+      <div class="ci">🧠</div>
+      <div class="cb"><div class="cbt">Inorder of BST = Sorted Order</div>
+        If you do inorder traversal on a BST, you get elements in sorted ascending order. This is a crucial property: it means you can validate a BST by checking if inorder traversal is sorted!
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="qttl">⚡ Quick Check</div>
+      <div class="qq">For the tree [1,2,3,4,5], what is the inorder traversal?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,'wrong','q2')">1, 2, 3, 4, 5</button>
+        <button class="qopt" onclick="cq(this,'correct','q2')">4, 2, 5, 1, 3</button>
+        <button class="qopt" onclick="cq(this,'wrong','q2')">1, 2, 4, 5, 3</button>
+        <button class="qopt" onclick="cq(this,'wrong','q2')">4, 5, 2, 3, 1</button>
+      </div>
+      <div class="qfb" id="q2">✅ 4, 2, 5, 1, 3. The tree is: 1→[2,3], 2→[4,5]. Inorder = leftmost first: 4, then 2, then 5, then 1 (root), then 3.</div>
+    </div>
+  </section>
+
+  <!-- ===== S4: BST ===== -->
+  <section class="section" id="s4">
+    <div class="shdr"><span class="snum">04</span>
+      <div><div class="stitle">Binary Search Tree (BST)</div><div class="ssub">Ordered trees with O(log n) search — the most tested tree type in interviews</div></div>
+    </div>
+
+    <!-- BST VIZ -->
+    <div class="viz">
+      <div class="vtitle">🔍 BST VISUALIZER — Insert, Search, Delete</div>
+      <div class="vctl">
+        <input class="vinput" id="bstInput" type="number" placeholder="value" value="50">
+        <button class="vbtn" onclick="bstOp('insert')">Insert</button>
+        <button class="vbtn" onclick="bstOp('search')">Search</button>
+        <button class="vbtn red" onclick="bstOp('delete')">Delete</button>
+        <button class="vbtn" onclick="bstOp('inorder')">Inorder</button>
+        <button class="vbtn red" onclick="bstReset()">Reset</button>
+      </div>
+      <div class="tree-canvas-wrap">
+        <canvas class="tree-canvas" id="bstCanvas" width="700" height="240"></canvas>
+      </div>
+      <div class="bst-result" id="bstResult"></div>
+      <div class="vlog" id="bstLog"><span class="vinf">Start by inserting: 50, 30, 70, 20, 40, 60, 80</span></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Full BST Implementation</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="kw">class</span> <span class="cls">BST</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>):
+        <span class="self">self</span>.root = <span class="bl">None</span>
+
+    <span class="cm"># ── INSERT: O(log n) average, O(n) worst ──</span>
+    <span class="kw">def</span> <span class="fn">insert</span>(<span class="self">self</span>, val):
+        <span class="self">self</span>.root = <span class="self">self</span>._insert(<span class="self">self</span>.root, val)
+
+    <span class="kw">def</span> <span class="fn">_insert</span>(<span class="self">self</span>, node, val):
+        <span class="kw">if not</span> node: <span class="kw">return</span> <span class="cls">TreeNode</span>(val)
+        <span class="kw">if</span>   val < node.val: node.left  = <span class="self">self</span>._insert(node.left,  val)
+        <span class="kw">elif</span> val > node.val: node.right = <span class="self">self</span>._insert(node.right, val)
+        <span class="kw">return</span> node  <span class="cm"># Duplicate: ignore</span>
+
+    <span class="cm"># ── SEARCH: O(log n) average ──</span>
+    <span class="kw">def</span> <span class="fn">search</span>(<span class="self">self</span>, val):
+        <span class="kw">return</span> <span class="self">self</span>._search(<span class="self">self</span>.root, val)
+
+    <span class="kw">def</span> <span class="fn">_search</span>(<span class="self">self</span>, node, val):
+        <span class="kw">if not</span> node <span class="kw">or</span> node.val == val: <span class="kw">return</span> node
+        <span class="kw">if</span> val < node.val: <span class="kw">return</span> <span class="self">self</span>._search(node.left,  val)
+        <span class="kw">return</span>                      <span class="self">self</span>._search(node.right, val)
+
+    <span class="cm"># ── DELETE: O(log n) average ──</span>
+    <span class="kw">def</span> <span class="fn">delete</span>(<span class="self">self</span>, val):
+        <span class="self">self</span>.root = <span class="self">self</span>._delete(<span class="self">self</span>.root, val)
+
+    <span class="kw">def</span> <span class="fn">_delete</span>(<span class="self">self</span>, node, val):
+        <span class="kw">if not</span> node: <span class="kw">return None</span>
+        <span class="kw">if</span>   val < node.val: node.left  = <span class="self">self</span>._delete(node.left,  val)
+        <span class="kw">elif</span> val > node.val: node.right = <span class="self">self</span>._delete(node.right, val)
+        <span class="kw">else</span>:  <span class="cm"># Found node to delete</span>
+            <span class="kw">if not</span> node.left:  <span class="kw">return</span> node.right  <span class="cm"># Case 1: no left child</span>
+            <span class="kw">if not</span> node.right: <span class="kw">return</span> node.left   <span class="cm"># Case 2: no right child</span>
+            <span class="cm"># Case 3: two children → replace with inorder successor</span>
+            successor = node.right
+            <span class="kw">while</span> successor.left:
+                successor = successor.left
+            node.val = successor.val              <span class="cm"># Copy successor value</span>
+            node.right = <span class="self">self</span>._delete(node.right, successor.val)
+        <span class="kw">return</span> node
+
+    <span class="cm"># ── VALIDATE BST ──</span>
+    <span class="kw">def</span> <span class="fn">is_valid</span>(<span class="self">self</span>):
+        <span class="kw">def</span> <span class="fn">check</span>(node, lo, hi):
+            <span class="kw">if not</span> node: <span class="kw">return True</span>
+            <span class="kw">if not</span> (lo < node.val < hi): <span class="kw">return False</span>
+            <span class="kw">return</span> check(node.left, lo, node.val) <span class="kw">and</span> \
+                   check(node.right, node.val, hi)
+        <span class="kw">return</span> check(<span class="self">self</span>.root, <span class="kw">float</span>(<span class="str">'-inf'</span>), <span class="kw">float</span>(<span class="str">'inf'</span>))</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Complexity</span>BST Operations</div>
+      <div class="cxrow">
+        <div class="cx ologn"><span class="cxop">Search (avg)</span><span class="cxv">O(log n)</span></div>
+        <div class="cx ologn"><span class="cxop">Insert (avg)</span><span class="cxv">O(log n)</span></div>
+        <div class="cx ologn"><span class="cxop">Delete (avg)</span><span class="cxv">O(log n)</span></div>
+        <div class="cx on2"><span class="cxop">All (worst)</span><span class="cxv">O(n)</span></div>
+        <div class="cx on"><span class="cxop">Space</span><span class="cxv">O(n)</span></div>
+      </div>
+      <div class="callout warn"><div class="ci">⚠️</div><div class="cb"><div class="cbt">Worst Case: Sorted Input</div>Inserting [1,2,3,4,5] in order creates a degenerate tree (linked list shape) → O(n) search. This is why balanced BSTs (AVL, Red-Black) exist.</div></div>
+    </div>
+  </section>
+
+  <!-- ===== S5: HEIGHT & DEPTH ===== -->
+  <section class="section" id="s5">
+    <div class="shdr"><span class="snum">05</span>
+      <div><div class="stitle">Height, Depth & Balance</div><div class="ssub">Measure and verify tree structure — critical for BST and balance problems</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Height, Depth, Diameter, Balance</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># ── HEIGHT of tree (longest root-to-leaf path) ──</span>
+<span class="kw">def</span> <span class="fn">height</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span> -<span class="num">1</span>  <span class="cm"># -1 for empty; 0 for leaf</span>
+    <span class="kw">return</span> <span class="num">1</span> + <span class="kw">max</span>(height(root.left), height(root.right))
+
+<span class="cm"># ── DEPTH of a target node ──</span>
+<span class="kw">def</span> <span class="fn">depth</span>(root, target, d=<span class="num">0</span>):
+    <span class="kw">if not</span> root: <span class="kw">return</span> -<span class="num">1</span>
+    <span class="kw">if</span> root.val == target: <span class="kw">return</span> d
+    left  = depth(root.left,  target, d+<span class="num">1</span>)
+    right = depth(root.right, target, d+<span class="num">1</span>)
+    <span class="kw">return</span> left <span class="kw">if</span> left != -<span class="num">1</span> <span class="kw">else</span> right
+
+<span class="cm"># ── IS BALANCED (AVL property) ──</span>
+<span class="cm"># Balanced: |height(left) - height(right)| <= 1 for every node</span>
+<span class="kw">def</span> <span class="fn">isBalanced</span>(root):
+    <span class="kw">def</span> <span class="fn">check</span>(node):
+        <span class="kw">if not</span> node: <span class="kw">return</span> <span class="num">0</span>  <span class="cm"># Height of empty = 0</span>
+        left  = check(node.left)
+        <span class="kw">if</span> left == -<span class="num">1</span>: <span class="kw">return</span> -<span class="num">1</span>  <span class="cm"># Left subtree unbalanced</span>
+        right = check(node.right)
+        <span class="kw">if</span> right == -<span class="num">1</span>: <span class="kw">return</span> -<span class="num">1</span>
+        <span class="kw">if</span> <span class="kw">abs</span>(left - right) > <span class="num">1</span>: <span class="kw">return</span> -<span class="num">1</span>  <span class="cm"># Unbalanced!</span>
+        <span class="kw">return</span> <span class="num">1</span> + <span class="kw">max</span>(left, right)
+    <span class="kw">return</span> check(root) != -<span class="num">1</span>
+
+<span class="cm"># ── DIAMETER (longest path between any two nodes) ──</span>
+<span class="kw">def</span> <span class="fn">diameterOfBinaryTree</span>(root):
+    max_diam = [<span class="num">0</span>]
+    <span class="kw">def</span> <span class="fn">dfs</span>(node):
+        <span class="kw">if not</span> node: <span class="kw">return</span> <span class="num">0</span>
+        left  = dfs(node.left)
+        right = dfs(node.right)
+        max_diam[<span class="num">0</span>] = <span class="kw">max</span>(max_diam[<span class="num">0</span>], left + right)
+        <span class="kw">return</span> <span class="num">1</span> + <span class="kw">max</span>(left, right)
+    dfs(root)
+    <span class="kw">return</span> max_diam[<span class="num">0</span>]
+<span class="cm"># Key insight: diameter at each node = left_height + right_height
+# Global max diameter may not pass through root!</span></pre></div>
+    </div>
+  </section>
+
+  <!-- ===== S6: PATH PROBLEMS ===== -->
+  <section class="section" id="s6">
+    <div class="shdr"><span class="snum">06</span>
+      <div><div class="stitle">Path Problems</div><div class="ssub">Root-to-leaf paths, max path sum, path with target — DFS patterns</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Path Sum Family — All Variants</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># ══ PATH SUM I: Does root-to-leaf path sum = target? ══</span>
+<span class="kw">def</span> <span class="fn">hasPathSum</span>(root, target):
+    <span class="kw">if not</span> root: <span class="kw">return False</span>
+    <span class="kw">if not</span> root.left <span class="kw">and not</span> root.right:   <span class="cm"># Leaf node</span>
+        <span class="kw">return</span> root.val == target
+    remaining = target - root.val
+    <span class="kw">return</span> hasPathSum(root.left,  remaining) <span class="kw">or</span> \
+           hasPathSum(root.right, remaining)
+
+<span class="cm"># ══ PATH SUM II: Return all root-to-leaf paths ══</span>
+<span class="kw">def</span> <span class="fn">pathSum</span>(root, target):
+    result = []
+    <span class="kw">def</span> <span class="fn">dfs</span>(node, path, remaining):
+        <span class="kw">if not</span> node: <span class="kw">return</span>
+        path.append(node.val)
+        <span class="kw">if not</span> node.left <span class="kw">and not</span> node.right <span class="kw">and</span> remaining == node.val:
+            result.append(path[:])  <span class="cm"># Copy! (mutable list)</span>
+        dfs(node.left,  path, remaining - node.val)
+        dfs(node.right, path, remaining - node.val)
+        path.pop()  <span class="cm"># Backtrack!</span>
+    dfs(root, [], target)
+    <span class="kw">return</span> result
+
+<span class="cm"># ══ MAX PATH SUM: Any path (not just root-to-leaf) ══</span>
+<span class="kw">def</span> <span class="fn">maxPathSum</span>(root):
+    max_sum = [<span class="kw">float</span>(<span class="str">'-inf'</span>)]
+    <span class="kw">def</span> <span class="fn">dfs</span>(node):
+        <span class="kw">if not</span> node: <span class="kw">return</span> <span class="num">0</span>
+        left  = <span class="kw">max</span>(dfs(node.left),  <span class="num">0</span>)  <span class="cm"># Ignore if negative</span>
+        right = <span class="kw">max</span>(dfs(node.right), <span class="num">0</span>)
+        <span class="cm"># Path through current node: left + node + right</span>
+        max_sum[<span class="num">0</span>] = <span class="kw">max</span>(max_sum[<span class="num">0</span>], left + node.val + right)
+        <span class="cm"># Return max single path (can't go both ways up)</span>
+        <span class="kw">return</span> node.val + <span class="kw">max</span>(left, right)
+    dfs(root)
+    <span class="kw">return</span> max_sum[<span class="num">0</span>]
+
+<span class="cm"># ══ PATH SUM III: Count paths summing to target (any start) ══</span>
+<span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+<span class="kw">def</span> <span class="fn">pathSumIII</span>(root, target):
+    prefix = defaultdict(<span class="kw">int</span>); prefix[<span class="num">0</span>] = <span class="num">1</span>; count = [<span class="num">0</span>]
+    <span class="kw">def</span> <span class="fn">dfs</span>(node, curr):
+        <span class="kw">if not</span> node: <span class="kw">return</span>
+        curr += node.val
+        count[<span class="num">0</span>] += prefix[curr - target]   <span class="cm"># Found valid path!</span>
+        prefix[curr] += <span class="num">1</span>
+        dfs(node.left,  curr); dfs(node.right, curr)
+        prefix[curr] -= <span class="num">1</span>  <span class="cm"># Backtrack</span>
+    dfs(root, <span class="num">0</span>)
+    <span class="kw">return</span> count[<span class="num">0</span>]</pre></div>
+    </div>
+  </section>
+
+  <!-- ===== S7: LCA ===== -->
+  <section class="section" id="s7">
+    <div class="shdr"><span class="snum">07</span>
+      <div><div class="stitle">Lowest Common Ancestor (LCA)</div><div class="ssub">The most popular tree interview topic — master all variants</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Concept</span>What is LCA?</div>
+      <p>The <strong>Lowest Common Ancestor</strong> of two nodes p and q is the deepest node that is an ancestor of both p and q. Think of it as the "meeting point" when you trace both nodes up to the root.</p>
+      <div class="dry">
+        <div style="font-weight:700;margin-bottom:6px;font-size:.83rem">Tree: 1→[2,3], 2→[4,5], 3→[6,7]</div>
+        <div class="ds"><span class="dsn">LCA(4,5):</span><span class="dsa">= 2 (their direct parent)</span></div>
+        <div class="ds"><span class="dsn">LCA(4,6):</span><span class="dsa">= 1 (root — different subtrees)</span></div>
+        <div class="ds"><span class="dsn">LCA(2,4):</span><span class="dsa">= 2 (ancestor is itself)</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>LCA — Binary Tree & BST Variants</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="cm"># ══ LCA in Binary Tree (general) — O(n) ══</span>
+<span class="kw">def</span> <span class="fn">lowestCommonAncestor</span>(root, p, q):
+    <span class="str">"""
+    If root is p or q, it's the LCA.
+    If p and q are in different subtrees, root is LCA.
+    If both in same subtree, recurse into that subtree.
+    """</span>
+    <span class="kw">if not</span> root <span class="kw">or</span> root == p <span class="kw">or</span> root == q:
+        <span class="kw">return</span> root
+    left  = lowestCommonAncestor(root.left,  p, q)
+    right = lowestCommonAncestor(root.right, p, q)
+    <span class="kw">if</span> left <span class="kw">and</span> right: <span class="kw">return</span> root  <span class="cm"># p and q on different sides</span>
+    <span class="kw">return</span> left <span class="kw">or</span> right             <span class="cm"># Both on same side</span>
+
+<span class="cm"># ══ LCA in BST — O(log n) using BST property ══</span>
+<span class="kw">def</span> <span class="fn">lcaBST</span>(root, p, q):
+    <span class="str">"""
+    In BST: if both p,q < root → LCA is in left subtree.
+    If both > root → LCA is in right subtree.
+    Otherwise → root is LCA (split point).
+    """</span>
+    <span class="kw">while</span> root:
+        <span class="kw">if</span> p.val < root.val <span class="kw">and</span> q.val < root.val:
+            root = root.left   <span class="cm"># Both in left subtree</span>
+        <span class="kw">elif</span> p.val > root.val <span class="kw">and</span> q.val > root.val:
+            root = root.right  <span class="cm"># Both in right subtree</span>
+        <span class="kw">else</span>:
+            <span class="kw">return</span> root        <span class="cm"># Split point = LCA</span>
+
+<span class="cm"># ══ LCA with Parent Pointers — O(h) ══</span>
+<span class="kw">def</span> <span class="fn">lcaWithParents</span>(p, q):
+    <span class="str">"""If each node has .parent pointer."""</span>
+    seen = <span class="kw">set</span>()
+    <span class="kw">while</span> p:
+        seen.add(p); p = p.parent
+    <span class="kw">while</span> q:
+        <span class="kw">if</span> q <span class="kw">in</span> seen: <span class="kw">return</span> q
+        q = q.parent</pre></div>
+    </div>
+
+    <div class="ibox">
+      <div class="iboxt">🎯 LCA Interview Insights</div>
+      <ul>
+        <li>LCA of Binary Tree: O(n) — must check all nodes</li>
+        <li>LCA of BST: O(log n) — use BST property to navigate</li>
+        <li>If either p or q equals root → root is LCA. Always handle this base case!</li>
+        <li>"Find if p is ancestor of q" → LCA(p,q) == p</li>
+        <li>LCA is used in: distance between nodes, path between nodes</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== S8: LEVEL ORDER ===== -->
+  <section class="section" id="s8">
+    <div class="shdr"><span class="snum">08</span>
+      <div><div class="stitle">Level Order & BFS Patterns</div><div class="ssub">BFS queue unlocks all level-wise tree problems</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Level Order Variants</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="cm"># ══ ZIGZAG LEVEL ORDER (LeetCode 103) ══</span>
+<span class="kw">def</span> <span class="fn">zigzagLevelOrder</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span> []
+    result, q, left_to_right = [], deque([root]), <span class="bl">True</span>
+    <span class="kw">while</span> q:
+        level = []
+        <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(q)):
+            node = q.popleft()
+            level.append(node.val)
+            <span class="kw">if</span> node.left:  q.append(node.left)
+            <span class="kw">if</span> node.right: q.append(node.right)
+        result.append(level <span class="kw">if</span> left_to_right <span class="kw">else</span> level[::-<span class="num">1</span>])
+        left_to_right = <span class="kw">not</span> left_to_right
+    <span class="kw">return</span> result
+
+<span class="cm"># ══ RIGHT SIDE VIEW (LeetCode 199) ══</span>
+<span class="kw">def</span> <span class="fn">rightSideView</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span> []
+    result, q = [], deque([root])
+    <span class="kw">while</span> q:
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(q)):
+            node = q.popleft()
+            <span class="kw">if</span> i == <span class="kw">len</span>(q):  <span class="cm"># Last node in level (after popping)</span>
+                result.append(node.val)
+            <span class="kw">if</span> node.left:  q.append(node.left)
+            <span class="kw">if</span> node.right: q.append(node.right)
+    <span class="kw">return</span> result
+
+<span class="cm"># Cleaner right side view:</span>
+<span class="kw">def</span> <span class="fn">rightSideView2</span>(root):
+    result, q = [], deque([root] <span class="kw">if</span> root <span class="kw">else</span> [])
+    <span class="kw">while</span> q:
+        result.append(q[-<span class="num">1</span>].val)  <span class="cm"># Last element = rightmost</span>
+        <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(<span class="kw">len</span>(q)):
+            node = q.popleft()
+            <span class="kw">if</span> node.left:  q.append(node.left)
+            <span class="kw">if</span> node.right: q.append(node.right)
+    <span class="kw">return</span> result
+
+<span class="cm"># ══ AVERAGE OF LEVELS (LeetCode 637) ══</span>
+<span class="kw">def</span> <span class="fn">averageOfLevels</span>(root):
+    result, q = [], deque([root])
+    <span class="kw">while</span> q:
+        level_sum, size = <span class="num">0</span>, <span class="kw">len</span>(q)
+        <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(size):
+            node = q.popleft()
+            level_sum += node.val
+            <span class="kw">if</span> node.left:  q.append(node.left)
+            <span class="kw">if</span> node.right: q.append(node.right)
+        result.append(level_sum / size)
+    <span class="kw">return</span> result
+
+<span class="cm"># ══ MINIMUM DEPTH (LeetCode 111) ══</span>
+<span class="kw">def</span> <span class="fn">minDepth</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span> <span class="num">0</span>
+    q = deque([(root, <span class="num">1</span>)])
+    <span class="kw">while</span> q:
+        node, depth = q.popleft()
+        <span class="kw">if not</span> node.left <span class="kw">and not</span> node.right:
+            <span class="kw">return</span> depth  <span class="cm"># First leaf found = min depth</span>
+        <span class="kw">if</span> node.left:  q.append((node.left,  depth+<span class="num">1</span>))
+        <span class="kw">if</span> node.right: q.append((node.right, depth+<span class="num">1</span>))</pre></div>
+    </div>
+  </section>
+
+  <!-- ===== S9: AVL ===== -->
+  <section class="section" id="s9">
+    <div class="shdr"><span class="snum">09</span>
+      <div><div class="stitle">AVL & Balanced Trees</div><div class="ssub">Self-balancing BSTs that guarantee O(log n) always</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Concept</span>Why Balanced Trees?</div>
+      <p>A standard BST degenerates to O(n) for sorted input. <strong>AVL trees</strong> maintain the invariant: for every node, |height(left) - height(right)| ≤ 1. After each insert/delete, rotations restore balance.</p>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>AVL Tree Rotations</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="kw">class</span> <span class="cls">AVLNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>, val):
+        <span class="self">self</span>.val = val; <span class="self">self</span>.left = <span class="self">self</span>.right = <span class="bl">None</span>; <span class="self">self</span>.height = <span class="num">1</span>
+
+<span class="kw">def</span> <span class="fn">get_height</span>(node): <span class="kw">return</span> node.height <span class="kw">if</span> node <span class="kw">else</span> <span class="num">0</span>
+<span class="kw">def</span> <span class="fn">get_balance</span>(node): <span class="kw">return</span> get_height(node.left) - get_height(node.right) <span class="kw">if</span> node <span class="kw">else</span> <span class="num">0</span>
+<span class="kw">def</span> <span class="fn">update_height</span>(node): node.height = <span class="num">1</span> + <span class="kw">max</span>(get_height(node.left), get_height(node.right))
+
+<span class="cm"># ── Right Rotation (LL imbalance) ──</span>
+<span class="kw">def</span> <span class="fn">rotate_right</span>(y):
+    x = y.left; T2 = x.right
+    x.right = y; y.left = T2
+    update_height(y); update_height(x)
+    <span class="kw">return</span> x
+
+<span class="cm"># ── Left Rotation (RR imbalance) ──</span>
+<span class="kw">def</span> <span class="fn">rotate_left</span>(x):
+    y = x.right; T2 = y.left
+    y.left = x; x.right = T2
+    update_height(x); update_height(y)
+    <span class="kw">return</span> y
+
+<span class="kw">def</span> <span class="fn">avl_insert</span>(node, val):
+    <span class="kw">if not</span> node: <span class="kw">return</span> <span class="cls">AVLNode</span>(val)
+    <span class="kw">if</span>   val < node.val: node.left  = avl_insert(node.left,  val)
+    <span class="kw">elif</span> val > node.val: node.right = avl_insert(node.right, val)
+    <span class="kw">else</span>: <span class="kw">return</span> node
+    update_height(node)
+    balance = get_balance(node)
+    <span class="cm"># LL Case</span>
+    <span class="kw">if</span> balance > <span class="num">1</span> <span class="kw">and</span> val < node.left.val:  <span class="kw">return</span> rotate_right(node)
+    <span class="cm"># RR Case</span>
+    <span class="kw">if</span> balance < -<span class="num">1</span> <span class="kw">and</span> val > node.right.val: <span class="kw">return</span> rotate_left(node)
+    <span class="cm"># LR Case</span>
+    <span class="kw">if</span> balance > <span class="num">1</span> <span class="kw">and</span> val > node.left.val:
+        node.left = rotate_left(node.left); <span class="kw">return</span> rotate_right(node)
+    <span class="cm"># RL Case</span>
+    <span class="kw">if</span> balance < -<span class="num">1</span> <span class="kw">and</span> val < node.right.val:
+        node.right = rotate_right(node.right); <span class="kw">return</span> rotate_left(node)
+    <span class="kw">return</span> node</pre></div>
+    </div>
+  </section>
+
+  <!-- ===== S10: TRIE ===== -->
+  <section class="section" id="s10">
+    <div class="shdr"><span class="snum">10</span>
+      <div><div class="stitle">Trie (Prefix Tree)</div><div class="ssub">Efficient string storage and search — autocomplete, spell-check, IP routing</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Concept</span>What is a Trie?</div>
+      <p>A <strong>Trie</strong> (prefix tree) stores strings character by character. Each path from root to a marked node represents a word. Searching a string of length L takes O(L) — independent of total number of words!</p>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Trie — Insert, Search, StartsWith</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="kw">class</span> <span class="cls">TrieNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>):
+        <span class="self">self</span>.children = {}     <span class="cm"># char → TrieNode</span>
+        <span class="self">self</span>.is_end = <span class="bl">False</span>   <span class="cm"># marks end of a word</span>
+
+<span class="kw">class</span> <span class="cls">Trie</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>):
+        <span class="self">self</span>.root = <span class="cls">TrieNode</span>()
+
+    <span class="kw">def</span> <span class="fn">insert</span>(<span class="self">self</span>, word):
+        node = <span class="self">self</span>.root
+        <span class="kw">for</span> ch <span class="kw">in</span> word:
+            <span class="kw">if</span> ch <span class="kw">not in</span> node.children:
+                node.children[ch] = <span class="cls">TrieNode</span>()
+            node = node.children[ch]
+        node.is_end = <span class="bl">True</span>
+
+    <span class="kw">def</span> <span class="fn">search</span>(<span class="self">self</span>, word):
+        <span class="str">"""Exact match: O(len(word))"""</span>
+        node = <span class="self">self</span>.root
+        <span class="kw">for</span> ch <span class="kw">in</span> word:
+            <span class="kw">if</span> ch <span class="kw">not in</span> node.children: <span class="kw">return False</span>
+            node = node.children[ch]
+        <span class="kw">return</span> node.is_end
+
+    <span class="kw">def</span> <span class="fn">startsWith</span>(<span class="self">self</span>, prefix):
+        <span class="str">"""Prefix match: O(len(prefix))"""</span>
+        node = <span class="self">self</span>.root
+        <span class="kw">for</span> ch <span class="kw">in</span> prefix:
+            <span class="kw">if</span> ch <span class="kw">not in</span> node.children: <span class="kw">return False</span>
+            node = node.children[ch]
+        <span class="kw">return True</span>
+
+    <span class="kw">def</span> <span class="fn">autocomplete</span>(<span class="self">self</span>, prefix):
+        <span class="str">"""Return all words with given prefix."""</span>
+        node = <span class="self">self</span>.root
+        <span class="kw">for</span> ch <span class="kw">in</span> prefix:
+            <span class="kw">if</span> ch <span class="kw">not in</span> node.children: <span class="kw">return</span> []
+            node = node.children[ch]
+        words = []
+        <span class="kw">def</span> <span class="fn">dfs</span>(n, path):
+            <span class="kw">if</span> n.is_end: words.append(prefix + path)
+            <span class="kw">for</span> c, child <span class="kw">in</span> n.children.items():
+                dfs(child, path + c)
+        dfs(node, <span class="str">""</span>)
+        <span class="kw">return</span> words
+
+<span class="cm"># Demo</span>
+trie = <span class="cls">Trie</span>()
+<span class="kw">for</span> w <span class="kw">in</span> [<span class="str">"apple"</span>,<span class="str">"app"</span>,<span class="str">"application"</span>,<span class="str">"apt"</span>]:
+    trie.insert(w)
+<span class="kw">print</span>(trie.search(<span class="str">"app"</span>))      <span class="cm"># True</span>
+<span class="kw">print</span>(trie.startsWith(<span class="str">"ap"</span>))   <span class="cm"># True</span>
+<span class="kw">print</span>(trie.autocomplete(<span class="str">"app"</span>)) <span class="cm"># ["app","apple","application"]</span></pre></div>
+    </div>
+  </section>
+
+  <!-- ===== S11: SEGMENT TREE ===== -->
+  <section class="section" id="s11">
+    <div class="shdr"><span class="snum">11</span>
+      <div><div class="stitle">Segment Tree</div><div class="ssub">Range sum, range min, range max in O(log n) — with point updates</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Concept</span>Why Segment Tree?</div>
+      <p>Prefix sums give O(1) range queries but O(n) updates. Segment trees give <strong>O(log n) both for queries and updates</strong> — the best of both worlds for dynamic arrays.</p>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Segment Tree — Array-Based</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="kw">class</span> <span class="cls">SegmentTree</span>:
+    <span class="str">"""
+    Array-based segment tree for range sum queries.
+    tree[1] = root, children of node i: 2i, 2i+1
+    Time: Build O(n), Query O(log n), Update O(log n)
+    Space: O(n) — tree array has 4n elements
+    """</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>, nums):
+        <span class="self">self</span>.n = <span class="kw">len</span>(nums)
+        <span class="self">self</span>.tree = [<span class="num">0</span>] * (<span class="num">4</span> * <span class="self">self</span>.n)
+        <span class="self">self</span>._build(nums, <span class="num">1</span>, <span class="num">0</span>, <span class="self">self</span>.n - <span class="num">1</span>)
+
+    <span class="kw">def</span> <span class="fn">_build</span>(<span class="self">self</span>, nums, node, start, end):
+        <span class="kw">if</span> start == end:
+            <span class="self">self</span>.tree[node] = nums[start]; <span class="kw">return</span>
+        mid = (start + end) // <span class="num">2</span>
+        <span class="self">self</span>._build(nums, <span class="num">2</span>*node,   start, mid)
+        <span class="self">self</span>._build(nums, <span class="num">2</span>*node+<span class="num">1</span>, mid+<span class="num">1</span>, end)
+        <span class="self">self</span>.tree[node] = <span class="self">self</span>.tree[<span class="num">2</span>*node] + <span class="self">self</span>.tree[<span class="num">2</span>*node+<span class="num">1</span>]
+
+    <span class="kw">def</span> <span class="fn">update</span>(<span class="self">self</span>, idx, val):
+        <span class="self">self</span>._update(<span class="num">1</span>, <span class="num">0</span>, <span class="self">self</span>.n-<span class="num">1</span>, idx, val)
+
+    <span class="kw">def</span> <span class="fn">_update</span>(<span class="self">self</span>, node, start, end, idx, val):
+        <span class="kw">if</span> start == end:
+            <span class="self">self</span>.tree[node] = val; <span class="kw">return</span>
+        mid = (start + end) // <span class="num">2</span>
+        <span class="kw">if</span> idx <= mid: <span class="self">self</span>._update(<span class="num">2</span>*node,   start, mid,   idx, val)
+        <span class="kw">else</span>:          <span class="self">self</span>._update(<span class="num">2</span>*node+<span class="num">1</span>, mid+<span class="num">1</span>, end, idx, val)
+        <span class="self">self</span>.tree[node] = <span class="self">self</span>.tree[<span class="num">2</span>*node] + <span class="self">self</span>.tree[<span class="num">2</span>*node+<span class="num">1</span>]
+
+    <span class="kw">def</span> <span class="fn">query</span>(<span class="self">self</span>, l, r):
+        <span class="kw">return</span> <span class="self">self</span>._query(<span class="num">1</span>, <span class="num">0</span>, <span class="self">self</span>.n-<span class="num">1</span>, l, r)
+
+    <span class="kw">def</span> <span class="fn">_query</span>(<span class="self">self</span>, node, start, end, l, r):
+        <span class="kw">if</span> r < start <span class="kw">or</span> end < l: <span class="kw">return</span> <span class="num">0</span>  <span class="cm"># Out of range</span>
+        <span class="kw">if</span> l <= start <span class="kw">and</span> end <= r: <span class="kw">return</span> <span class="self">self</span>.tree[node]  <span class="cm"># Fully in range</span>
+        mid = (start + end) // <span class="num">2</span>
+        <span class="kw">return</span> <span class="self">self</span>._query(<span class="num">2</span>*node, start, mid, l, r) + \
+               <span class="self">self</span>._query(<span class="num">2</span>*node+<span class="num">1</span>, mid+<span class="num">1</span>, end, l, r)
+
+<span class="cm"># Demo</span>
+st = <span class="cls">SegmentTree</span>([<span class="num">1</span>,<span class="num">3</span>,<span class="num">5</span>,<span class="num">7</span>,<span class="num">9</span>,<span class="num">11</span>])
+<span class="kw">print</span>(st.query(<span class="num">1</span>,<span class="num">3</span>))  <span class="cm"># 15 (3+5+7)</span>
+st.update(<span class="num">1</span>, <span class="num">10</span>)
+<span class="kw">print</span>(st.query(<span class="num">1</span>,<span class="num">3</span>))  <span class="cm"># 22 (10+5+7)</span></pre></div>
+    </div>
+  </section>
+
+  <!-- ===== S12: ADVANCED PATTERNS ===== -->
+  <section class="section" id="s12">
+    <div class="shdr"><span class="snum">12</span>
+      <div><div class="stitle">Advanced Tree Patterns</div><div class="ssub">Serialize/deserialize, flatten, construct from traversals</div></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Serialize & Deserialize Binary Tree</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="kw">class</span> <span class="cls">Codec</span>:
+    <span class="str">"""LeetCode 297 — Serialize/Deserialize.
+    Use preorder DFS with '#' for null nodes."""</span>
+
+    <span class="kw">def</span> <span class="fn">serialize</span>(<span class="self">self</span>, root):
+        <span class="kw">def</span> <span class="fn">dfs</span>(node):
+            <span class="kw">if not</span> node: <span class="kw">return</span> <span class="str">'#'</span>
+            <span class="kw">return</span> <span class="str">f"{node.val},{dfs(node.left)},{dfs(node.right)}"</span>
+        <span class="kw">return</span> dfs(root)
+
+    <span class="kw">def</span> <span class="fn">deserialize</span>(<span class="self">self</span>, data):
+        vals = iter(data.split(<span class="str">','</span>))
+        <span class="kw">def</span> <span class="fn">dfs</span>():
+            val = <span class="kw">next</span>(vals)
+            <span class="kw">if</span> val == <span class="str">'#'</span>: <span class="kw">return None</span>
+            node = <span class="cls">TreeNode</span>(<span class="kw">int</span>(val))
+            node.left  = dfs()
+            node.right = dfs()
+            <span class="kw">return</span> node
+        <span class="kw">return</span> dfs()</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Construct Tree from Inorder + Preorder</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="kw">def</span> <span class="fn">buildTreeFromTraversals</span>(preorder, inorder):
+    <span class="str">"""
+    Key insight: preorder[0] = root.
+    Find root in inorder → splits into left/right subtrees.
+    Time: O(n) with hashmap | Space: O(n)
+    """</span>
+    idx_map = {val: i <span class="kw">for</span> i, val <span class="kw">in</span> <span class="kw">enumerate</span>(inorder)}
+
+    <span class="kw">def</span> <span class="fn">build</span>(pre_start, in_start, in_end):
+        <span class="kw">if</span> pre_start >= <span class="kw">len</span>(preorder) <span class="kw">or</span> in_start > in_end:
+            <span class="kw">return None</span>
+        root_val = preorder[pre_start]
+        root = <span class="cls">TreeNode</span>(root_val)
+        mid = idx_map[root_val]          <span class="cm"># Root's position in inorder</span>
+        left_size = mid - in_start       <span class="cm"># Size of left subtree</span>
+        root.left  = build(pre_start + <span class="num">1</span>,         in_start, mid - <span class="num">1</span>)
+        root.right = build(pre_start + left_size + <span class="num">1</span>, mid + <span class="num">1</span>, in_end)
+        <span class="kw">return</span> root
+
+    <span class="kw">return</span> build(<span class="num">0</span>, <span class="num">0</span>, <span class="kw">len</span>(inorder) - <span class="num">1</span>)</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t3">Code</span>Flatten Binary Tree to Linked List (LC 114)</div>
+      <div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div>
+      <pre><span class="kw">def</span> <span class="fn">flatten</span>(root):
+    <span class="str">"""Flatten to linked list in-place (preorder order).
+    Morris traversal approach: O(n) time, O(1) space."""</span>
+    cur = root
+    <span class="kw">while</span> cur:
+        <span class="kw">if</span> cur.left:
+            <span class="cm"># Find rightmost node of left subtree</span>
+            rightmost = cur.left
+            <span class="kw">while</span> rightmost.right:
+                rightmost = rightmost.right
+            <span class="cm"># Connect rightmost to current's right subtree</span>
+            rightmost.right = cur.right
+            <span class="cm"># Move left subtree to right</span>
+            cur.right = cur.left
+            cur.left = <span class="bl">None</span>
+        cur = cur.right</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="cttl"><span class="tag t1">Patterns</span>Recognize These Tree Patterns</div>
+      <div class="pgrid">
+        <div class="pc"><div class="pi">🔄</div><div class="pn">DFS with Return</div><div class="pd">Return a value up the call stack. Used for height, diameter, balance.</div></div>
+        <div class="pc"><div class="pi">📋</div><div class="pn">Global Variable</div><div class="pd">Track max/count across all paths. Diameter, max path sum.</div></div>
+        <div class="pc"><div class="pi">🌊</div><div class="pn">BFS Level Order</div><div class="pd">Level-by-level processing. Right view, zigzag, min depth.</div></div>
+        <div class="pc"><div class="pi">↩️</div><div class="pn">Backtracking</div><div class="pd">Build path, recurse, undo. Path sum II, all root-to-leaf.</div></div>
+        <div class="pc"><div class="pi">📦</div><div class="pn">Prefix Sum DFS</div><div class="pd">Carry running sum down. Path sum III — count paths.</div></div>
+        <div class="pc"><div class="pi">🔀</div><div class="pn">Two-Pass DFS</div><div class="pd">First pass to compute something, second to use it.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== S13: INTERVIEW PROBLEMS ===== -->
+  <section class="section" id="s13">
+    <div class="shdr"><span class="snum">13</span>
+      <div><div class="stitle">Interview Problems</div><div class="ssub">15 must-know tree problems with full solutions</div></div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">1. Maximum Depth of Binary Tree</div><span class="diff de">Easy</span><span style="font-family:'Source Code Pro',monospace;font-size:.6rem;color:var(--text3)">LC 104</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p1e')">Explain</div><div class="ptab" onclick="st(this,'p1c')">Code</div></div>
+        <div class="ptc active" id="p1e"><p><strong>Pattern:</strong> DFS returning height. Recursively get height of left and right, return 1 + max.</p></div>
+        <div class="ptc" id="p1c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">maxDepth</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span> <span class="num">0</span>
+    <span class="kw">return</span> <span class="num">1</span> + <span class="kw">max</span>(maxDepth(root.left), maxDepth(root.right))
+<span class="cm"># O(n) time, O(h) space (h = height)</span></pre></div></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">2. Invert Binary Tree</div><span class="diff de">Easy</span><span style="font-family:'Source Code Pro',monospace;font-size:.6rem;color:var(--text3)">LC 226</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p2e')">Explain</div><div class="ptab" onclick="st(this,'p2c')">Code</div></div>
+        <div class="ptc active" id="p2e"><p><strong>Pattern:</strong> Post-order DFS. Swap children after recursively inverting both subtrees.</p></div>
+        <div class="ptc" id="p2c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">invertTree</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return None</span>
+    root.left, root.right = invertTree(root.right), invertTree(root.left)
+    <span class="kw">return</span> root  <span class="cm"># O(n) time, O(h) space</span></pre></div></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">3. Symmetric Tree</div><span class="diff de">Easy</span><span style="font-family:'Source Code Pro',monospace;font-size:.6rem;color:var(--text3)">LC 101</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p3e')">Explain</div><div class="ptab" onclick="st(this,'p3c')">Code</div></div>
+        <div class="ptc active" id="p3e"><p><strong>Pattern:</strong> Compare mirror pairs. isMirror(left, right): check if left.val == right.val and isMirror(left.left, right.right) and isMirror(left.right, right.left).</p></div>
+        <div class="ptc" id="p3c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">isSymmetric</span>(root):
+    <span class="kw">def</span> <span class="fn">mirror</span>(l, r):
+        <span class="kw">if not</span> l <span class="kw">and not</span> r: <span class="kw">return True</span>
+        <span class="kw">if not</span> l <span class="kw">or not</span> r: <span class="kw">return False</span>
+        <span class="kw">return</span> l.val==r.val <span class="kw">and</span> mirror(l.left,r.right) <span class="kw">and</span> mirror(l.right,r.left)
+    <span class="kw">return</span> mirror(root.left, root.right)</pre></div></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">4. Validate BST</div><span class="diff dm">Medium</span><span style="font-family:'Source Code Pro',monospace;font-size:.6rem;color:var(--text3)">LC 98</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p4e')">Explain</div><div class="ptab" onclick="st(this,'p4c')">Code</div></div>
+        <div class="ptc active" id="p4e"><p><strong>Pattern:</strong> Pass min/max bounds. At each node, value must be strictly between inherited bounds. Bounds tighten as you go deeper.</p></div>
+        <div class="ptc" id="p4c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">isValidBST</span>(root):
+    <span class="kw">def</span> <span class="fn">check</span>(node, lo, hi):
+        <span class="kw">if not</span> node: <span class="kw">return True</span>
+        <span class="kw">if not</span> (lo < node.val < hi): <span class="kw">return False</span>
+        <span class="kw">return</span> check(node.left, lo, node.val) <span class="kw">and</span> \
+               check(node.right, node.val, hi)
+    <span class="kw">return</span> check(root, <span class="kw">float</span>(<span class="str">'-inf'</span>), <span class="kw">float</span>(<span class="str">'inf'</span>))</pre></div></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">5. Binary Tree Level Order Traversal</div><span class="diff dm">Medium</span><span style="font-family:'Source Code Pro',monospace;font-size:.6rem;color:var(--text3)">LC 102</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p5e')">Explain</div></div>
+        <div class="ptc active" id="p5e"><p><strong>Pattern:</strong> BFS with level tracking. Record len(q) before processing each level. Full code in Section 3 (levelOrder function). O(n) time and space.</p></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">6. Lowest Common Ancestor</div><span class="diff dm">Medium</span><span style="font-family:'Source Code Pro',monospace;font-size:.6rem;color:var(--text3)">LC 236</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p6e')">Explain</div></div>
+        <div class="ptc active" id="p6e"><p><strong>Pattern:</strong> If root is p or q, return root. Otherwise recurse both sides. If both non-null results, root is LCA. Else return non-null result. Full code in Section 7.</p></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">7. Maximum Path Sum</div><span class="diff dh">Hard</span><span style="font-family:'Source Code Pro',monospace;font-size:.6rem;color:var(--text3)">LC 124</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p7e')">Explain</div></div>
+        <div class="ptc active" id="p7e"><p><strong>Pattern:</strong> DFS returning max gain from node upward. At each node: update global max with left+node+right. Return node + max(left, right) for parent. Full code in Section 6.</p></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">8. Serialize & Deserialize</div><span class="diff dh">Hard</span><span style="font-family:'Source Code Pro',monospace;font-size:.6rem;color:var(--text3)">LC 297</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p8e')">Explain</div></div>
+        <div class="ptc active" id="p8e"><p><strong>Pattern:</strong> Preorder DFS with '#' for nulls. Deserialize uses an iterator over split values. Full code in Section 12.</p></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">9. Kth Smallest in BST</div><span class="diff dm">Medium</span><span style="font-family:'Source Code Pro',monospace;font-size:.6rem;color:var(--text3)">LC 230</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p9e')">Explain</div><div class="ptab" onclick="st(this,'p9c')">Code</div></div>
+        <div class="ptc active" id="p9e"><p><strong>Pattern:</strong> Inorder traversal of BST = sorted order. The kth element in inorder traversal = kth smallest.</p></div>
+        <div class="ptc" id="p9c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">kthSmallest</span>(root, k):
+    stack, cur = [], root
+    <span class="kw">while</span> cur <span class="kw">or</span> stack:
+        <span class="kw">while</span> cur: stack.append(cur); cur = cur.left
+        cur = stack.pop()
+        k -= <span class="num">1</span>
+        <span class="kw">if</span> k == <span class="num">0</span>: <span class="kw">return</span> cur.val
+        cur = cur.right</pre></div></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">10. Binary Tree Right Side View</div><span class="diff dm">Medium</span><span style="font-family:'Source Code Pro',monospace;font-size:.6rem;color:var(--text3)">LC 199</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p10e')">Explain</div></div>
+        <div class="ptc active" id="p10e"><p><strong>Pattern:</strong> BFS level order. Take the last element of each level. Full code in Section 8 (rightSideView2).</p></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">11. Construct Tree from Preorder+Inorder</div><span class="diff dm">Medium</span><span style="font-family:'Source Code Pro',monospace;font-size:.6rem;color:var(--text3)">LC 105</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p11e')">Explain</div></div>
+        <div class="ptc active" id="p11e"><p><strong>Pattern:</strong> preorder[0] = root. Find root in inorder → left/right subtree sizes. Recurse. O(n) with hashmap. Full code in Section 12.</p></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">12. Diameter of Binary Tree</div><span class="diff de">Easy</span><span style="font-family:'Source Code Pro',monospace;font-size:.6rem;color:var(--text3)">LC 543</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p12e')">Explain</div></div>
+        <div class="ptc active" id="p12e"><p><strong>Pattern:</strong> DFS returns height. At each node, update global max with left+right (diameter through node). Full code in Section 5.</p></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">13. Path Sum III</div><span class="diff dm">Medium</span><span style="font-family:'Source Code Pro',monospace;font-size:.6rem;color:var(--text3)">LC 437</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p13e')">Explain</div></div>
+        <div class="ptc active" id="p13e"><p><strong>Pattern:</strong> DFS with prefix sum HashMap. At each node, check if (curr_sum - target) exists in prefix map. Full code in Section 6.</p></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">14. Implement Trie</div><span class="diff dm">Medium</span><span style="font-family:'Source Code Pro',monospace;font-size:.6rem;color:var(--text3)">LC 208</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p14e')">Explain</div></div>
+        <div class="ptc active" id="p14e"><p><strong>Pattern:</strong> TrieNode with children dict and is_end flag. Insert/search traverse character by character. Full implementation in Section 10.</p></div>
+      </div>
+    </div>
+
+    <div class="prob">
+      <div class="phdr"><div class="ptitle">15. Word Search II (Trie + Backtracking)</div><span class="diff dh">Hard</span><span style="font-family:'Source Code Pro',monospace;font-size:.6rem;color:var(--text3)">LC 212</span></div>
+      <div class="pbody">
+        <div class="ptabs"><div class="ptab active" onclick="st(this,'p15e')">Explain</div><div class="ptab" onclick="st(this,'p15c')">Code</div></div>
+        <div class="ptc active" id="p15e"><p><strong>Pattern:</strong> Build Trie from word list. DFS on grid matching Trie paths. When is_end hit, record word. Prune Trie to avoid repeated searches.</p></div>
+        <div class="ptc" id="p15c"><div class="cb2"><div class="ch"><span class="cl">Python</span><button class="cpb" onclick="cc(this)">Copy</button></div><pre><span class="kw">def</span> <span class="fn">findWords</span>(board, words):
+    trie = {}
+    <span class="kw">for</span> w <span class="kw">in</span> words:
+        node = trie
+        <span class="kw">for</span> c <span class="kw">in</span> w: node = node.setdefault(c, {})
+        node[<span class="str">'#'</span>] = w  <span class="cm"># Mark end with word itself</span>
+
+    R, C = <span class="kw">len</span>(board), <span class="kw">len</span>(board[<span class="num">0</span>])
+    result = []
+
+    <span class="kw">def</span> <span class="fn">dfs</span>(r, c, node):
+        ch = board[r][c]
+        <span class="kw">if</span> ch <span class="kw">not in</span> node: <span class="kw">return</span>
+        nxt = node[ch]
+        <span class="kw">if</span> <span class="str">'#'</span> <span class="kw">in</span> nxt:
+            result.append(nxt.pop(<span class="str">'#'</span>))  <span class="cm"># Found word!</span>
+        board[r][c] = <span class="str">'*'</span>  <span class="cm"># Mark visited</span>
+        <span class="kw">for</span> dr, dc <span class="kw">in</span> [(0,1),(0,-1),(1,0),(-1,0)]:
+            nr, nc = r+dr, c+dc
+            <span class="kw">if</span> 0<=nr<R <span class="kw">and</span> 0<=nc<C <span class="kw">and</span> board[nr][nc]!=<span class="str">'*'</span>:
+                dfs(nr, nc, nxt)
+        board[r][c] = ch  <span class="cm"># Restore</span>
+        <span class="kw">if not</span> nxt: <span class="kw">del</span> node[ch]  <span class="cm"># Prune empty branch</span>
+
+    <span class="kw">for</span> r <span class="kw">in</span> <span class="kw">range</span>(R):
+        <span class="kw">for</span> c <span class="kw">in</span> <span class="kw">range</span>(C):
+            dfs(r, c, trie)
+    <span class="kw">return</span> result</pre></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== S14: CHEAT SHEET & ROADMAP ===== -->
+  <section class="section" id="s14">
+    <div class="shdr"><span class="snum">14</span>
+      <div><div class="stitle">Cheat Sheet & 7-Day Roadmap</div><div class="ssub">Everything for interview day — one screen</div></div>
+    </div>
+
+    <div class="cgrid">
+      <div class="ci2">
+        <div class="cit">🌳 TreeNode Template</div>
+        <div class="cb2" style="margin:0"><pre style="font-size:.7rem;padding:10px"><span class="kw">class</span> <span class="cls">TreeNode</span>:
+  <span class="kw">def</span> <span class="fn">__init__</span>(s,v=0,l=<span class="bl">None</span>,r=<span class="bl">None</span>):
+    s.val=v;s.left=l;s.right=r</pre></div>
+      </div>
+      <div class="ci2">
+        <div class="cit">🔄 DFS Templates</div>
+        <div class="cb2" style="margin:0"><pre style="font-size:.7rem;padding:10px"><span class="cm"># Preorder</span>
+<span class="kw">def</span> <span class="fn">pre</span>(n):
+  <span class="kw">if not</span> n: <span class="kw">return</span>
+  <span class="cm"># process n</span>
+  pre(n.left);pre(n.right)
+<span class="cm"># Post: swap last two lines</span>
+<span class="cm"># Inorder: process between</span></pre></div>
+      </div>
+      <div class="ci2">
+        <div class="cit">🌊 BFS Template</div>
+        <div class="cb2" style="margin:0"><pre style="font-size:.7rem;padding:10px"><span class="kw">from</span> collections <span class="kw">import</span> deque
+q = deque([root])
+<span class="kw">while</span> q:
+  sz = <span class="kw">len</span>(q)
+  <span class="kw">for</span> _ <span class="kw">in</span> <span class="kw">range</span>(sz):
+    n = q.popleft()
+    <span class="kw">if</span> n.left: q.append(n.left)
+    <span class="kw">if</span> n.right:q.append(n.right)</pre></div>
+      </div>
+      <div class="ci2">
+        <div class="cit">📊 Complexity Quick Ref</div>
+        <ul>
+          <li>BST search avg: O(log n)</li>
+          <li>BST search worst: O(n)</li>
+          <li>AVL all ops: O(log n)</li>
+          <li>DFS traversal: O(n) time, O(h) space</li>
+          <li>BFS: O(n) time, O(w) space (w=max width)</li>
+          <li>Trie insert/search: O(L) L=word length</li>
+          <li>Segment tree query/update: O(log n)</li>
+        </ul>
+      </div>
+      <div class="ci2">
+        <div class="cit">🎯 Pattern Recognition</div>
+        <ul>
+          <li>"Height/depth/balance" → DFS returning int</li>
+          <li>"Level-wise / shortest" → BFS</li>
+          <li>"Path with sum" → DFS backtracking</li>
+          <li>"LCA" → check if root = p or q</li>
+          <li>"Validate BST" → pass min/max bounds</li>
+          <li>"Serialize" → preorder DFS with nulls</li>
+          <li>"Range query updates" → Segment Tree</li>
+          <li>"String prefix search" → Trie</li>
+        </ul>
+      </div>
+      <div class="ci2">
+        <div class="cit">⚠️ Common Mistakes</div>
+        <ul>
+          <li>BST validate: wrong — check root.left.val &lt; root.val only. Right — pass min/max bounds down!</li>
+          <li>Height of empty = -1 OR 0 (clarify!)</li>
+          <li>Path sum: check leaf, not just null child</li>
+          <li>LCA: handle case where p or q = root</li>
+          <li>Inorder iterative: advance cur after pop</li>
+          <li>Level order: save len(q) BEFORE inner loop</li>
+        </ul>
+      </div>
+      <div class="ci2">
+        <div class="cit">💡 Key Insights</div>
+        <ul>
+          <li>Inorder BST = sorted sequence</li>
+          <li>Diameter may not pass through root!</li>
+          <li>Max path sum: compare 0 to ignore negatives</li>
+          <li>Preorder[0] = root for reconstruction</li>
+          <li>LCA in BST: O(log n) via BST property</li>
+          <li>Complete BT height = ⌊log₂ n⌋</li>
+        </ul>
+      </div>
+      <div class="ci2">
+        <div class="cit">🏆 Interview Phrases</div>
+        <ul>
+          <li>"I'll use DFS returning height to compute this in O(n)"</li>
+          <li>"BFS gives level-by-level processing — O(n) time and O(w) space"</li>
+          <li>"For BST validation I pass bounds down, not just compare with parent"</li>
+          <li>"LCA in BST is O(log n) using the ordering property"</li>
+          <li>"I'll use a global variable to track max across all paths"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top:28px">
+      <div class="stitle" style="font-size:1.6rem;margin-bottom:20px">7-Day Roadmap</div>
+      <div class="roadmap">
+        <div class="rday"><div class="rdot">D1</div>
+          <div class="rbody">
+            <div class="rttl">Day 1 — Foundations <span class="badge be">Beginner</span></div>
+            <ul class="rlist">
+              <li>Read Sections 1–2. Memorize tree vocabulary and TreeNode class.</li>
+              <li>Build trees manually: draw on paper, code from scratch.</li>
+              <li>Implement all 4 traversals recursively from memory.</li>
+              <li>Solve: LC 104 (Max Depth), LC 226 (Invert Tree), LC 101 (Symmetric).</li>
+              <li>Understand height vs depth difference.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rday"><div class="rdot" style="border-color:var(--a5)">D2</div>
+          <div class="rbody">
+            <div class="rttl">Day 2 — Traversals & BST <span class="badge be">Beginner</span></div>
+            <ul class="rlist">
+              <li>Implement all 4 traversals iteratively (Section 3).</li>
+              <li>Use the traversal visualizer. Trace inorder on BST = sorted.</li>
+              <li>Implement full BST (insert, search, delete) from scratch.</li>
+              <li>Solve: LC 98 (Validate BST), LC 230 (Kth Smallest).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rday"><div class="rdot" style="border-color:var(--a3)">D3</div>
+          <div class="rbody">
+            <div class="rttl">Day 3 — BFS & Level Order <span class="badge bm">Intermediate</span></div>
+            <ul class="rlist">
+              <li>Memorize BFS level order template cold (Section 8).</li>
+              <li>Solve: LC 102 (Level Order), LC 199 (Right Side View).</li>
+              <li>Solve: LC 103 (Zigzag Level Order), LC 637 (Average of Levels).</li>
+              <li>Understand when BFS beats DFS (level-wise / shortest path problems).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rday"><div class="rdot" style="border-color:var(--a4)">D4</div>
+          <div class="rbody">
+            <div class="rttl">Day 4 — DFS Patterns <span class="badge bm">Intermediate</span></div>
+            <ul class="rlist">
+              <li>Path sum family: LC 112, 113, 437 (Sections 5–6).</li>
+              <li>LCA: LC 236, LC 235 (BST version). Trace algorithm by hand.</li>
+              <li>Solve: LC 543 (Diameter), LC 110 (Is Balanced).</li>
+              <li>Solve: LC 124 (Max Path Sum) — hardest DFS pattern.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rday"><div class="rdot" style="border-color:var(--a2)">D5</div>
+          <div class="rbody">
+            <div class="rttl">Day 5 — Advanced Trees <span class="badge bh">Advanced</span></div>
+            <ul class="rlist">
+              <li>Implement Trie from scratch: insert, search, startsWith (Section 10).</li>
+              <li>Solve: LC 208 (Implement Trie), LC 212 (Word Search II).</li>
+              <li>Construct from traversals: LC 105 (Preorder + Inorder).</li>
+              <li>Serialize/Deserialize: LC 297.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rday"><div class="rdot" style="border-color:var(--a3)">D6</div>
+          <div class="rbody">
+            <div class="rttl">Day 6 — Segment Tree & Hard Problems <span class="badge bh">Advanced</span></div>
+            <ul class="rlist">
+              <li>Implement Segment Tree (Section 11). Understand build/query/update.</li>
+              <li>Solve: LC 307 (Range Sum Query Mutable) with Segment Tree.</li>
+              <li>Solve: LC 114 (Flatten to Linked List), LC 297 again without reference.</li>
+              <li>Review AVL rotations (Section 9) conceptually.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rday"><div class="rdot">D7</div>
+          <div class="rbody">
+            <div class="rttl">Day 7 — Mock Interview <span class="badge bh">Interview</span></div>
+            <ul class="rlist">
+              <li>Revise Cheat Sheet — 30 min, no code.</li>
+              <li>Code TreeNode, BFS template, DFS template from memory in &lt;3 min each.</li>
+              <li>Solve 3 unseen problems with 35-min timer. Explain reasoning aloud.</li>
+              <li>Final check: can you validate BST, find LCA, and serialize a tree in one sitting?</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout ok" style="margin-top:24px">
+      <div class="ci">🏆</div>
+      <div class="cb"><div class="cbt">You're Interview-Ready When You Can...</div>
+        <ul style="margin:0;padding-left:16px">
+          <li>Write all 4 traversals (recursive AND iterative) from memory</li>
+          <li>Validate BST using min/max bounds (not just parent comparison)</li>
+          <li>Find LCA in both binary tree and BST with correct time complexity</li>
+          <li>Implement Trie from scratch in under 10 minutes</li>
+          <li>Recognize DFS-returning-value vs global-variable patterns</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <div class="ci">🚫</div>
+      <div class="cb"><div class="cbt">When to Use BFS vs DFS</div>
+        <strong>BFS:</strong> level-order, shortest path, minimum depth, anything level-wise.<br>
+        <strong>DFS:</strong> all paths, max/min of any path, tree construction, validate structure.<br>
+        <strong>DFS iterative</strong> when recursion depth could exceed Python's limit (~1000 default).
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div>🌳 Trees Mastery — Complete DSA Course</div>
+    <div style="margin-top:4px">From roots to leaves. Every pattern mastered.</div>
+  </footer>
+</main>
+</div>
+
+<script>
+/* THEME / SIDEBAR */
+function toggleTheme(){const h=document.documentElement;h.setAttribute('data-theme',h.getAttribute('data-theme')==='dark'?'light':'dark');drawBST()}
+function openSb(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('show')}
+function closeSb(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
+function gt(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});document.querySelectorAll('.nl').forEach(n=>n.classList.remove('active'));event.currentTarget.classList.add('active');if(window.innerWidth<=768)closeSb()}
+function cc(btn){const c=btn.closest('.cb2').querySelector('pre').innerText;navigator.clipboard.writeText(c).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',1800)})}
+function cq(btn,r,id){btn.closest('.qopts').querySelectorAll('.qopt').forEach(o=>o.disabled=true);const fb=document.getElementById(id);if(r==='correct'){btn.classList.add('correct');fb.className='qfb show ok'}else{btn.classList.add('wrong');fb.className='qfb show no';fb.textContent='❌ Not quite — review the section above!'}}
+function st(tab,cid){const b=tab.closest('.pbody');b.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));b.querySelectorAll('.ptc').forEach(c=>c.classList.remove('active'));tab.classList.add('active');document.getElementById(cid).classList.add('active')}
+
+/* TRAVERSAL VISUALIZER */
+const TREE_VALS = [1,2,3,4,5,null,6];
+function buildTree(vals){
+  if(!vals||!vals[0])return null;
+  const nodes=vals.map(v=>v!==null&&v!==undefined?{val:v,left:null,right:null}:null);
+  for(let i=0;i<nodes.length;i++){
+    if(!nodes[i])continue;
+    const l=2*i+1,r=2*i+2;
+    if(l<nodes.length)nodes[i].left=nodes[l];
+    if(r<nodes.length)nodes[i].right=nodes[r];
+  }
+  return nodes[0];
+}
+
+function initTravNodes(){
+  const el=document.getElementById('travNodes');el.innerHTML='';
+  [1,2,3,4,5,6].forEach(v=>{
+    const n=document.createElement('div');n.className='tnode';n.textContent=v;n.id='tn'+v;el.appendChild(n);
+  });
+}
+
+let travTimeout=[];
+function resetTrav(){travTimeout.forEach(clearTimeout);travTimeout=[];initTravNodes();document.getElementById('travOrder').innerHTML='';document.getElementById('travLog').innerHTML='<span class="vinf">Choose a traversal type above.</span>'}
+
+function runTrav(type){
+  resetTrav();
+  const root=buildTree(TREE_VALS);
+  const order=[];
+  const names={inorder:'Inorder: L→N→R',preorder:'Preorder: N→L→R',postorder:'Postorder: L→R→N',level:'Level Order (BFS)'};
+  function inorder(n){if(!n)return;inorder(n.left);order.push(n.val);inorder(n.right)}
+  function preorder(n){if(!n)return;order.push(n.val);preorder(n.left);preorder(n.right)}
+  function postorder(n){if(!n)return;postorder(n.left);postorder(n.right);order.push(n.val)}
+  function levelorder(n){if(!n)return;const q=[n];while(q.length){const x=q.shift();order.push(x.val);if(x.left)q.push(x.left);if(x.right)q.push(x.right)}}
+  if(type==='inorder')inorder(root);
+  else if(type==='preorder')preorder(root);
+  else if(type==='postorder')postorder(root);
+  else levelorder(root);
+  document.getElementById('travLog').innerHTML=`<span class="vinf">${names[type]} — animating...</span>`;
+  const resultEl=document.getElementById('travOrder');
+  order.forEach((val,i)=>{
+    const t=setTimeout(()=>{
+      const node=document.getElementById('tn'+val);
+      if(node){node.className='tnode current';setTimeout(()=>node.className='tnode visited',400)}
+      resultEl.innerHTML='<span style="font-weight:700;margin-right:6px">Order:</span>'+order.slice(0,i+1).map(v=>`<span class="item">${v}</span>`).join('');
+      if(i===order.length-1)document.getElementById('travLog').innerHTML=`<span class="vok">✅ ${names[type]} complete: [${order}]</span>`;
+    },i*600);
+    travTimeout.push(t);
+  });
+}
+
+/* BST VISUALIZER */
+class BSTree{
+  constructor(){this.root=null}
+  insert(v){this.root=this._ins(this.root,v)}
+  _ins(n,v){if(!n)return{val:v,left:null,right:null};if(v<n.val)n.left=this._ins(n.left,v);else if(v>n.val)n.right=this._ins(n.right,v);return n}
+  search(v){let n=this.root;while(n){if(n.val===v)return true;n=v<n.val?n.left:n.right}return false}
+  delete(v){this.root=this._del(this.root,v)}
+  _del(n,v){if(!n)return null;if(v<n.val)n.left=this._del(n.left,v);else if(v>n.val)n.right=this._del(n.right,v);else{if(!n.left)return n.right;if(!n.right)return n.left;let s=n.right;while(s.left)s=s.left;n.val=s.val;n.right=this._del(n.right,s.val)}return n}
+  inorder(){const r=[];const dfs=(n)=>{if(!n)return;dfs(n.left);r.push(n.val);dfs(n.right)};dfs(this.root);return r}
+}
+const bst=new BSTree();
+[50,30,70,20,40,60,80].forEach(v=>bst.insert(v));
+
+function drawBST(){
+  const canvas=document.getElementById('bstCanvas');
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width=Math.max(600,canvas.parentElement.clientWidth||700);
+  ctx.clearRect(0,0,W,canvas.height);
+  const isDark=document.documentElement.getAttribute('data-theme')!=='light';
+  const textC=isDark?'#e2e8f5':'#0f1520';
+  const borderC=isDark?'#262d3d':'#c8d0e4';
+  if(!bst.root){ctx.fillStyle=isDark?'#3d4d66':'#9aaac0';ctx.font='13px Source Code Pro,monospace';ctx.textAlign='center';ctx.fillText('BST is empty. Insert some values!',W/2,120);return}
+  function getPositions(node,x,y,xOff){
+    if(!node)return;
+    node._x=x;node._y=y;
+    getPositions(node.left, x-xOff,y+60,xOff/2);
+    getPositions(node.right,x+xOff,y+60,xOff/2);
+  }
+  getPositions(bst.root,W/2,40,W/4);
+  function drawEdges(node){
+    if(!node)return;
+    if(node.left){ctx.beginPath();ctx.moveTo(node._x,node._y);ctx.lineTo(node.left._x,node.left._y);ctx.strokeStyle=borderC;ctx.lineWidth=1.5;ctx.stroke();drawEdges(node.left)}
+    if(node.right){ctx.beginPath();ctx.moveTo(node._x,node._y);ctx.lineTo(node.right._x,node.right._y);ctx.strokeStyle=borderC;ctx.lineWidth=1.5;ctx.stroke();drawEdges(node.right)}
+  }
+  function drawNodes(node){
+    if(!node)return;
+    ctx.beginPath();ctx.arc(node._x,node._y,20,0,2*Math.PI);
+    ctx.fillStyle=isDark?'rgba(100,255,218,0.12)':'rgba(100,255,218,0.18)';
+    ctx.fill();ctx.strokeStyle='#64ffda';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle=textC;ctx.font='bold 13px Source Code Pro,monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(node.val,node._x,node._y);
+    drawNodes(node.left);drawNodes(node.right);
+  }
+  drawEdges(bst.root);drawNodes(bst.root);
+}
+
+function bstLog(msg,t='info'){document.getElementById('bstLog').innerHTML=`<span class="${t==='ok'?'vok':t==='err'?'verr':'vinf'}">${msg}</span>`}
+
+function bstOp(op){
+  const v=parseInt(document.getElementById('bstInput').value);
+  if(op==='inorder'){const r=bst.inorder();document.getElementById('bstResult').innerHTML='<span style="color:var(--a1);font-weight:700">Inorder: </span>'+r.join(' → ');bstLog('Inorder traversal (should be sorted for valid BST)','ok');return}
+  if(isNaN(v)){bstLog('Enter a valid number','err');return}
+  if(op==='insert'){bst.insert(v);bstLog(`Inserted ${v}`,'ok')}
+  else if(op==='search'){const f=bst.search(v);bstLog(f?`✅ Found ${v} in BST!`:`❌ ${v} not found in BST`,f?'ok':'err')}
+  else if(op==='delete'){bst.delete(v);bstLog(`Deleted ${v} (if it existed)`,'ok')}
+  document.getElementById('bstResult').innerHTML='';
+  drawBST();
+}
+function bstReset(){while(bst.root)bst.root=null;[50,30,70,20,40,60,80].forEach(v=>bst.insert(v));drawBST();bstLog('BST reset to default [50,30,70,20,40,60,80]','ok');document.getElementById('bstResult').innerHTML=''}
+
+/* PROGRESS */
+function updateProgress(){const s=document.querySelectorAll('.section');let v=0;const sc=window.scrollY+window.innerHeight;s.forEach(x=>{if(x.offsetTop<sc-100)v++});document.getElementById('pf').style.width=Math.min(100,Math.round(v/s.length*100))+'%'}
+function updateNav(){const s=document.querySelectorAll('.section');const ls=document.querySelectorAll('.nl');let a='';s.forEach(x=>{if(x.offsetTop<=window.scrollY+200)a=x.id});ls.forEach(l=>{l.classList.remove('active');const o=l.getAttribute('onclick');if(o&&o.includes(a))l.classList.add('active')})}
+window.addEventListener('scroll',()=>{updateProgress();updateNav()});
+window.addEventListener('load',()=>{initTravNodes();drawBST()});
+window.addEventListener('resize',drawBST);
+new MutationObserver(()=>drawBST()).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+</script>
+</body>
+</html>

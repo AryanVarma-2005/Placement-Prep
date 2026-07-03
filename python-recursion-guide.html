@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recursion Mastery — Python</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0e0b07;
+    --surface:   #141008;
+    --surface2:  #1c1509;
+    --surface3:  #231b0c;
+    --border:    #2e2410;
+    --border2:   #3d3118;
+    --amber:     #f5a623;
+    --amber-dim: #c47d0e;
+    --gold:      #e8c56a;
+    --cream:     #f0e6d0;
+    --sage:      #7fb380;
+    --teal:      #5fbfb3;
+    --rose:      #e07070;
+    --lavender:  #a88fd0;
+    --text:      #d4c4a8;
+    --text-muted:#8a7a60;
+    --text-dim:  #4a3e2a;
+    --heading:   #f0e6d0;
+    --code-bg:   #110e06;
+
+    /* Python syntax */
+    --pk: #d4946a;   /* keyword */
+    --pb: #5fbfb3;   /* builtin */
+    --ps: #7fb380;   /* string */
+    --pn: #e8c56a;   /* number */
+    --pc: #5a5040;   /* comment */
+    --pf: #f5a623;   /* function */
+    --pv: #c9b99a;   /* variable */
+    --pp: #a88fd0;   /* class/type */
+    --po: #d4c4a8;   /* operator */
+    --pd: #e07070;   /* decorator */
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ─── GRAIN OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; opacity: 0.4;
+  }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* ─── TOPBAR ─── */
+  .topbar {
+    position: sticky; top: 0; z-index: 200;
+    background: rgba(14, 11, 7, 0.96);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    height: 54px;
+    display: flex; align-items: center;
+    padding: 0 36px; gap: 18px;
+  }
+
+  .topbar-brand {
+    font-family: 'Crimson Pro', serif;
+    font-size: 18px; font-weight: 700;
+    color: var(--amber); text-decoration: none;
+    letter-spacing: 0.02em;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .topbar-pill {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--text-dim); background: var(--surface2);
+    border: 1px solid var(--border); padding: 2px 9px; border-radius: 3px;
+    letter-spacing: 0.05em;
+  }
+
+  .topbar-spacer { flex: 1; }
+
+  .topbar-tag {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--text-muted); letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative;
+    padding: 96px 48px 80px;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 0%,   #f5a62318 0%, transparent 55%),
+      radial-gradient(ellipse 40% 30% at 15% 100%,  #a88fd010 0%, transparent 50%),
+      radial-gradient(ellipse 40% 30% at 85% 100%,  #7fb38010 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  /* Decorative recursive rings */
+  .hero-rings {
+    position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+  }
+
+  .ring {
+    position: absolute;
+    border: 1px solid;
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    animation: ringPulse 4s ease-in-out infinite;
+  }
+
+  .ring:nth-child(1) { width: 500px; height: 500px; border-color: #f5a62306; animation-delay: 0s; }
+  .ring:nth-child(2) { width: 700px; height: 700px; border-color: #f5a62304; animation-delay: 0.8s; }
+  .ring:nth-child(3) { width: 900px; height: 900px; border-color: #f5a62303; animation-delay: 1.6s; }
+  .ring:nth-child(4) { width: 1100px; height: 1100px; border-color: #f5a62302; animation-delay: 2.4s; }
+
+  @keyframes ringPulse {
+    0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+    50%       { opacity: 1;   transform: translate(-50%, -50%) scale(1.02); }
+  }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--amber-dim); letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    border: 1px solid #f5a62320;
+    background: #f5a62308;
+    padding: 6px 18px; border-radius: 2px;
+  }
+
+  .hero h1 {
+    font-family: 'Crimson Pro', serif;
+    font-size: clamp(56px, 10vw, 108px);
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 0.95;
+    letter-spacing: -3px;
+    margin-bottom: 28px;
+  }
+
+  .hero h1 .word-recursion {
+    display: block;
+    background: linear-gradient(135deg, var(--amber) 0%, var(--gold) 50%, var(--amber) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 40px #f5a62340);
+  }
+
+  .hero h1 .word-python {
+    font-style: italic;
+    color: var(--sage);
+    -webkit-text-fill-color: var(--sage);
+    font-size: 0.55em;
+    letter-spacing: -1px;
+    display: block;
+    margin-top: 4px;
+  }
+
+  .hero-desc {
+    font-family: 'Crimson Pro', serif;
+    font-size: 20px; font-weight: 300; font-style: italic;
+    color: var(--text-muted);
+    max-width: 520px; margin: 0 auto 52px;
+    line-height: 1.5;
+  }
+
+  .hero-stats {
+    display: flex; justify-content: center; gap: 0; flex-wrap: wrap;
+    border: 1px solid var(--border); border-radius: 4px;
+    overflow: hidden; max-width: 540px; margin: 0 auto;
+  }
+
+  .stat {
+    flex: 1; padding: 18px 24px; text-align: center;
+    border-right: 1px solid var(--border);
+    min-width: 100px;
+  }
+
+  .stat:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: 'Crimson Pro', serif;
+    font-size: 36px; font-weight: 700;
+    color: var(--amber); line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.1em;
+  }
+
+  /* ─── LAYOUT ─── */
+  .layout {
+    display: grid;
+    grid-template-columns: 252px 1fr;
+    max-width: 1380px; margin: 0 auto;
+    position: relative; z-index: 1;
+  }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar {
+    position: sticky; top: 54px;
+    height: calc(100vh - 54px);
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+    padding: 24px 0;
+  }
+
+  .sidebar::-webkit-scrollbar { width: 3px; }
+
+  .sidebar-label {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--text-dim); padding: 0 20px 14px;
+    border-bottom: 1px solid var(--border); margin-bottom: 10px;
+  }
+
+  .nav-group-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.12em; color: var(--text-dim);
+    padding: 14px 20px 5px;
+  }
+
+  .nav-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 20px; color: var(--text-muted);
+    text-decoration: none; font-size: 13px;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .nav-link:hover {
+    color: var(--cream); background: var(--surface2);
+    border-left-color: var(--amber);
+  }
+
+  .nav-link.active {
+    color: var(--amber); background: #f5a62310;
+    border-left-color: var(--amber);
+  }
+
+  .nav-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--text-dim); flex-shrink: 0;
+    transition: background 0.15s;
+  }
+
+  .nav-link.active .nav-dot { background: var(--amber); }
+
+  /* ─── MAIN ─── */
+  .main { padding: 52px 60px; max-width: 960px; position: relative; z-index: 1; }
+
+  /* ─── SECTIONS ─── */
+  .section {
+    margin-bottom: 88px;
+    opacity: 0; transform: translateY(22px);
+    animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+  .section:nth-child(1)  { animation-delay: 0.05s; }
+  .section:nth-child(2)  { animation-delay: 0.1s;  }
+  .section:nth-child(3)  { animation-delay: 0.15s; }
+  .section:nth-child(4)  { animation-delay: 0.2s;  }
+  .section:nth-child(5)  { animation-delay: 0.25s; }
+
+  .section-header {
+    display: flex; align-items: flex-start; gap: 18px;
+    margin-bottom: 28px; padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-icon {
+    width: 44px; height: 44px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0; margin-top: 2px;
+  }
+
+  .ic-amber  { background: #f5a62318; border: 1px solid #f5a62330; }
+  .ic-sage   { background: #7fb38018; border: 1px solid #7fb38030; }
+  .ic-teal   { background: #5fbfb318; border: 1px solid #5fbfb330; }
+  .ic-lav    { background: #a88fd018; border: 1px solid #a88fd030; }
+  .ic-rose   { background: #e0707018; border: 1px solid #e0707030; }
+  .ic-gold   { background: #e8c56a18; border: 1px solid #e8c56a30; }
+  .ic-cream  { background: #f0e6d018; border: 1px solid #f0e6d030; }
+  .ic-muted  { background: #2e241018; border: 1px solid #3d311830; }
+
+  .section-meta { flex: 1; }
+  .section-num {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--text-dim); letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 4px; display: block;
+  }
+
+  .section h2 {
+    font-family: 'Crimson Pro', serif;
+    font-size: 30px; font-weight: 700;
+    color: var(--heading); letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+
+  .level-badge {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    padding: 4px 11px; border-radius: 2px; border: 1px solid;
+    white-space: nowrap; margin-top: 6px; align-self: flex-start;
+    flex-shrink: 0;
+  }
+
+  .lv-b { color: var(--sage);     border-color: #7fb38040; background: #7fb38010; }
+  .lv-i { color: var(--gold);     border-color: #e8c56a40; background: #e8c56a10; }
+  .lv-a { color: var(--amber);    border-color: #f5a62340; background: #f5a62310; }
+  .lv-e { color: var(--lavender); border-color: #a88fd040; background: #a88fd010; }
+
+  /* ─── CODE BLOCKS ─── */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px; margin: 18px 0; overflow: hidden;
+  }
+
+  .code-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 16px; background: var(--surface3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-left  { display: flex; align-items: center; gap: 12px; }
+  .code-dots  { display: flex; gap: 6px; }
+  .code-dot   { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; } .dot-y { background: #febc2e; } .dot-g { background: #28c840; }
+
+  .code-lang {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;
+  }
+
+  .copy-btn {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--text-muted); background: none;
+    border: 1px solid var(--border2); padding: 3px 10px;
+    border-radius: 3px; cursor: pointer; transition: all 0.15s;
+  }
+  .copy-btn:hover { color: var(--amber); border-color: var(--amber); }
+
+  pre {
+    padding: 22px; overflow-x: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px; line-height: 1.75;
+  }
+
+  /* Syntax colors */
+  .pk { color: var(--pk); }
+  .pb { color: var(--pb); }
+  .ps { color: var(--ps); }
+  .pn { color: var(--pn); }
+  .pc { color: var(--pc); font-style: italic; }
+  .pf { color: var(--pf); }
+  .pv { color: var(--pv); }
+  .pp { color: var(--pp); }
+  .po { color: var(--po); }
+  .pd { color: var(--pd); }
+
+  /* ─── INFO BOXES ─── */
+  .info-box {
+    border-radius: 6px; padding: 15px 18px; margin: 16px 0;
+    border-left: 3px solid;
+    display: flex; gap: 13px; align-items: flex-start;
+  }
+
+  .info-box.tip     { background: #7fb38010; border-color: var(--sage); }
+  .info-box.warning { background: #f5a62310; border-color: var(--amber); }
+  .info-box.danger  { background: #e0707010; border-color: var(--rose); }
+  .info-box.note    { background: #5fbfb310; border-color: var(--teal); }
+  .info-box.think   { background: #a88fd010; border-color: var(--lavender); }
+
+  .info-box-icon    { font-size: 15px; flex-shrink: 0; margin-top: 2px; }
+  .info-box-content { font-size: 13.5px; line-height: 1.6; color: var(--text-muted); }
+  .info-box-content strong { color: var(--text); }
+  .info-box-content code { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--amber); background: var(--surface3); padding: 1px 5px; border-radius: 3px; border: 1px solid var(--border); }
+
+  /* ─── TABLES ─── */
+  .cmd-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+
+  .cmd-table th {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text-muted); text-align: left;
+    padding: 10px 16px; background: var(--surface3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cmd-table td { padding: 10px 16px; border-bottom: 1px solid var(--surface2); vertical-align: top; }
+  .cmd-table tr:hover td { background: var(--surface2); }
+  .cmd-table code { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--amber); background: var(--surface3); padding: 2px 6px; border-radius: 3px; }
+  .cmd-table td:last-child { color: var(--text-muted); }
+
+  /* ─── CONCEPT CARDS ─── */
+  .concept-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 14px; margin: 20px 0;
+  }
+
+  .concept-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 7px; padding: 18px; transition: all 0.2s;
+  }
+
+  .concept-card:hover {
+    border-color: var(--amber-dim);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(245, 166, 35, 0.07);
+  }
+
+  .concept-card h4 {
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    color: var(--amber); margin-bottom: 8px; letter-spacing: 0.03em;
+  }
+
+  .concept-card p { font-size: 13px; color: var(--text-muted); line-height: 1.55; margin: 0; }
+
+  /* ─── CALL STACK VIZ ─── */
+  .call-stack {
+    font-family: 'DM Mono', monospace; font-size: 13px;
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 20px 24px; margin: 16px 0;
+    line-height: 2;
+  }
+
+  .cs-call   { color: var(--amber); }
+  .cs-return { color: var(--sage); }
+  .cs-base   { color: var(--rose); }
+  .cs-note   { color: var(--text-dim); font-style: italic; }
+  .cs-dim    { color: var(--text-dim); }
+  .cs-frame  { color: var(--lavender); }
+  .cs-val    { color: var(--gold); }
+
+  /* ─── TREE VIZ ─── */
+  .tree-viz {
+    font-family: 'DM Mono', monospace; font-size: 12.5px;
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 20px 24px; margin: 16px 0;
+    line-height: 1.9; overflow-x: auto; white-space: pre;
+  }
+
+  .tv-node   { color: var(--amber); }
+  .tv-branch { color: var(--text-dim); }
+  .tv-leaf   { color: var(--sage); }
+  .tv-val    { color: var(--gold); }
+  .tv-call   { color: var(--lavender); }
+
+  /* ─── INLINE CODE ─── */
+  code {
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    color: var(--amber); background: var(--surface3);
+    padding: 2px 6px; border-radius: 3px; border: 1px solid var(--border);
+  }
+
+  /* ─── PROSE ─── */
+  p { margin-bottom: 14px; color: var(--text-muted); }
+  p strong { color: var(--text); font-weight: 600; }
+
+  h3 {
+    font-family: 'Crimson Pro', serif;
+    font-size: 20px; font-weight: 600;
+    color: var(--cream); margin: 30px 0 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  h3::before {
+    content: '';
+    display: inline-block; width: 3px; height: 18px;
+    background: linear-gradient(to bottom, var(--amber), var(--amber-dim));
+    border-radius: 2px;
+  }
+
+  ul, ol { padding-left: 20px; margin-bottom: 14px; color: var(--text-muted); }
+  li { margin-bottom: 5px; font-size: 14px; }
+  li strong { color: var(--text); }
+
+  /* ─── NUMBERED STEPS ─── */
+  .steps { counter-reset: step; list-style: none; padding: 0; }
+  .steps li {
+    counter-increment: step; display: flex;
+    gap: 16px; padding: 14px 0;
+    border-bottom: 1px solid var(--border); align-items: flex-start;
+  }
+  .steps li:last-child { border-bottom: none; }
+  .steps li::before {
+    content: counter(step, decimal-leading-zero);
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--amber); background: #f5a62315; border: 1px solid #f5a62330;
+    border-radius: 4px; padding: 4px 8px; flex-shrink: 0; margin-top: 2px;
+  }
+  .step-content h4 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .step-content p  { font-size: 13px; margin: 0; }
+
+  /* ─── FLOW DIAGRAM ─── */
+  .flow-diagram {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 24px; margin: 20px 0; overflow-x: auto;
+  }
+
+  .flow-row {
+    display: flex; align-items: center; justify-content: center;
+    gap: 0; min-width: max-content; margin: 0 auto;
+  }
+
+  .flow-node {
+    background: var(--surface3); border: 1px solid var(--border);
+    border-radius: 6px; padding: 10px 16px; text-align: center;
+    min-width: 110px; transition: all 0.2s;
+  }
+
+  .flow-node:hover { border-color: var(--amber-dim); }
+  .flow-node span  { display: block; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); margin-bottom: 2px; }
+  .flow-node strong { font-size: 12px; color: var(--text); }
+
+  .flow-arrow { font-size: 16px; color: var(--text-dim); padding: 0 6px; }
+  .flow-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-dim); text-align: center; margin-top: 10px; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { padding: 32px 20px; }
+    .hero { padding: 60px 20px; }
+    .topbar { padding: 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a href="#top" class="topbar-brand">↻ Recursion · Python</a>
+  <span class="topbar-pill">Python 3.x</span>
+  <span class="topbar-spacer"></span>
+  <span class="topbar-tag">Divide · Conquer · Combine</span>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-rings">
+    <div class="ring"></div><div class="ring"></div>
+    <div class="ring"></div><div class="ring"></div>
+  </div>
+  <div class="hero-eyebrow">🔁 Algorithms · Functions calling themselves</div>
+  <h1>
+    <span class="word-recursion">Recursion</span>
+    <span class="word-python">in Python</span>
+  </h1>
+  <p class="hero-desc">To understand recursion, you must first understand recursion — a complete guide from base cases to tail call patterns and beyond.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">12</div><div class="stat-label">Chapters</div></div>
+    <div class="stat"><div class="stat-num">50+</div><div class="stat-label">Examples</div></div>
+    <div class="stat"><div class="stat-num">4</div><div class="stat-label">Levels</div></div>
+  </div>
+</section>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-label">Contents</div>
+
+    <div>
+      <div class="nav-group-label">Foundations</div>
+      <a class="nav-link" href="#intro"><span class="nav-dot"></span>01 · What is Recursion</a>
+      <a class="nav-link" href="#anatomy"><span class="nav-dot"></span>02 · Anatomy</a>
+      <a class="nav-link" href="#callstack"><span class="nav-dot"></span>03 · Call Stack</a>
+      <a class="nav-link" href="#classic"><span class="nav-dot"></span>04 · Classic Examples</a>
+    </div>
+
+    <div>
+      <div class="nav-group-label">Intermediate</div>
+      <a class="nav-link" href="#types"><span class="nav-dot"></span>05 · Types of Recursion</a>
+      <a class="nav-link" href="#tree"><span class="nav-dot"></span>06 · Tree Recursion</a>
+      <a class="nav-link" href="#memoization"><span class="nav-dot"></span>07 · Memoization</a>
+      <a class="nav-link" href="#strings"><span class="nav-dot"></span>08 · Strings & Lists</a>
+    </div>
+
+    <div>
+      <div class="nav-group-label">Advanced</div>
+      <a class="nav-link" href="#backtracking"><span class="nav-dot"></span>09 · Backtracking</a>
+      <a class="nav-link" href="#divconquer"><span class="nav-dot"></span>10 · Divide & Conquer</a>
+      <a class="nav-link" href="#tailcall"><span class="nav-dot"></span>11 · Tail Call & Iteration</a>
+      <a class="nav-link" href="#patterns"><span class="nav-dot"></span>12 · Design Patterns</a>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ══════════════════════════════ -->
+    <!-- 01 · WHAT IS RECURSION        -->
+    <!-- ══════════════════════════════ -->
+    <section class="section" id="intro">
+      <div class="section-header">
+        <div class="section-icon ic-amber">📖</div>
+        <div class="section-meta">
+          <span class="section-num">Chapter 01</span>
+          <h2>What is Recursion?</h2>
+        </div>
+        <span class="level-badge lv-b">Beginner</span>
+      </div>
+
+      <p><strong>Recursion</strong> is a technique where a function calls itself to solve a smaller version of the same problem. It is an elegant way to express problems that have a naturally recursive structure — like trees, graphs, nested data, and mathematical sequences.</p>
+
+      <p>Every recursive solution has two parts: a <strong>base case</strong> that stops the recursion, and a <strong>recursive case</strong> that breaks the problem down and calls itself.</p>
+
+      <h3>The Simplest Example</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pc"># Count down from n to 0</span>
+<span class="pk">def</span> <span class="pf">countdown</span><span class="po">(</span><span class="pv">n</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pk">None</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pv">n</span> <span class="po"><</span> <span class="pn">0</span><span class="po">:</span>            <span class="pc"># ◀ Base case: stop</span>
+        <span class="pk">return</span>
+    <span class="pb">print</span><span class="po">(</span><span class="pv">n</span><span class="po">)</span>
+    <span class="pf">countdown</span><span class="po">(</span><span class="pv">n</span> <span class="po">-</span> <span class="pn">1</span><span class="po">)</span>    <span class="pc"># ◀ Recursive case: smaller subproblem</span>
+
+<span class="pf">countdown</span><span class="po">(</span><span class="pn">3</span><span class="po">)</span>
+<span class="pc"># prints: 3  2  1  0</span></pre>
+      </div>
+
+      <h3>Recursion vs Iteration</h3>
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h4>🔁 Recursion</h4>
+          <p>Function calls itself. Elegant for tree/graph problems. Uses call stack memory. Can be slower if no memoization.</p>
+        </div>
+        <div class="concept-card">
+          <h4>🔄 Iteration</h4>
+          <p>Explicit loop. More performant for linear problems. No stack overhead. Can be verbose for hierarchical data.</p>
+        </div>
+        <div class="concept-card">
+          <h4>✅ Use Recursion When</h4>
+          <p>Problem is naturally tree-shaped (files, DOM, graphs). Divide-and-conquer. Backtracking. Mathematical sequences.</p>
+        </div>
+        <div class="concept-card">
+          <h4>✅ Use Iteration When</h4>
+          <p>Simple loops. Performance critical. Deep nesting risks stack overflow. Python has a 1000-frame stack limit by default.</p>
+        </div>
+      </div>
+
+      <h3>Python's Recursion Limit</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">import</span> <span class="pv">sys</span>
+
+<span class="pc"># Check the default recursion limit</span>
+<span class="pb">print</span><span class="po">(</span><span class="pv">sys</span><span class="po">.</span><span class="pf">getrecursionlimit</span><span class="po">())</span>   <span class="pc"># 1000</span>
+
+<span class="pc"># Increase if needed (use sparingly)</span>
+<span class="pv">sys</span><span class="po">.</span><span class="pf">setrecursionlimit</span><span class="po">(</span><span class="pn">10_000</span><span class="po">)</span>
+
+<span class="pc"># Exceeding the limit raises:</span>
+<span class="pc"># RecursionError: maximum recursion depth exceeded</span></pre>
+      </div>
+
+      <div class="info-box warning">
+        <span class="info-box-icon">⚠️</span>
+        <div class="info-box-content"><strong>Python does not optimize tail calls.</strong> Deep recursion always risks stack overflow. For depth > 1000, prefer an iterative approach or use an explicit stack.</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ -->
+    <!-- 02 · ANATOMY                  -->
+    <!-- ══════════════════════════════ -->
+    <section class="section" id="anatomy">
+      <div class="section-header">
+        <div class="section-icon ic-sage">🧬</div>
+        <div class="section-meta">
+          <span class="section-num">Chapter 02</span>
+          <h2>Anatomy of a Recursive Function</h2>
+        </div>
+        <span class="level-badge lv-b">Beginner</span>
+      </div>
+
+      <h3>The Two Essential Parts</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python · Annotated</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">def</span> <span class="pf">factorial</span><span class="po">(</span><span class="pv">n</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pc"># ───────────────────────────────────────────────
+    # BASE CASE — the problem is small enough to answer directly.
+    # Without this, recursion loops forever (RecursionError).
+    # ───────────────────────────────────────────────</span>
+    <span class="pk">if</span> <span class="pv">n</span> <span class="po">==</span> <span class="pn">0</span> <span class="pk">or</span> <span class="pv">n</span> <span class="po">==</span> <span class="pn">1</span><span class="po">:</span>
+        <span class="pk">return</span> <span class="pn">1</span>
+
+    <span class="pc"># ───────────────────────────────────────────────
+    # RECURSIVE CASE — reduce problem toward base case.
+    # Must make progress: n decreases every call.
+    # ───────────────────────────────────────────────</span>
+    <span class="pk">return</span> <span class="pv">n</span> <span class="po">*</span> <span class="pf">factorial</span><span class="po">(</span><span class="pv">n</span> <span class="po">-</span> <span class="pn">1</span><span class="po">)</span>
+
+<span class="pf">factorial</span><span class="po">(</span><span class="pn">5</span><span class="po">)</span>   <span class="pc"># 120</span></pre>
+      </div>
+
+      <h3>The Three Laws of Recursion</h3>
+      <ol class="steps">
+        <li>
+          <div class="step-content">
+            <h4>Must have a base case</h4>
+            <p>At least one case that can be solved without recursion. This is the stopping condition.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <h4>Must change state and move toward the base case</h4>
+            <p>Each recursive call must work on a smaller or simpler version of the problem. Infinite recursion = bug.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <h4>Must call itself recursively</h4>
+            <p>The function must call itself on the reduced subproblem to constitute actual recursion.</p>
+          </div>
+        </li>
+      </ol>
+
+      <h3>Anatomy Template</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python · Template</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">def</span> <span class="pf">solve</span><span class="po">(</span><span class="pv">problem</span><span class="po">):</span>
+    <span class="pc"># 1. BASE CASE(S) — handle trivially small input</span>
+    <span class="pk">if</span> <span class="pf">is_base_case</span><span class="po">(</span><span class="pv">problem</span><span class="po">):</span>
+        <span class="pk">return</span> <span class="pf">base_solution</span><span class="po">(</span><span class="pv">problem</span><span class="po">)</span>
+
+    <span class="pc"># 2. DECOMPOSE — break into smaller subproblems</span>
+    <span class="pv">smaller_problem</span> <span class="po">=</span> <span class="pf">reduce</span><span class="po">(</span><span class="pv">problem</span><span class="po">)</span>
+
+    <span class="pc"># 3. RECURSE — solve the subproblem</span>
+    <span class="pv">sub_result</span> <span class="po">=</span> <span class="pf">solve</span><span class="po">(</span><span class="pv">smaller_problem</span><span class="po">)</span>
+
+    <span class="pc"># 4. COMBINE — build the full solution from sub_result</span>
+    <span class="pk">return</span> <span class="pf">combine</span><span class="po">(</span><span class="pv">problem</span><span class="po">,</span> <span class="pv">sub_result</span><span class="po">)</span></pre>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ -->
+    <!-- 03 · CALL STACK               -->
+    <!-- ══════════════════════════════ -->
+    <section class="section" id="callstack">
+      <div class="section-header">
+        <div class="section-icon ic-teal">📚</div>
+        <div class="section-meta">
+          <span class="section-num">Chapter 03</span>
+          <h2>The Call Stack</h2>
+        </div>
+        <span class="level-badge lv-b">Beginner</span>
+      </div>
+
+      <p>Each function call creates a new <strong>stack frame</strong> in memory, holding its local variables and return address. Recursive calls stack these frames on top of each other until a base case is hit — then they unwind in reverse order.</p>
+
+      <h3>factorial(4) — Execution Trace</h3>
+      <div class="call-stack">
+<span class="cs-note">── Winding (calling) ──────────────────────────────────</span>
+<span class="cs-call">factorial(4)</span>   <span class="cs-dim">→ needs</span> <span class="cs-frame">4 * factorial(3)</span>   <span class="cs-dim">← frame pushed</span>
+  <span class="cs-call">factorial(3)</span> <span class="cs-dim">→ needs</span> <span class="cs-frame">3 * factorial(2)</span>   <span class="cs-dim">← frame pushed</span>
+    <span class="cs-call">factorial(2)</span> <span class="cs-dim">→ needs</span> <span class="cs-frame">2 * factorial(1)</span> <span class="cs-dim">← frame pushed</span>
+      <span class="cs-base">factorial(1)</span> <span class="cs-dim">→</span> <span class="cs-val">returns 1</span>               <span class="cs-dim">← BASE CASE</span>
+
+<span class="cs-note">── Unwinding (returning) ───────────────────────────────</span>
+    <span class="cs-return">factorial(2)</span> <span class="cs-dim">← 2 * 1 =</span> <span class="cs-val">2</span>            <span class="cs-dim">← frame popped</span>
+  <span class="cs-return">factorial(3)</span>   <span class="cs-dim">← 3 * 2 =</span> <span class="cs-val">6</span>          <span class="cs-dim">← frame popped</span>
+<span class="cs-return">factorial(4)</span>     <span class="cs-dim">← 4 * 6 =</span> <span class="cs-val">24</span>         <span class="cs-dim">← frame popped</span>
+      </div>
+
+      <h3>Visualizing with sys.setprofile</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">import</span> <span class="pv">sys</span>
+
+<span class="pv">depth</span> <span class="po">=</span> <span class="pn">0</span>
+
+<span class="pk">def</span> <span class="pf">trace</span><span class="po">(</span><span class="pv">frame</span><span class="po">,</span> <span class="pv">event</span><span class="po">,</span> <span class="pv">arg</span><span class="po">):</span>
+    <span class="pk">global</span> <span class="pv">depth</span>
+    <span class="pk">if</span> <span class="pv">event</span> <span class="po">==</span> <span class="ps">"call"</span><span class="po">:</span>
+        <span class="pb">print</span><span class="po">(</span><span class="ps">"  "</span> <span class="po">*</span> <span class="pv">depth</span> <span class="po">+</span> <span class="ps">f"→ calling {frame.f_code.co_name}"</span><span class="po">)</span>
+        <span class="pv">depth</span> <span class="po">+=</span> <span class="pn">1</span>
+    <span class="pk">elif</span> <span class="pv">event</span> <span class="po">==</span> <span class="ps">"return"</span><span class="po">:</span>
+        <span class="pv">depth</span> <span class="po">-=</span> <span class="pn">1</span>
+        <span class="pb">print</span><span class="po">(</span><span class="ps">"  "</span> <span class="po">*</span> <span class="pv">depth</span> <span class="po">+</span> <span class="ps">f"← returning {arg}"</span><span class="po">)</span>
+
+<span class="pv">sys</span><span class="po">.</span><span class="pf">settrace</span><span class="po">(</span><span class="pv">trace</span><span class="po">)</span>
+<span class="pf">factorial</span><span class="po">(</span><span class="pn">3</span><span class="po">)</span>
+<span class="pv">sys</span><span class="po">.</span><span class="pf">settrace</span><span class="po">(</span><span class="pk">None</span><span class="po">)</span></pre>
+      </div>
+
+      <div class="info-box note">
+        <span class="info-box-icon">📌</span>
+        <div class="info-box-content"><strong>Stack depth = O(n)</strong> for linear recursion. For tree recursion with branching factor b and depth d, you get O(b<sup>d</sup>) total calls but only O(d) max stack depth at any moment.</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ -->
+    <!-- 04 · CLASSIC EXAMPLES         -->
+    <!-- ══════════════════════════════ -->
+    <section class="section" id="classic">
+      <div class="section-header">
+        <div class="section-icon ic-gold">⭐</div>
+        <div class="section-meta">
+          <span class="section-num">Chapter 04</span>
+          <h2>Classic Examples</h2>
+        </div>
+        <span class="level-badge lv-b">Beginner</span>
+      </div>
+
+      <h3>Factorial · n!</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">def</span> <span class="pf">factorial</span><span class="po">(</span><span class="pv">n</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pv">n</span> <span class="po"><</span> <span class="pn">0</span><span class="po">:</span>  <span class="pk">raise</span> <span class="pp">ValueError</span><span class="po">(</span><span class="ps">"n must be >= 0"</span><span class="po">)</span>
+    <span class="pk">if</span> <span class="pv">n</span> <span class="po"><=</span> <span class="pn">1</span><span class="po">:</span> <span class="pk">return</span> <span class="pn">1</span>          <span class="pc"># base case</span>
+    <span class="pk">return</span> <span class="pv">n</span> <span class="po">*</span> <span class="pf">factorial</span><span class="po">(</span><span class="pv">n</span> <span class="po">-</span> <span class="pn">1</span><span class="po">)</span>  <span class="pc"># recursive case</span>
+
+<span class="pc"># Unrolled: factorial(5) = 5*4*3*2*1 = 120</span></pre>
+      </div>
+
+      <h3>Fibonacci Sequence</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pc"># Naive — exponential O(2^n), covered later with memoization</span>
+<span class="pk">def</span> <span class="pf">fib</span><span class="po">(</span><span class="pv">n</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pv">n</span> <span class="po"><=</span> <span class="pn">1</span><span class="po">:</span> <span class="pk">return</span> <span class="pv">n</span>                  <span class="pc"># fib(0)=0, fib(1)=1</span>
+    <span class="pk">return</span> <span class="pf">fib</span><span class="po">(</span><span class="pv">n</span> <span class="po">-</span> <span class="pn">1</span><span class="po">)</span> <span class="po">+</span> <span class="pf">fib</span><span class="po">(</span><span class="pv">n</span> <span class="po">-</span> <span class="pn">2</span><span class="po">)</span>
+
+<span class="pc"># Sequence: 0 1 1 2 3 5 8 13 21 34 ...</span></pre>
+      </div>
+
+      <h3>Sum of a List</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">def</span> <span class="pf">list_sum</span><span class="po">(</span><span class="pv">nums</span><span class="po">:</span> <span class="pb">list</span><span class="po">[</span><span class="pb">int</span><span class="po">])</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pk">not</span> <span class="pv">nums</span><span class="po">:</span>  <span class="pk">return</span> <span class="pn">0</span>           <span class="pc"># base case: empty list</span>
+    <span class="pk">return</span> <span class="pv">nums</span><span class="po">[</span><span class="pn">0</span><span class="po">]</span> <span class="po">+</span> <span class="pf">list_sum</span><span class="po">(</span><span class="pv">nums</span><span class="po">[</span><span class="pn">1</span><span class="po">:])</span>
+
+<span class="pf">list_sum</span><span class="po">([</span><span class="pn">1</span><span class="po">,</span> <span class="pn">2</span><span class="po">,</span> <span class="pn">3</span><span class="po">,</span> <span class="pn">4</span><span class="po">,</span> <span class="pn">5</span><span class="po">])</span>  <span class="pc"># 15</span>
+
+<span class="pc"># How it resolves:</span>
+<span class="pc"># 1 + list_sum([2,3,4,5])</span>
+<span class="pc"># 1 + 2 + list_sum([3,4,5])</span>
+<span class="pc"># 1 + 2 + 3 + list_sum([4,5])</span>
+<span class="pc"># 1 + 2 + 3 + 4 + list_sum([5])</span>
+<span class="pc"># 1 + 2 + 3 + 4 + 5 + list_sum([]) → 0</span></pre>
+      </div>
+
+      <h3>Power Function</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pc"># Naive O(n)</span>
+<span class="pk">def</span> <span class="pf">power</span><span class="po">(</span><span class="pv">base</span><span class="po">:</span> <span class="pb">float</span><span class="po">,</span> <span class="pv">exp</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">float</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pv">exp</span> <span class="po">==</span> <span class="pn">0</span><span class="po">:</span> <span class="pk">return</span> <span class="pn">1</span>
+    <span class="pk">return</span> <span class="pv">base</span> <span class="po">*</span> <span class="pf">power</span><span class="po">(</span><span class="pv">base</span><span class="po">,</span> <span class="pv">exp</span> <span class="po">-</span> <span class="pn">1</span><span class="po">)</span>
+
+<span class="pc"># Fast exponentiation O(log n) — halve the exponent each time</span>
+<span class="pk">def</span> <span class="pf">fast_power</span><span class="po">(</span><span class="pv">base</span><span class="po">:</span> <span class="pb">float</span><span class="po">,</span> <span class="pv">exp</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">float</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pv">exp</span> <span class="po">==</span> <span class="pn">0</span><span class="po">:</span>  <span class="pk">return</span> <span class="pn">1</span>
+    <span class="pk">if</span> <span class="pv">exp</span> <span class="po">%</span> <span class="pn">2</span> <span class="po">==</span> <span class="pn">0</span><span class="po">:</span>
+        <span class="pv">half</span> <span class="po">=</span> <span class="pf">fast_power</span><span class="po">(</span><span class="pv">base</span><span class="po">,</span> <span class="pv">exp</span> <span class="po">//</span> <span class="pn">2</span><span class="po">)</span>
+        <span class="pk">return</span> <span class="pv">half</span> <span class="po">*</span> <span class="pv">half</span>              <span class="pc"># even: base^n = (base^(n/2))^2</span>
+    <span class="pk">return</span> <span class="pv">base</span> <span class="po">*</span> <span class="pf">fast_power</span><span class="po">(</span><span class="pv">base</span><span class="po">,</span> <span class="pv">exp</span> <span class="po">-</span> <span class="pn">1</span><span class="po">)</span>   <span class="pc"># odd: factor out base</span>
+
+<span class="pf">fast_power</span><span class="po">(</span><span class="pn">2</span><span class="po">,</span> <span class="pn">10</span><span class="po">)</span>  <span class="pc"># 1024 — only 4 recursive calls!</span></pre>
+      </div>
+
+      <h3>GCD — Euclid's Algorithm</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">def</span> <span class="pf">gcd</span><span class="po">(</span><span class="pv">a</span><span class="po">:</span> <span class="pb">int</span><span class="po">,</span> <span class="pv">b</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pv">b</span> <span class="po">==</span> <span class="pn">0</span><span class="po">:</span> <span class="pk">return</span> <span class="pv">a</span>       <span class="pc"># base case</span>
+    <span class="pk">return</span> <span class="pf">gcd</span><span class="po">(</span><span class="pv">b</span><span class="po">,</span> <span class="pv">a</span> <span class="po">%</span> <span class="pv">b</span><span class="po">)</span>    <span class="pc"># recursive case</span>
+
+<span class="pf">gcd</span><span class="po">(</span><span class="pn">48</span><span class="po">,</span> <span class="pn">18</span><span class="po">)</span>  <span class="pc"># 6</span>
+<span class="pc"># gcd(48,18) → gcd(18,12) → gcd(12,6) → gcd(6,0) → 6</span></pre>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ -->
+    <!-- 05 · TYPES OF RECURSION       -->
+    <!-- ══════════════════════════════ -->
+    <section class="section" id="types">
+      <div class="section-header">
+        <div class="section-icon ic-lav">🌀</div>
+        <div class="section-meta">
+          <span class="section-num">Chapter 05</span>
+          <h2>Types of Recursion</h2>
+        </div>
+        <span class="level-badge lv-i">Intermediate</span>
+      </div>
+
+      <h3>Linear Recursion</h3>
+      <p>One recursive call per function invocation. Stack grows linearly with input size — O(n) space.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">def</span> <span class="pf">linear_sum</span><span class="po">(</span><span class="pv">n</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pv">n</span> <span class="po">==</span> <span class="pn">0</span><span class="po">:</span> <span class="pk">return</span> <span class="pn">0</span>
+    <span class="pk">return</span> <span class="pv">n</span> <span class="po">+</span> <span class="pf">linear_sum</span><span class="po">(</span><span class="pv">n</span> <span class="po">-</span> <span class="pn">1</span><span class="po">)</span>   <span class="pc"># one recursive call</span></pre>
+      </div>
+
+      <h3>Tail Recursion</h3>
+      <p>The recursive call is the <em>last</em> operation — no computation after it. Many languages optimize this; Python does <strong>not</strong>. Covered in depth in Chapter 11.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pc"># Tail-recursive factorial (accumulator pattern)</span>
+<span class="pk">def</span> <span class="pf">factorial_tail</span><span class="po">(</span><span class="pv">n</span><span class="po">:</span> <span class="pb">int</span><span class="po">,</span> <span class="pv">acc</span><span class="po">:</span> <span class="pb">int</span> <span class="po">=</span> <span class="pn">1</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pv">n</span> <span class="po"><=</span> <span class="pn">1</span><span class="po">:</span> <span class="pk">return</span> <span class="pv">acc</span>
+    <span class="pk">return</span> <span class="pf">factorial_tail</span><span class="po">(</span><span class="pv">n</span> <span class="po">-</span> <span class="pn">1</span><span class="po">,</span> <span class="pv">n</span> <span class="po">*</span> <span class="pv">acc</span><span class="po">)</span>  <span class="pc"># tail position — acc carries state</span>
+
+<span class="pc"># Note: Python still creates new stack frames for each call.</span></pre>
+      </div>
+
+      <h3>Binary / Tree Recursion</h3>
+      <p>Two recursive calls per invocation. Forms a binary call tree — covered fully in Chapter 6.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">def</span> <span class="pf">fib</span><span class="po">(</span><span class="pv">n</span><span class="po">)</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pv">n</span> <span class="po"><=</span> <span class="pn">1</span><span class="po">:</span> <span class="pk">return</span> <span class="pv">n</span>
+    <span class="pk">return</span> <span class="pf">fib</span><span class="po">(</span><span class="pv">n</span><span class="po">-</span><span class="pn">1</span><span class="po">)</span> <span class="po">+</span> <span class="pf">fib</span><span class="po">(</span><span class="pv">n</span><span class="po">-</span><span class="pn">2</span><span class="po">)</span>   <span class="pc"># two recursive calls</span></pre>
+      </div>
+
+      <h3>Mutual Recursion</h3>
+      <p>Two or more functions call each other in turns. Each acts as the other's recursive helper.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">def</span> <span class="pf">is_even</span><span class="po">(</span><span class="pv">n</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">bool</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pv">n</span> <span class="po">==</span> <span class="pn">0</span><span class="po">:</span> <span class="pk">return</span> <span class="pk">True</span>
+    <span class="pk">return</span> <span class="pf">is_odd</span><span class="po">(</span><span class="pv">n</span> <span class="po">-</span> <span class="pn">1</span><span class="po">)</span>
+
+<span class="pk">def</span> <span class="pf">is_odd</span><span class="po">(</span><span class="pv">n</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">bool</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pv">n</span> <span class="po">==</span> <span class="pn">0</span><span class="po">:</span> <span class="pk">return</span> <span class="pk">False</span>
+    <span class="pk">return</span> <span class="pf">is_even</span><span class="po">(</span><span class="pv">n</span> <span class="po">-</span> <span class="pn">1</span><span class="po">)</span>
+
+<span class="pf">is_even</span><span class="po">(</span><span class="pn">4</span><span class="po">)</span>  <span class="pc"># True</span></pre>
+      </div>
+
+      <h3>Indirect Recursion</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pc"># A → B → C → A (chain of 3 or more functions)</span>
+<span class="pk">def</span> <span class="pf">a</span><span class="po">(</span><span class="pv">n</span><span class="po">):</span>
+    <span class="pk">if</span> <span class="pv">n</span> <span class="po"><=</span> <span class="pn">0</span><span class="po">:</span> <span class="pk">return</span> <span class="pn">0</span>
+    <span class="pb">print</span><span class="po">(</span><span class="ps">f"a({n})"</span><span class="po">);</span> <span class="pk">return</span> <span class="pf">b</span><span class="po">(</span><span class="pv">n</span> <span class="po">-</span> <span class="pn">1</span><span class="po">)</span>
+
+<span class="pk">def</span> <span class="pf">b</span><span class="po">(</span><span class="pv">n</span><span class="po">):</span>
+    <span class="pk">if</span> <span class="pv">n</span> <span class="po"><=</span> <span class="pn">0</span><span class="po">:</span> <span class="pk">return</span> <span class="pn">0</span>
+    <span class="pb">print</span><span class="po">(</span><span class="ps">f"b({n})"</span><span class="po">);</span> <span class="pk">return</span> <span class="pf">c</span><span class="po">(</span><span class="pv">n</span> <span class="po">-</span> <span class="pn">1</span><span class="po">)</span>
+
+<span class="pk">def</span> <span class="pf">c</span><span class="po">(</span><span class="pv">n</span><span class="po">):</span>
+    <span class="pk">if</span> <span class="pv">n</span> <span class="po"><=</span> <span class="pn">0</span><span class="po">:</span> <span class="pk">return</span> <span class="pn">0</span>
+    <span class="pb">print</span><span class="po">(</span><span class="ps">f"c({n})"</span><span class="po">);</span> <span class="pk">return</span> <span class="pf">a</span><span class="po">(</span><span class="pv">n</span> <span class="po">-</span> <span class="pn">1</span><span class="po">)</span>
+
+<span class="pf">a</span><span class="po">(</span><span class="pn">4</span><span class="po">)</span></pre>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ -->
+    <!-- 06 · TREE RECURSION           -->
+    <!-- ══════════════════════════════ -->
+    <section class="section" id="tree">
+      <div class="section-header">
+        <div class="section-icon ic-sage">🌳</div>
+        <div class="section-meta">
+          <span class="section-num">Chapter 06</span>
+          <h2>Tree Recursion</h2>
+        </div>
+        <span class="level-badge lv-i">Intermediate</span>
+      </div>
+
+      <p>Tree recursion produces a branching call tree. The canonical example is Fibonacci, but the pattern appears everywhere: tree traversals, combinatorics, expression parsing.</p>
+
+      <h3>fib(5) Call Tree</h3>
+      <div class="tree-viz"><span class="tv-call">fib(5)</span>
+<span class="tv-branch">├──</span> <span class="tv-call">fib(4)</span>
+<span class="tv-branch">│   ├──</span> <span class="tv-call">fib(3)</span>
+<span class="tv-branch">│   │   ├──</span> <span class="tv-call">fib(2)</span>
+<span class="tv-branch">│   │   │   ├──</span> <span class="tv-leaf">fib(1) = 1</span>
+<span class="tv-branch">│   │   │   └──</span> <span class="tv-leaf">fib(0) = 0</span>
+<span class="tv-branch">│   │   └──</span> <span class="tv-leaf">fib(1) = 1</span>
+<span class="tv-branch">│   └──</span> <span class="tv-call">fib(2)</span>
+<span class="tv-branch">│       ├──</span> <span class="tv-leaf">fib(1) = 1</span>
+<span class="tv-branch">│       └──</span> <span class="tv-leaf">fib(0) = 0</span>
+<span class="tv-branch">└──</span> <span class="tv-call">fib(3)</span>
+<span class="tv-branch">    ├──</span> <span class="tv-call">fib(2)</span>
+<span class="tv-branch">    │   ├──</span> <span class="tv-leaf">fib(1) = 1</span>
+<span class="tv-branch">    │   └──</span> <span class="tv-leaf">fib(0) = 0</span>
+<span class="tv-branch">    └──</span> <span class="tv-leaf">fib(1) = 1</span>
+
+<span class="tv-val">Total calls: 15  |  Depth: 5  |  fib(5) = 5</span></div>
+
+      <h3>Binary Tree Traversal</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">from</span> <span class="pv">dataclasses</span> <span class="pk">import</span> <span class="pv">dataclass</span>
+<span class="pk">from</span> <span class="pv">typing</span> <span class="pk">import</span> <span class="pp">Optional</span>
+
+<span class="pd">@dataclass</span>
+<span class="pk">class</span> <span class="pp">Node</span><span class="po">:</span>
+    <span class="pv">val</span><span class="po">:</span>   <span class="pb">int</span>
+    <span class="pv">left</span><span class="po">:</span>  <span class="pp">Optional</span><span class="po">[</span><span class="ps">'Node'</span><span class="po">]</span> <span class="po">=</span> <span class="pk">None</span>
+    <span class="pv">right</span><span class="po">:</span> <span class="pp">Optional</span><span class="po">[</span><span class="ps">'Node'</span><span class="po">]</span> <span class="po">=</span> <span class="pk">None</span>
+
+<span class="pc"># Pre-order:  root → left → right</span>
+<span class="pk">def</span> <span class="pf">preorder</span><span class="po">(</span><span class="pv">node</span><span class="po">:</span> <span class="pp">Optional</span><span class="po">[</span><span class="pp">Node</span><span class="po">])</span> <span class="po">-></span> <span class="pb">list</span><span class="po">[</span><span class="pb">int</span><span class="po">]:</span>
+    <span class="pk">if</span> <span class="pk">not</span> <span class="pv">node</span><span class="po">:</span> <span class="pk">return</span> <span class="po">[]</span>
+    <span class="pk">return</span> <span class="po">[</span><span class="pv">node</span><span class="po">.</span><span class="pv">val</span><span class="po">]</span> <span class="po">+</span> <span class="pf">preorder</span><span class="po">(</span><span class="pv">node</span><span class="po">.</span><span class="pv">left</span><span class="po">)</span> <span class="po">+</span> <span class="pf">preorder</span><span class="po">(</span><span class="pv">node</span><span class="po">.</span><span class="pv">right</span><span class="po">)</span>
+
+<span class="pc"># In-order:   left → root → right  (gives sorted BST)</span>
+<span class="pk">def</span> <span class="pf">inorder</span><span class="po">(</span><span class="pv">node</span><span class="po">:</span> <span class="pp">Optional</span><span class="po">[</span><span class="pp">Node</span><span class="po">])</span> <span class="po">-></span> <span class="pb">list</span><span class="po">[</span><span class="pb">int</span><span class="po">]:</span>
+    <span class="pk">if</span> <span class="pk">not</span> <span class="pv">node</span><span class="po">:</span> <span class="pk">return</span> <span class="po">[]</span>
+    <span class="pk">return</span> <span class="pf">inorder</span><span class="po">(</span><span class="pv">node</span><span class="po">.</span><span class="pv">left</span><span class="po">)</span> <span class="po">+</span> <span class="po">[</span><span class="pv">node</span><span class="po">.</span><span class="pv">val</span><span class="po">]</span> <span class="po">+</span> <span class="pf">inorder</span><span class="po">(</span><span class="pv">node</span><span class="po">.</span><span class="pv">right</span><span class="po">)</span>
+
+<span class="pc"># Post-order: left → right → root</span>
+<span class="pk">def</span> <span class="pf">postorder</span><span class="po">(</span><span class="pv">node</span><span class="po">:</span> <span class="pp">Optional</span><span class="po">[</span><span class="pp">Node</span><span class="po">])</span> <span class="po">-></span> <span class="pb">list</span><span class="po">[</span><span class="pb">int</span><span class="po">]:</span>
+    <span class="pk">if</span> <span class="pk">not</span> <span class="pv">node</span><span class="po">:</span> <span class="pk">return</span> <span class="po">[]</span>
+    <span class="pk">return</span> <span class="pf">postorder</span><span class="po">(</span><span class="pv">node</span><span class="po">.</span><span class="pv">left</span><span class="po">)</span> <span class="po">+</span> <span class="pf">postorder</span><span class="po">(</span><span class="pv">node</span><span class="po">.</span><span class="pv">right</span><span class="po">)</span> <span class="po">+</span> <span class="po">[</span><span class="pv">node</span><span class="po">.</span><span class="pv">val</span><span class="po">]</span>
+
+<span class="pc"># Tree height</span>
+<span class="pk">def</span> <span class="pf">height</span><span class="po">(</span><span class="pv">node</span><span class="po">:</span> <span class="pp">Optional</span><span class="po">[</span><span class="pp">Node</span><span class="po">])</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pk">not</span> <span class="pv">node</span><span class="po">:</span> <span class="pk">return</span> <span class="pn">0</span>
+    <span class="pk">return</span> <span class="pn">1</span> <span class="po">+</span> <span class="pb">max</span><span class="po">(</span><span class="pf">height</span><span class="po">(</span><span class="pv">node</span><span class="po">.</span><span class="pv">left</span><span class="po">),</span> <span class="pf">height</span><span class="po">(</span><span class="pv">node</span><span class="po">.</span><span class="pv">right</span><span class="po">))</span></pre>
+      </div>
+
+      <h3>Flatten a Nested List</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">def</span> <span class="pf">flatten</span><span class="po">(</span><span class="pv">nested</span><span class="po">:</span> <span class="pb">list</span><span class="po">)</span> <span class="po">-></span> <span class="pb">list</span><span class="po">:</span>
+    <span class="pv">result</span> <span class="po">=</span> <span class="po">[]</span>
+    <span class="pk">for</span> <span class="pv">item</span> <span class="pk">in</span> <span class="pv">nested</span><span class="po">:</span>
+        <span class="pk">if</span> <span class="pb">isinstance</span><span class="po">(</span><span class="pv">item</span><span class="po">,</span> <span class="pb">list</span><span class="po">):</span>
+            <span class="pv">result</span><span class="po">.</span><span class="pf">extend</span><span class="po">(</span><span class="pf">flatten</span><span class="po">(</span><span class="pv">item</span><span class="po">))</span>   <span class="pc"># recurse into sublists</span>
+        <span class="pk">else</span><span class="po">:</span>
+            <span class="pv">result</span><span class="po">.</span><span class="pf">append</span><span class="po">(</span><span class="pv">item</span><span class="po">)</span>
+    <span class="pk">return</span> <span class="pv">result</span>
+
+<span class="pf">flatten</span><span class="po">([</span><span class="pn">1</span><span class="po">,</span> <span class="po">[</span><span class="pn">2</span><span class="po">,</span> <span class="po">[</span><span class="pn">3</span><span class="po">,</span> <span class="pn">4</span><span class="po">],</span> <span class="pn">5</span><span class="po">],</span> <span class="po">[</span><span class="pn">6</span><span class="po">,</span> <span class="pn">7</span><span class="po">]])</span>  <span class="pc"># [1, 2, 3, 4, 5, 6, 7]</span></pre>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ -->
+    <!-- 07 · MEMOIZATION              -->
+    <!-- ══════════════════════════════ -->
+    <section class="section" id="memoization">
+      <div class="section-header">
+        <div class="section-icon ic-gold">⚡</div>
+        <div class="section-meta">
+          <span class="section-num">Chapter 07</span>
+          <h2>Memoization</h2>
+        </div>
+        <span class="level-badge lv-i">Intermediate</span>
+      </div>
+
+      <p>Memoization caches the result of expensive recursive calls so they are computed only once. It turns exponential tree recursion into linear time by avoiding redundant subproblems — the core of <strong>top-down dynamic programming</strong>.</p>
+
+      <h3>Manual Cache Dict</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pc"># Without memo: O(2^n) — fib(50) takes billions of calls</span>
+<span class="pc"># With memo:    O(n)   — fib(50) takes 50 unique calls</span>
+
+<span class="pk">def</span> <span class="pf">fib_memo</span><span class="po">(</span><span class="pv">n</span><span class="po">:</span> <span class="pb">int</span><span class="po">,</span> <span class="pv">cache</span><span class="po">:</span> <span class="pb">dict</span> <span class="po">=</span> <span class="po">{}</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pv">n</span> <span class="pk">in</span> <span class="pv">cache</span><span class="po">:</span>  <span class="pk">return</span> <span class="pv">cache</span><span class="po">[</span><span class="pv">n</span><span class="po">]</span>   <span class="pc"># cache hit ✅</span>
+    <span class="pk">if</span> <span class="pv">n</span> <span class="po"><=</span> <span class="pn">1</span><span class="po">:</span>     <span class="pk">return</span> <span class="pv">n</span>
+    <span class="pv">cache</span><span class="po">[</span><span class="pv">n</span><span class="po">]</span> <span class="po">=</span> <span class="pf">fib_memo</span><span class="po">(</span><span class="pv">n</span><span class="po">-</span><span class="pn">1</span><span class="po">,</span> <span class="pv">cache</span><span class="po">)</span> <span class="po">+</span> <span class="pf">fib_memo</span><span class="po">(</span><span class="pv">n</span><span class="po">-</span><span class="pn">2</span><span class="po">,</span> <span class="pv">cache</span><span class="po">)</span>
+    <span class="pk">return</span> <span class="pv">cache</span><span class="po">[</span><span class="pv">n</span><span class="po">]</span>
+
+<span class="pf">fib_memo</span><span class="po">(</span><span class="pn">100</span><span class="po">)</span>  <span class="pc"># instant!</span></pre>
+      </div>
+
+      <h3>functools.lru_cache and cache</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">from</span> <span class="pv">functools</span> <span class="pk">import</span> <span class="pv">lru_cache</span><span class="po">,</span> <span class="pv">cache</span>
+
+<span class="pc"># @cache — unbounded memoization (Python 3.9+)</span>
+<span class="pd">@cache</span>
+<span class="pk">def</span> <span class="pf">fib</span><span class="po">(</span><span class="pv">n</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pv">n</span> <span class="po"><=</span> <span class="pn">1</span><span class="po">:</span> <span class="pk">return</span> <span class="pv">n</span>
+    <span class="pk">return</span> <span class="pf">fib</span><span class="po">(</span><span class="pv">n</span><span class="po">-</span><span class="pn">1</span><span class="po">)</span> <span class="po">+</span> <span class="pf">fib</span><span class="po">(</span><span class="pv">n</span><span class="po">-</span><span class="pn">2</span><span class="po">)</span>
+
+<span class="pc"># @lru_cache — bounded cache, evicts least-recently-used</span>
+<span class="pd">@lru_cache</span><span class="po">(</span>maxsize<span class="po">=</span><span class="pn">128</span><span class="po">)</span>
+<span class="pk">def</span> <span class="pf">expensive</span><span class="po">(</span><span class="pv">n</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pk">return</span> <span class="pv">n</span> <span class="po">**</span> <span class="pn">3</span> <span class="po">+</span> <span class="pf">expensive</span><span class="po">(</span><span class="pv">n</span> <span class="po">-</span> <span class="pn">1</span><span class="po">)</span> <span class="pk">if</span> <span class="pv">n</span> <span class="po">></span> <span class="pn">0</span> <span class="pk">else</span> <span class="pn">0</span>
+
+<span class="pc"># Cache introspection</span>
+<span class="pf">fib</span><span class="po">.</span><span class="pf">cache_info</span><span class="po">()</span>   <span class="pc"># CacheInfo(hits=98, misses=101, maxsize=None, currsize=101)</span>
+<span class="pf">fib</span><span class="po">.</span><span class="pf">cache_clear</span><span class="po">()</span>  <span class="pc"># clear all cached results</span>
+
+<span class="pc"># ⚠️ Arguments must be hashable — tuples, not lists!</span>
+<span class="pd">@cache</span>
+<span class="pk">def</span> <span class="pf">knapsack</span><span class="po">(</span><span class="pv">items</span><span class="po">:</span> <span class="pb">tuple</span><span class="po">,</span> <span class="pv">capacity</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="po">...</span></pre>
+      </div>
+
+      <h3>Coin Change (Top-Down DP)</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">from</span> <span class="pv">functools</span> <span class="pk">import</span> <span class="pv">cache</span>
+
+<span class="pk">def</span> <span class="pf">coin_change</span><span class="po">(</span><span class="pv">coins</span><span class="po">:</span> <span class="pb">list</span><span class="po">[</span><span class="pb">int</span><span class="po">],</span> <span class="pv">amount</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pv">coin_tuple</span> <span class="po">=</span> <span class="pb">tuple</span><span class="po">(</span><span class="pv">coins</span><span class="po">)</span>       <span class="pc"># make hashable for @cache</span>
+
+    <span class="pd">@cache</span>
+    <span class="pk">def</span> <span class="pf">dp</span><span class="po">(</span><span class="pv">remaining</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+        <span class="pk">if</span> <span class="pv">remaining</span> <span class="po">==</span> <span class="pn">0</span><span class="po">:</span> <span class="pk">return</span> <span class="pn">0</span>
+        <span class="pk">if</span> <span class="pv">remaining</span> <span class="po"><</span>  <span class="pn">0</span><span class="po">:</span> <span class="pk">return</span> <span class="pb">float</span><span class="po">(</span><span class="ps">'inf'</span><span class="po">)</span>
+        <span class="pk">return</span> <span class="pn">1</span> <span class="po">+</span> <span class="pb">min</span><span class="po">(</span><span class="pf">dp</span><span class="po">(</span><span class="pv">remaining</span> <span class="po">-</span> <span class="pv">c</span><span class="po">)</span> <span class="pk">for</span> <span class="pv">c</span> <span class="pk">in</span> <span class="pv">coin_tuple</span><span class="po">)</span>
+
+    <span class="pv">result</span> <span class="po">=</span> <span class="pf">dp</span><span class="po">(</span><span class="pv">amount</span><span class="po">)</span>
+    <span class="pk">return</span> <span class="pv">result</span> <span class="pk">if</span> <span class="pv">result</span> <span class="po">!=</span> <span class="pb">float</span><span class="po">(</span><span class="ps">'inf'</span><span class="po">)</span> <span class="pk">else</span> <span class="po">-</span><span class="pn">1</span>
+
+<span class="pf">coin_change</span><span class="po">([</span><span class="pn">1</span><span class="po">,</span> <span class="pn">5</span><span class="po">,</span> <span class="pn">10</span><span class="po">,</span> <span class="pn">25</span><span class="po">],</span> <span class="pn">41</span><span class="po">)</span>  <span class="pc"># 4 (25+10+5+1)</span></pre>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ -->
+    <!-- 08 · STRINGS & LISTS          -->
+    <!-- ══════════════════════════════ -->
+    <section class="section" id="strings">
+      <div class="section-header">
+        <div class="section-icon ic-teal">📝</div>
+        <div class="section-meta">
+          <span class="section-num">Chapter 08</span>
+          <h2>Recursion on Strings & Lists</h2>
+        </div>
+        <span class="level-badge lv-i">Intermediate</span>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pc"># ── Reverse a string ─────────────────────────────────────────</span>
+<span class="pk">def</span> <span class="pf">reverse</span><span class="po">(</span><span class="pv">s</span><span class="po">:</span> <span class="pb">str</span><span class="po">)</span> <span class="po">-></span> <span class="pb">str</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pb">len</span><span class="po">(</span><span class="pv">s</span><span class="po">)</span> <span class="po"><=</span> <span class="pn">1</span><span class="po">:</span> <span class="pk">return</span> <span class="pv">s</span>
+    <span class="pk">return</span> <span class="pf">reverse</span><span class="po">(</span><span class="pv">s</span><span class="po">[</span><span class="pn">1</span><span class="po">:])</span> <span class="po">+</span> <span class="pv">s</span><span class="po">[</span><span class="pn">0</span><span class="po">]</span>
+
+<span class="pc"># ── Palindrome check ─────────────────────────────────────────</span>
+<span class="pk">def</span> <span class="pf">is_palindrome</span><span class="po">(</span><span class="pv">s</span><span class="po">:</span> <span class="pb">str</span><span class="po">)</span> <span class="po">-></span> <span class="pb">bool</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pb">len</span><span class="po">(</span><span class="pv">s</span><span class="po">)</span> <span class="po"><=</span> <span class="pn">1</span><span class="po">:</span>  <span class="pk">return</span> <span class="pk">True</span>
+    <span class="pk">if</span> <span class="pv">s</span><span class="po">[</span><span class="pn">0</span><span class="po">]</span> <span class="po">!=</span> <span class="pv">s</span><span class="po">[-</span><span class="pn">1</span><span class="po">]:</span> <span class="pk">return</span> <span class="pk">False</span>
+    <span class="pk">return</span> <span class="pf">is_palindrome</span><span class="po">(</span><span class="pv">s</span><span class="po">[</span><span class="pn">1</span><span class="po">:-</span><span class="pn">1</span><span class="po">])</span>
+
+<span class="pc"># ── Count occurrences in a list ──────────────────────────────</span>
+<span class="pk">def</span> <span class="pf">count</span><span class="po">(</span><span class="pv">lst</span><span class="po">:</span> <span class="pb">list</span><span class="po">,</span> <span class="pv">target</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pk">not</span> <span class="pv">lst</span><span class="po">:</span> <span class="pk">return</span> <span class="pn">0</span>
+    <span class="pk">return</span> <span class="po">(</span><span class="pn">1</span> <span class="pk">if</span> <span class="pv">lst</span><span class="po">[</span><span class="pn">0</span><span class="po">]</span> <span class="po">==</span> <span class="pv">target</span> <span class="pk">else</span> <span class="pn">0</span><span class="po">)</span> <span class="po">+</span> <span class="pf">count</span><span class="po">(</span><span class="pv">lst</span><span class="po">[</span><span class="pn">1</span><span class="po">:],</span> <span class="pv">target</span><span class="po">)</span>
+
+<span class="pc"># ── Binary search ────────────────────────────────────────────</span>
+<span class="pk">def</span> <span class="pf">binary_search</span><span class="po">(</span><span class="pv">arr</span><span class="po">:</span> <span class="pb">list</span><span class="po">[</span><span class="pb">int</span><span class="po">],</span> <span class="pv">target</span><span class="po">:</span> <span class="pb">int</span><span class="po">,</span> <span class="pv">lo</span><span class="po">=</span><span class="pn">0</span><span class="po">,</span> <span class="pv">hi</span><span class="po">=</span><span class="pk">None</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pv">hi</span> <span class="pk">is</span> <span class="pk">None</span><span class="po">:</span> <span class="pv">hi</span> <span class="po">=</span> <span class="pb">len</span><span class="po">(</span><span class="pv">arr</span><span class="po">)</span> <span class="po">-</span> <span class="pn">1</span>
+    <span class="pk">if</span> <span class="pv">lo</span> <span class="po">></span> <span class="pv">hi</span><span class="po">:</span>  <span class="pk">return</span> <span class="po">-</span><span class="pn">1</span>        <span class="pc"># not found</span>
+    <span class="pv">mid</span> <span class="po">=</span> <span class="po">(</span><span class="pv">lo</span> <span class="po">+</span> <span class="pv">hi</span><span class="po">)</span> <span class="po">//</span> <span class="pn">2</span>
+    <span class="pk">if</span>   <span class="pv">arr</span><span class="po">[</span><span class="pv">mid</span><span class="po">]</span> <span class="po">==</span> <span class="pv">target</span><span class="po">:</span> <span class="pk">return</span> <span class="pv">mid</span>
+    <span class="pk">elif</span> <span class="pv">arr</span><span class="po">[</span><span class="pv">mid</span><span class="po">]</span> <span class="po"><</span>  <span class="pv">target</span><span class="po">:</span> <span class="pk">return</span> <span class="pf">binary_search</span><span class="po">(</span><span class="pv">arr</span><span class="po">,</span> <span class="pv">target</span><span class="po">,</span> <span class="pv">mid</span><span class="po">+</span><span class="pn">1</span><span class="po">,</span> <span class="pv">hi</span><span class="po">)</span>
+    <span class="pk">else</span><span class="po">:</span>                        <span class="pk">return</span> <span class="pf">binary_search</span><span class="po">(</span><span class="pv">arr</span><span class="po">,</span> <span class="pv">target</span><span class="po">,</span> <span class="pv">lo</span><span class="po">,</span> <span class="pv">mid</span><span class="po">-</span><span class="pn">1</span><span class="po">)</span></pre>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ -->
+    <!-- 09 · BACKTRACKING             -->
+    <!-- ══════════════════════════════ -->
+    <section class="section" id="backtracking">
+      <div class="section-header">
+        <div class="section-icon ic-rose">🔙</div>
+        <div class="section-meta">
+          <span class="section-num">Chapter 09</span>
+          <h2>Backtracking</h2>
+        </div>
+        <span class="level-badge lv-a">Advanced</span>
+      </div>
+
+      <p>Backtracking explores all possible solutions by building candidates incrementally and <strong>abandoning ("pruning") a candidate</strong> as soon as it's determined that it cannot lead to a valid solution.</p>
+
+      <div class="flow-diagram">
+        <div class="flow-row">
+          <div class="flow-node"><span>Choose</span><strong>Make choice</strong></div>
+          <div class="flow-arrow">──→</div>
+          <div class="flow-node"><span>Explore</span><strong>Recurse</strong></div>
+          <div class="flow-arrow">──→</div>
+          <div class="flow-node"><span>Unchoose</span><strong>Undo choice</strong></div>
+        </div>
+        <div class="flow-label">Choose → Explore → Unchoose (if dead end)</div>
+      </div>
+
+      <h3>Generate All Permutations</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">def</span> <span class="pf">permutations</span><span class="po">(</span><span class="pv">nums</span><span class="po">:</span> <span class="pb">list</span><span class="po">[</span><span class="pb">int</span><span class="po">])</span> <span class="po">-></span> <span class="pb">list</span><span class="po">[</span><span class="pb">list</span><span class="po">[</span><span class="pb">int</span><span class="po">]]:</span>
+    <span class="pv">result</span> <span class="po">=</span> <span class="po">[]</span>
+
+    <span class="pk">def</span> <span class="pf">backtrack</span><span class="po">(</span><span class="pv">path</span><span class="po">:</span> <span class="pb">list</span><span class="po">[</span><span class="pb">int</span><span class="po">],</span> <span class="pv">remaining</span><span class="po">:</span> <span class="pb">list</span><span class="po">[</span><span class="pb">int</span><span class="po">])</span> <span class="po">-></span> <span class="pk">None</span><span class="po">:</span>
+        <span class="pk">if</span> <span class="pk">not</span> <span class="pv">remaining</span><span class="po">:</span>               <span class="pc"># base case: used all numbers</span>
+            <span class="pv">result</span><span class="po">.</span><span class="pf">append</span><span class="po">(</span><span class="pv">path</span><span class="po">[:])</span>
+            <span class="pk">return</span>
+        <span class="pk">for</span> <span class="pv">i</span><span class="po">,</span> <span class="pv">n</span> <span class="pk">in</span> <span class="pb">enumerate</span><span class="po">(</span><span class="pv">remaining</span><span class="po">):</span>
+            <span class="pv">path</span><span class="po">.</span><span class="pf">append</span><span class="po">(</span><span class="pv">n</span><span class="po">)</span>               <span class="pc"># choose</span>
+            <span class="pf">backtrack</span><span class="po">(</span><span class="pv">path</span><span class="po">,</span> <span class="pv">remaining</span><span class="po">[:</span><span class="pv">i</span><span class="po">]</span> <span class="po">+</span> <span class="pv">remaining</span><span class="po">[</span><span class="pv">i</span><span class="po">+</span><span class="pn">1</span><span class="po">:])</span>  <span class="pc"># explore</span>
+            <span class="pv">path</span><span class="po">.</span><span class="pf">pop</span><span class="po">()</span>                   <span class="pc"># unchoose</span>
+
+    <span class="pf">backtrack</span><span class="po">(</span><span class="po">[],</span> <span class="pv">nums</span><span class="po">)</span>
+    <span class="pk">return</span> <span class="pv">result</span>
+
+<span class="pf">permutations</span><span class="po">([</span><span class="pn">1</span><span class="po">,</span> <span class="pn">2</span><span class="po">,</span> <span class="pn">3</span><span class="po">])</span>  <span class="pc"># [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]</span></pre>
+      </div>
+
+      <h3>N-Queens Problem</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">def</span> <span class="pf">solve_n_queens</span><span class="po">(</span><span class="pv">n</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">list</span><span class="po">[</span><span class="pb">list</span><span class="po">[</span><span class="pb">str</span><span class="po">]]:</span>
+    <span class="pv">solutions</span>  <span class="po">=</span> <span class="po">[]</span>
+    <span class="pv">cols</span>       <span class="po">=</span> <span class="pb">set</span><span class="po">()</span>
+    <span class="pv">diag1</span>      <span class="po">=</span> <span class="pb">set</span><span class="po">()</span>   <span class="pc"># row - col</span>
+    <span class="pv">diag2</span>      <span class="po">=</span> <span class="pb">set</span><span class="po">()</span>   <span class="pc"># row + col</span>
+    <span class="pv">board</span>      <span class="po">=</span> <span class="po">[[</span><span class="ps">"."</span><span class="po">]</span> <span class="po">*</span> <span class="pv">n</span> <span class="pk">for</span> <span class="pv">_</span> <span class="pk">in</span> <span class="pb">range</span><span class="po">(</span><span class="pv">n</span><span class="po">)]</span>
+
+    <span class="pk">def</span> <span class="pf">backtrack</span><span class="po">(</span><span class="pv">row</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pk">None</span><span class="po">:</span>
+        <span class="pk">if</span> <span class="pv">row</span> <span class="po">==</span> <span class="pv">n</span><span class="po">:</span>
+            <span class="pv">solutions</span><span class="po">.</span><span class="pf">append</span><span class="po">([</span><span class="ps">""</span><span class="po">.</span><span class="pf">join</span><span class="po">(</span><span class="pv">r</span><span class="po">)</span> <span class="pk">for</span> <span class="pv">r</span> <span class="pk">in</span> <span class="pv">board</span><span class="po">])</span>
+            <span class="pk">return</span>
+        <span class="pk">for</span> <span class="pv">col</span> <span class="pk">in</span> <span class="pb">range</span><span class="po">(</span><span class="pv">n</span><span class="po">):</span>
+            <span class="pk">if</span> <span class="pv">col</span> <span class="pk">in</span> <span class="pv">cols</span> <span class="pk">or</span> <span class="po">(</span><span class="pv">row</span><span class="po">-</span><span class="pv">col</span><span class="po">)</span> <span class="pk">in</span> <span class="pv">diag1</span> <span class="pk">or</span> <span class="po">(</span><span class="pv">row</span><span class="po">+</span><span class="pv">col</span><span class="po">)</span> <span class="pk">in</span> <span class="pv">diag2</span><span class="po">:</span>
+                <span class="pk">continue</span>                <span class="pc"># prune: unsafe position</span>
+            <span class="pv">cols</span><span class="po">.</span><span class="pf">add</span><span class="po">(</span><span class="pv">col</span><span class="po">);</span> <span class="pv">diag1</span><span class="po">.</span><span class="pf">add</span><span class="po">(</span><span class="pv">row</span><span class="po">-</span><span class="pv">col</span><span class="po">);</span> <span class="pv">diag2</span><span class="po">.</span><span class="pf">add</span><span class="po">(</span><span class="pv">row</span><span class="po">+</span><span class="pv">col</span><span class="po">)</span>
+            <span class="pv">board</span><span class="po">[</span><span class="pv">row</span><span class="po">][</span><span class="pv">col</span><span class="po">]</span> <span class="po">=</span> <span class="ps">"Q"</span>   <span class="pc"># choose</span>
+            <span class="pf">backtrack</span><span class="po">(</span><span class="pv">row</span> <span class="po">+</span> <span class="pn">1</span><span class="po">)</span>        <span class="pc"># explore</span>
+            <span class="pv">board</span><span class="po">[</span><span class="pv">row</span><span class="po">][</span><span class="pv">col</span><span class="po">]</span> <span class="po">=</span> <span class="ps">"."</span>   <span class="pc"># unchoose</span>
+            <span class="pv">cols</span><span class="po">.</span><span class="pf">discard</span><span class="po">(</span><span class="pv">col</span><span class="po">);</span> <span class="pv">diag1</span><span class="po">.</span><span class="pf">discard</span><span class="po">(</span><span class="pv">row</span><span class="po">-</span><span class="pv">col</span><span class="po">);</span> <span class="pv">diag2</span><span class="po">.</span><span class="pf">discard</span><span class="po">(</span><span class="pv">row</span><span class="po">+</span><span class="pv">col</span><span class="po">)</span>
+
+    <span class="pf">backtrack</span><span class="po">(</span><span class="pn">0</span><span class="po">)</span>
+    <span class="pk">return</span> <span class="pv">solutions</span>
+
+<span class="pb">len</span><span class="po">(</span><span class="pf">solve_n_queens</span><span class="po">(</span><span class="pn">8</span><span class="po">))</span>  <span class="pc"># 92 solutions for the 8-queens problem</span></pre>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ -->
+    <!-- 10 · DIVIDE & CONQUER         -->
+    <!-- ══════════════════════════════ -->
+    <section class="section" id="divconquer">
+      <div class="section-header">
+        <div class="section-icon ic-amber">⚔️</div>
+        <div class="section-meta">
+          <span class="section-num">Chapter 10</span>
+          <h2>Divide & Conquer</h2>
+        </div>
+        <span class="level-badge lv-a">Advanced</span>
+      </div>
+
+      <p>Divide the problem into independent subproblems, conquer them recursively, then combine the results. Unlike backtracking, subproblems don't share state and don't need undoing.</p>
+
+      <h3>Merge Sort · O(n log n)</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">def</span> <span class="pf">merge_sort</span><span class="po">(</span><span class="pv">arr</span><span class="po">:</span> <span class="pb">list</span><span class="po">[</span><span class="pb">int</span><span class="po">])</span> <span class="po">-></span> <span class="pb">list</span><span class="po">[</span><span class="pb">int</span><span class="po">]:</span>
+    <span class="pk">if</span> <span class="pb">len</span><span class="po">(</span><span class="pv">arr</span><span class="po">)</span> <span class="po"><=</span> <span class="pn">1</span><span class="po">:</span> <span class="pk">return</span> <span class="pv">arr</span>       <span class="pc"># base case</span>
+
+    <span class="pv">mid</span>   <span class="po">=</span> <span class="pb">len</span><span class="po">(</span><span class="pv">arr</span><span class="po">)</span> <span class="po">//</span> <span class="pn">2</span>
+    <span class="pv">left</span>  <span class="po">=</span> <span class="pf">merge_sort</span><span class="po">(</span><span class="pv">arr</span><span class="po">[:</span><span class="pv">mid</span><span class="po">])</span>    <span class="pc"># divide + conquer left</span>
+    <span class="pv">right</span> <span class="po">=</span> <span class="pf">merge_sort</span><span class="po">(</span><span class="pv">arr</span><span class="po">[</span><span class="pv">mid</span><span class="po">:])</span>    <span class="pc"># divide + conquer right</span>
+    <span class="pk">return</span> <span class="pf">merge</span><span class="po">(</span><span class="pv">left</span><span class="po">,</span> <span class="pv">right</span><span class="po">)</span>          <span class="pc"># combine</span>
+
+<span class="pk">def</span> <span class="pf">merge</span><span class="po">(</span><span class="pv">left</span><span class="po">:</span> <span class="pb">list</span><span class="po">,</span> <span class="pv">right</span><span class="po">:</span> <span class="pb">list</span><span class="po">)</span> <span class="po">-></span> <span class="pb">list</span><span class="po">:</span>
+    <span class="pv">result</span><span class="po">,</span> <span class="pv">i</span><span class="po">,</span> <span class="pv">j</span> <span class="po">=</span> <span class="po">[],</span> <span class="pn">0</span><span class="po">,</span> <span class="pn">0</span>
+    <span class="pk">while</span> <span class="pv">i</span> <span class="po"><</span> <span class="pb">len</span><span class="po">(</span><span class="pv">left</span><span class="po">)</span> <span class="pk">and</span> <span class="pv">j</span> <span class="po"><</span> <span class="pb">len</span><span class="po">(</span><span class="pv">right</span><span class="po">):</span>
+        <span class="pk">if</span> <span class="pv">left</span><span class="po">[</span><span class="pv">i</span><span class="po">]</span> <span class="po"><=</span> <span class="pv">right</span><span class="po">[</span><span class="pv">j</span><span class="po">]:</span>
+            <span class="pv">result</span><span class="po">.</span><span class="pf">append</span><span class="po">(</span><span class="pv">left</span><span class="po">[</span><span class="pv">i</span><span class="po">]);</span> <span class="pv">i</span> <span class="po">+=</span> <span class="pn">1</span>
+        <span class="pk">else</span><span class="po">:</span>
+            <span class="pv">result</span><span class="po">.</span><span class="pf">append</span><span class="po">(</span><span class="pv">right</span><span class="po">[</span><span class="pv">j</span><span class="po">]);</span> <span class="pv">j</span> <span class="po">+=</span> <span class="pn">1</span>
+    <span class="pk">return</span> <span class="pv">result</span> <span class="po">+</span> <span class="pv">left</span><span class="po">[</span><span class="pv">i</span><span class="po">:]</span> <span class="po">+</span> <span class="pv">right</span><span class="po">[</span><span class="pv">j</span><span class="po">:]</span></pre>
+      </div>
+
+      <h3>Quick Sort · O(n log n) avg</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">def</span> <span class="pf">quicksort</span><span class="po">(</span><span class="pv">arr</span><span class="po">:</span> <span class="pb">list</span><span class="po">[</span><span class="pb">int</span><span class="po">])</span> <span class="po">-></span> <span class="pb">list</span><span class="po">[</span><span class="pb">int</span><span class="po">]:</span>
+    <span class="pk">if</span> <span class="pb">len</span><span class="po">(</span><span class="pv">arr</span><span class="po">)</span> <span class="po"><=</span> <span class="pn">1</span><span class="po">:</span> <span class="pk">return</span> <span class="pv">arr</span>
+    <span class="pv">pivot</span> <span class="po">=</span> <span class="pv">arr</span><span class="po">[</span><span class="pb">len</span><span class="po">(</span><span class="pv">arr</span><span class="po">)</span> <span class="po">//</span> <span class="pn">2</span><span class="po">]</span>        <span class="pc"># median pivot reduces worst case</span>
+    <span class="pv">left</span>  <span class="po">=</span> <span class="po">[</span><span class="pv">x</span> <span class="pk">for</span> <span class="pv">x</span> <span class="pk">in</span> <span class="pv">arr</span> <span class="pk">if</span> <span class="pv">x</span>  <span class="po"><</span> <span class="pv">pivot</span><span class="po">]</span>
+    <span class="pv">mid</span>   <span class="po">=</span> <span class="po">[</span><span class="pv">x</span> <span class="pk">for</span> <span class="pv">x</span> <span class="pk">in</span> <span class="pv">arr</span> <span class="pk">if</span> <span class="pv">x</span> <span class="po">==</span> <span class="pv">pivot</span><span class="po">]</span>
+    <span class="pv">right</span> <span class="po">=</span> <span class="po">[</span><span class="pv">x</span> <span class="pk">for</span> <span class="pv">x</span> <span class="pk">in</span> <span class="pv">arr</span> <span class="pk">if</span> <span class="pv">x</span>  <span class="po">></span> <span class="pv">pivot</span><span class="po">]</span>
+    <span class="pk">return</span> <span class="pf">quicksort</span><span class="po">(</span><span class="pv">left</span><span class="po">)</span> <span class="po">+</span> <span class="pv">mid</span> <span class="po">+</span> <span class="pf">quicksort</span><span class="po">(</span><span class="pv">right</span><span class="po">)</span></pre>
+      </div>
+
+      <h3>Maximum Subarray — Divide & Conquer</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">def</span> <span class="pf">max_subarray</span><span class="po">(</span><span class="pv">arr</span><span class="po">:</span> <span class="pb">list</span><span class="po">[</span><span class="pb">int</span><span class="po">],</span> <span class="pv">lo</span><span class="po">=</span><span class="pn">0</span><span class="po">,</span> <span class="pv">hi</span><span class="po">=</span><span class="pk">None</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pv">hi</span> <span class="pk">is</span> <span class="pk">None</span><span class="po">:</span> <span class="pv">hi</span> <span class="po">=</span> <span class="pb">len</span><span class="po">(</span><span class="pv">arr</span><span class="po">)</span> <span class="po">-</span> <span class="pn">1</span>
+    <span class="pk">if</span> <span class="pv">lo</span> <span class="po">==</span> <span class="pv">hi</span><span class="po">:</span> <span class="pk">return</span> <span class="pv">arr</span><span class="po">[</span><span class="pv">lo</span><span class="po">]</span>
+
+    <span class="pv">mid</span> <span class="po">=</span> <span class="po">(</span><span class="pv">lo</span> <span class="po">+</span> <span class="pv">hi</span><span class="po">)</span> <span class="po">//</span> <span class="pn">2</span>
+    <span class="pv">left_max</span>  <span class="po">=</span> <span class="pf">max_subarray</span><span class="po">(</span><span class="pv">arr</span><span class="po">,</span> <span class="pv">lo</span><span class="po">,</span> <span class="pv">mid</span><span class="po">)</span>
+    <span class="pv">right_max</span> <span class="po">=</span> <span class="pf">max_subarray</span><span class="po">(</span><span class="pv">arr</span><span class="po">,</span> <span class="pv">mid</span><span class="po">+</span><span class="pn">1</span><span class="po">,</span> <span class="pv">hi</span><span class="po">)</span>
+
+    <span class="pc"># Max crossing subarray</span>
+    <span class="pv">left_cross</span> <span class="po">=</span> <span class="pv">s</span> <span class="po">=</span> <span class="pn">0</span>
+    <span class="pk">for</span> <span class="pv">i</span> <span class="pk">in</span> <span class="pb">range</span><span class="po">(</span><span class="pv">mid</span><span class="po">,</span> <span class="pv">lo</span><span class="po">-</span><span class="pn">1</span><span class="po">,</span> <span class="po">-</span><span class="pn">1</span><span class="po">):</span>
+        <span class="pv">s</span> <span class="po">+=</span> <span class="pv">arr</span><span class="po">[</span><span class="pv">i</span><span class="po">];</span> <span class="pv">left_cross</span> <span class="po">=</span> <span class="pb">max</span><span class="po">(</span><span class="pv">left_cross</span><span class="po">,</span> <span class="pv">s</span><span class="po">)</span>
+    <span class="pv">right_cross</span> <span class="po">=</span> <span class="pv">s</span> <span class="po">=</span> <span class="pn">0</span>
+    <span class="pk">for</span> <span class="pv">i</span> <span class="pk">in</span> <span class="pb">range</span><span class="po">(</span><span class="pv">mid</span><span class="po">+</span><span class="pn">1</span><span class="po">,</span> <span class="pv">hi</span><span class="po">+</span><span class="pn">1</span><span class="po">):</span>
+        <span class="pv">s</span> <span class="po">+=</span> <span class="pv">arr</span><span class="po">[</span><span class="pv">i</span><span class="po">];</span> <span class="pv">right_cross</span> <span class="po">=</span> <span class="pb">max</span><span class="po">(</span><span class="pv">right_cross</span><span class="po">,</span> <span class="pv">s</span><span class="po">)</span>
+
+    <span class="pk">return</span> <span class="pb">max</span><span class="po">(</span><span class="pv">left_max</span><span class="po">,</span> <span class="pv">right_max</span><span class="po">,</span> <span class="pv">left_cross</span> <span class="po">+</span> <span class="pv">right_cross</span><span class="po">)</span></pre>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ -->
+    <!-- 11 · TAIL CALL & ITERATION    -->
+    <!-- ══════════════════════════════ -->
+    <section class="section" id="tailcall">
+      <div class="section-header">
+        <div class="section-icon ic-muted">🔃</div>
+        <div class="section-meta">
+          <span class="section-num">Chapter 11</span>
+          <h2>Tail Call & Converting to Iteration</h2>
+        </div>
+        <span class="level-badge lv-a">Advanced</span>
+      </div>
+
+      <p>Since Python doesn't optimize tail calls, deep linear recursion should be converted to iteration using an explicit stack when stack depth is a concern.</p>
+
+      <h3>Trampolining (Simulated TCO)</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">from</span> <span class="pv">typing</span> <span class="pk">import</span> <span class="pp">Callable</span><span class="po">,</span> <span class="pp">Any</span>
+
+<span class="pk">def</span> <span class="pf">trampoline</span><span class="po">(</span><span class="pv">f</span><span class="po">:</span> <span class="pp">Callable</span><span class="po">)</span> <span class="po">-></span> <span class="pp">Callable</span><span class="po">:</span>
+    <span class="pk">def</span> <span class="pf">run</span><span class="po">(*</span><span class="pv">args</span><span class="po">):</span>
+        <span class="pv">result</span> <span class="po">=</span> <span class="pf">f</span><span class="po">(*</span><span class="pv">args</span><span class="po">)</span>
+        <span class="pk">while</span> <span class="pb">callable</span><span class="po">(</span><span class="pv">result</span><span class="po">):</span>   <span class="pc"># if returned a thunk, call it</span>
+            <span class="pv">result</span> <span class="po">=</span> <span class="pv">result</span><span class="po">()</span>
+        <span class="pk">return</span> <span class="pv">result</span>
+    <span class="pk">return</span> <span class="pv">run</span>
+
+<span class="pd">@trampoline</span>
+<span class="pk">def</span> <span class="pf">factorial_t</span><span class="po">(</span><span class="pv">n</span><span class="po">,</span> <span class="pv">acc</span><span class="po">=</span><span class="pn">1</span><span class="po">):</span>
+    <span class="pk">if</span> <span class="pv">n</span> <span class="po"><=</span> <span class="pn">1</span><span class="po">:</span> <span class="pk">return</span> <span class="pv">acc</span>
+    <span class="pk">return</span> <span class="pk">lambda</span><span class="po">:</span> <span class="pf">factorial_t</span><span class="po">.</span><span class="pf">__wrapped__</span><span class="po">(</span><span class="pv">n</span><span class="po">-</span><span class="pn">1</span><span class="po">,</span> <span class="pv">n</span><span class="po">*</span><span class="pv">acc</span><span class="po">)</span>  <span class="pc"># return thunk</span></pre>
+      </div>
+
+      <h3>Recursive → Iterative with Explicit Stack</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pc"># ── Recursive DFS on graph ───────────────────────────────────</span>
+<span class="pk">def</span> <span class="pf">dfs_recursive</span><span class="po">(</span><span class="pv">graph</span><span class="po">:</span> <span class="pb">dict</span><span class="po">,</span> <span class="pv">start</span><span class="po">,</span> <span class="pv">visited</span><span class="po">=</span><span class="pk">None</span><span class="po">):</span>
+    <span class="pk">if</span> <span class="pv">visited</span> <span class="pk">is</span> <span class="pk">None</span><span class="po">:</span> <span class="pv">visited</span> <span class="po">=</span> <span class="pb">set</span><span class="po">()</span>
+    <span class="pv">visited</span><span class="po">.</span><span class="pf">add</span><span class="po">(</span><span class="pv">start</span><span class="po">)</span>
+    <span class="pk">for</span> <span class="pv">neighbor</span> <span class="pk">in</span> <span class="pv">graph</span><span class="po">.</span><span class="pf">get</span><span class="po">(</span><span class="pv">start</span><span class="po">,</span> <span class="po">[]):</span>
+        <span class="pk">if</span> <span class="pv">neighbor</span> <span class="pk">not in</span> <span class="pv">visited</span><span class="po">:</span>
+            <span class="pf">dfs_recursive</span><span class="po">(</span><span class="pv">graph</span><span class="po">,</span> <span class="pv">neighbor</span><span class="po">,</span> <span class="pv">visited</span><span class="po">)</span>
+    <span class="pk">return</span> <span class="pv">visited</span>
+
+<span class="pc"># ── Iterative DFS — same result, no stack overflow risk ───────</span>
+<span class="pk">def</span> <span class="pf">dfs_iterative</span><span class="po">(</span><span class="pv">graph</span><span class="po">:</span> <span class="pb">dict</span><span class="po">,</span> <span class="pv">start</span><span class="po">)</span> <span class="po">-></span> <span class="pb">set</span><span class="po">:</span>
+    <span class="pv">visited</span><span class="po">,</span> <span class="pv">stack</span> <span class="po">=</span> <span class="pb">set</span><span class="po">(),</span> <span class="po">[</span><span class="pv">start</span><span class="po">]</span>
+    <span class="pk">while</span> <span class="pv">stack</span><span class="po">:</span>
+        <span class="pv">node</span> <span class="po">=</span> <span class="pv">stack</span><span class="po">.</span><span class="pf">pop</span><span class="po">()</span>
+        <span class="pk">if</span> <span class="pv">node</span> <span class="pk">in</span> <span class="pv">visited</span><span class="po">:</span> <span class="pk">continue</span>
+        <span class="pv">visited</span><span class="po">.</span><span class="pf">add</span><span class="po">(</span><span class="pv">node</span><span class="po">)</span>
+        <span class="pv">stack</span><span class="po">.</span><span class="pf">extend</span><span class="po">(</span><span class="pv">graph</span><span class="po">.</span><span class="pf">get</span><span class="po">(</span><span class="pv">node</span><span class="po">,</span> <span class="po">[]))</span>
+    <span class="pk">return</span> <span class="pv">visited</span>
+
+<span class="pc"># ── Iterative in-order BST traversal ────────────────────────</span>
+<span class="pk">def</span> <span class="pf">inorder_iter</span><span class="po">(</span><span class="pv">root</span><span class="po">)</span> <span class="po">-></span> <span class="pb">list</span><span class="po">[</span><span class="pb">int</span><span class="po">]:</span>
+    <span class="pv">result</span><span class="po">,</span> <span class="pv">stack</span><span class="po">,</span> <span class="pv">curr</span> <span class="po">=</span> <span class="po">[],</span> <span class="po">[],</span> <span class="pv">root</span>
+    <span class="pk">while</span> <span class="pv">curr</span> <span class="pk">or</span> <span class="pv">stack</span><span class="po">:</span>
+        <span class="pk">while</span> <span class="pv">curr</span><span class="po">:</span>
+            <span class="pv">stack</span><span class="po">.</span><span class="pf">append</span><span class="po">(</span><span class="pv">curr</span><span class="po">);</span> <span class="pv">curr</span> <span class="po">=</span> <span class="pv">curr</span><span class="po">.</span><span class="pv">left</span>
+        <span class="pv">curr</span> <span class="po">=</span> <span class="pv">stack</span><span class="po">.</span><span class="pf">pop</span><span class="po">()</span>
+        <span class="pv">result</span><span class="po">.</span><span class="pf">append</span><span class="po">(</span><span class="pv">curr</span><span class="po">.</span><span class="pv">val</span><span class="po">);</span> <span class="pv">curr</span> <span class="po">=</span> <span class="pv">curr</span><span class="po">.</span><span class="pv">right</span>
+    <span class="pk">return</span> <span class="pv">result</span></pre>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ -->
+    <!-- 12 · DESIGN PATTERNS          -->
+    <!-- ══════════════════════════════ -->
+    <section class="section" id="patterns">
+      <div class="section-header">
+        <div class="section-icon ic-lav">🏗️</div>
+        <div class="section-meta">
+          <span class="section-num">Chapter 12</span>
+          <h2>Design Patterns & Quick Reference</h2>
+        </div>
+        <span class="level-badge lv-e">Expert</span>
+      </div>
+
+      <h3>Recursive Generator (Lazy Evaluation)</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">from</span> <span class="pv">typing</span> <span class="pk">import</span> <span class="pp">Generator</span>
+
+<span class="pc"># Walk a nested dict/list structure lazily</span>
+<span class="pk">def</span> <span class="pf">deep_values</span><span class="po">(</span><span class="pv">obj</span><span class="po">)</span> <span class="po">-></span> <span class="pp">Generator</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pb">isinstance</span><span class="po">(</span><span class="pv">obj</span><span class="po">,</span> <span class="pb">dict</span><span class="po">):</span>
+        <span class="pk">for</span> <span class="pv">v</span> <span class="pk">in</span> <span class="pv">obj</span><span class="po">.</span><span class="pf">values</span><span class="po">():</span>
+            <span class="pk">yield from</span> <span class="pf">deep_values</span><span class="po">(</span><span class="pv">v</span><span class="po">)</span>   <span class="pc"># yield from = recursive generator</span>
+    <span class="pk">elif</span> <span class="pb">isinstance</span><span class="po">(</span><span class="pv">obj</span><span class="po">,</span> <span class="po">(</span><span class="pb">list</span><span class="po">,</span> <span class="pb">tuple</span><span class="po">)):</span>
+        <span class="pk">for</span> <span class="pv">item</span> <span class="pk">in</span> <span class="pv">obj</span><span class="po">:</span>
+            <span class="pk">yield from</span> <span class="pf">deep_values</span><span class="po">(</span><span class="pv">item</span><span class="po">)</span>
+    <span class="pk">else</span><span class="po">:</span>
+        <span class="pk">yield</span> <span class="pv">obj</span>                         <span class="pc"># base case: scalar value
+
+data</span> <span class="po">=</span> <span class="po">{</span><span class="ps">"a"</span><span class="po">:</span> <span class="po">{</span><span class="ps">"b"</span><span class="po">:</span> <span class="po">[</span><span class="pn">1</span><span class="po">,</span> <span class="pn">2</span><span class="po">]},</span> <span class="ps">"c"</span><span class="po">:</span> <span class="pn">3</span><span class="po">}</span>
+<span class="pb">list</span><span class="po">(</span><span class="pf">deep_values</span><span class="po">(</span><span class="pv">data</span><span class="po">))</span>              <span class="pc"># [1, 2, 3]</span></pre>
+      </div>
+
+      <h3>Recursive Decorator — Retry Logic</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-left"><div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div><span class="code-lang">Python</span></div>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">import</span> <span class="pv">time</span>
+
+<span class="pk">def</span> <span class="pf">retry</span><span class="po">(</span><span class="pv">max_attempts</span><span class="po">:</span> <span class="pb">int</span><span class="po">,</span> <span class="pv">delay</span><span class="po">:</span> <span class="pb">float</span> <span class="po">=</span> <span class="pn">1.0</span><span class="po">):</span>
+    <span class="pk">def</span> <span class="pf">decorator</span><span class="po">(</span><span class="pv">func</span><span class="po">):</span>
+        <span class="pk">def</span> <span class="pf">wrapper</span><span class="po">(*</span><span class="pv">args</span><span class="po">,</span> <span class="pv">attempt</span><span class="po">=</span><span class="pn">1</span><span class="po">,</span> <span class="po">**</span><span class="pv">kwargs</span><span class="po">):</span>
+            <span class="pk">try</span><span class="po">:</span>
+                <span class="pk">return</span> <span class="pv">func</span><span class="po">(*</span><span class="pv">args</span><span class="po">,</span> <span class="po">**</span><span class="pv">kwargs</span><span class="po">)</span>
+            <span class="pk">except</span> <span class="pp">Exception</span> <span class="pk">as</span> <span class="pv">e</span><span class="po">:</span>
+                <span class="pk">if</span> <span class="pv">attempt</span> <span class="po">>=</span> <span class="pv">max_attempts</span><span class="po">:</span>  <span class="pk">raise</span>   <span class="pc"># base case</span>
+                <span class="pv">time</span><span class="po">.</span><span class="pf">sleep</span><span class="po">(</span><span class="pv">delay</span><span class="po">)</span>
+                <span class="pk">return</span> <span class="pf">wrapper</span><span class="po">(*</span><span class="pv">args</span><span class="po">,</span> attempt<span class="po">=</span><span class="pv">attempt</span><span class="po">+</span><span class="pn">1</span><span class="po">,</span> <span class="po">**</span><span class="pv">kwargs</span><span class="po">)</span>  <span class="pc"># recurse</span>
+        <span class="pk">return</span> <span class="pv">wrapper</span>
+    <span class="pk">return</span> <span class="pv">decorator</span>
+
+<span class="pd">@retry</span><span class="po">(</span>max_attempts<span class="po">=</span><span class="pn">3</span><span class="po">)</span>
+<span class="pk">def</span> <span class="pf">fetch_data</span><span class="po">(</span><span class="pv">url</span><span class="po">:</span> <span class="pb">str</span><span class="po">)</span> <span class="po">-></span> <span class="pb">str</span><span class="po">:</span>
+    <span class="po">...</span>   <span class="pc"># may throw network errors</span></pre>
+      </div>
+
+      <h3>Quick Reference</h3>
+      <table class="cmd-table">
+        <thead><tr><th>Pattern</th><th>Python Idiom</th><th>Use Case</th></tr></thead>
+        <tbody>
+          <tr><td>Memoize any fn</td><td><code>@functools.cache</code></td><td>Top-down DP, expensive recursion</td></tr>
+          <tr><td>Stack-safe DFS</td><td>Explicit <code>stack = []</code></td><td>Deep graphs, large trees</td></tr>
+          <tr><td>Lazy recursion</td><td><code>yield from f(sub)</code></td><td>Streaming large nested structures</td></tr>
+          <tr><td>Tree traversal</td><td>3 orderings with base <code>if not node</code></td><td>BST, expression trees, file systems</td></tr>
+          <tr><td>Backtracking</td><td>choose → recurse → unchoose</td><td>Permutations, Sudoku, N-Queens</td></tr>
+          <tr><td>Divide & Conquer</td><td>split → recurse × 2 → merge</td><td>Merge sort, quick sort, FFT</td></tr>
+          <tr><td>Accumulator</td><td>Pass <code>acc</code> parameter</td><td>Tail-recursive style, avoid post-work</td></tr>
+          <tr><td>Increase limit</td><td><code>sys.setrecursionlimit(n)</code></td><td>When depth > 1000 unavoidable</td></tr>
+        </tbody>
+      </table>
+
+      <div class="info-box think">
+        <span class="info-box-icon">🧠</span>
+        <div class="info-box-content">
+          <strong>Mental model for writing any recursive function:</strong><br>
+          1. Trust that <code>solve(smaller)</code> works correctly — don't trace the full call tree.<br>
+          2. Find the smallest possible input (base case) and return its answer directly.<br>
+          3. Express the answer for <em>n</em> in terms of the answer for <em>n-1</em> (or some smaller input).
+        </div>
+      </div>
+
+      <div class="info-box danger">
+        <span class="info-box-icon">🚫</span>
+        <div class="info-box-content">
+          <strong>Common bugs:</strong> Missing or wrong base case (infinite recursion) · Not progressing toward the base case · Off-by-one errors in index/slice bounds · Mutating shared state inside recursion without restoring it (backtracking bug) · Using mutable default arguments for cache (use <code>None</code> sentinel instead).
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+<!-- FOOTER -->
+<footer style="text-align:center; padding:48px 20px; border-top:1px solid var(--border); color:var(--text-dim); font-family:'DM Mono',monospace; font-size:12px; position:relative; z-index:1;">
+  Python Recursion Mastery · Built for Industry Engineers · Python 3.x
+</footer>
+
+<script>
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.style.color = 'var(--sage)';
+      btn.style.borderColor = 'var(--sage)';
+      setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
+    });
+  }
+
+  const sections = document.querySelectorAll('section[id]');
+  sections.forEach(s => {
+    new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.nav-link').forEach(l =>
+            l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' }).observe(s);
+  });
+</script>
+</body>
+</html>

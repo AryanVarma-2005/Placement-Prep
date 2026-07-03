@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python HashMap Mastery — Complete Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07090f;
+    --surface: #0d1117;
+    --surface2: #131920;
+    --surface3: #1a2230;
+    --border: #21303d;
+    --accent: #4fc3f7;
+    --accent2: #81c995;
+    --accent3: #ce93d8;
+    --accent4: #ffb74d;
+    --accent5: #ef9a9a;
+    --accent6: #80cbc4;
+    --text: #cdd9e5;
+    --text-muted: #768390;
+    --text-dim: #3d4f5e;
+    --heading: #e6f0fa;
+    --code-bg: #0d1117;
+    --py-blue: #4fc3f7;
+    --py-yellow: #ffd54f;
+    --py-green: #81c995;
+    --py-orange: #ffb74d;
+    --py-purple: #ce93d8;
+    --py-red: #ef9a9a;
+    --py-teal: #80cbc4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative;
+    padding: 100px 40px 80px;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% -10%, #4fc3f720 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 10% 100%, #81c99510 0%, transparent 50%),
+      radial-gradient(ellipse 50% 30% at 90% 80%, #ce93d810 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 6px 16px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--accent2); margin-bottom: 32px;
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(44px, 7vw, 88px);
+    font-weight: 900; color: var(--heading);
+    line-height: 1.05; margin-bottom: 20px; letter-spacing: -2px;
+  }
+
+  .hero h1 span { color: var(--accent); }
+  .hero h1 em { color: var(--py-yellow); font-style: normal; }
+
+  .hero p {
+    font-size: 18px; color: var(--text-muted);
+    max-width: 580px; margin: 0 auto 48px; font-weight: 300;
+  }
+
+  .hero-stats {
+    display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;
+  }
+
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: var(--accent); }
+  .stat-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  /* ─── TOPBAR ─── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(7, 9, 15, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex; align-items: center; height: 52px; gap: 20px;
+  }
+
+  .topbar-brand {
+    font-family: 'JetBrains Mono', monospace; font-size: 14px;
+    font-weight: 700; color: var(--accent); text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .topbar-pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: var(--text-dim); background: var(--surface2);
+    border: 1px solid var(--border); padding: 2px 8px; border-radius: 4px;
+  }
+
+  .topbar-spacer { flex: 1; }
+
+  .complexity-pills { display: flex; gap: 8px; }
+  .cpill {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    padding: 3px 10px; border-radius: 20px; border: 1px solid;
+  }
+  .cpill-o1  { color: var(--accent2); border-color: #81c99540; background: #81c99510; }
+  .cpill-on  { color: var(--accent4); border-color: #ffb74d40; background: #ffb74d10; }
+  .cpill-ok  { color: var(--accent5); border-color: #ef9a9a40; background: #ef9a9a10; }
+
+  /* ─── LAYOUT ─── */
+  .layout {
+    display: grid; grid-template-columns: 265px 1fr;
+    max-width: 1400px; margin: 0 auto;
+  }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar {
+    position: sticky; top: 52px; height: calc(100vh - 52px);
+    overflow-y: auto; border-right: 1px solid var(--border);
+    padding: 28px 0; background: var(--surface);
+  }
+
+  .sidebar::-webkit-scrollbar { width: 3px; }
+
+  .sidebar-title {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--text-dim); padding: 0 20px 12px;
+    border-bottom: 1px solid var(--border); margin-bottom: 10px;
+  }
+
+  .nav-section-label {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.12em; color: var(--text-dim); padding: 12px 20px 4px;
+  }
+
+  .nav-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 20px; color: var(--text-muted); text-decoration: none;
+    font-size: 13px; transition: all 0.15s;
+    border-left: 2px solid transparent; margin: 1px 0;
+  }
+
+  .nav-link:hover { color: var(--text); background: var(--surface2); border-left-color: var(--accent); }
+  .nav-link.active { color: var(--accent); background: #4fc3f710; border-left-color: var(--accent); }
+
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-dim); flex-shrink: 0; }
+
+  /* ─── MAIN ─── */
+  .main { padding: 48px 56px; max-width: 960px; }
+
+  /* ─── SECTIONS ─── */
+  .section {
+    margin-bottom: 80px;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+  .section:nth-child(1) { animation-delay: 0.05s; }
+  .section:nth-child(2) { animation-delay: 0.1s; }
+  .section:nth-child(3) { animation-delay: 0.15s; }
+  .section:nth-child(4) { animation-delay: 0.2s; }
+  .section:nth-child(5) { animation-delay: 0.25s; }
+
+  .section-header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 28px; padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-icon {
+    width: 42px; height: 42px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+
+  .ic-blue   { background: #4fc3f720; }
+  .ic-green  { background: #81c99520; }
+  .ic-purple { background: #ce93d820; }
+  .ic-orange { background: #ffb74d20; }
+  .ic-red    { background: #ef9a9a20; }
+  .ic-teal   { background: #80cbc420; }
+  .ic-yellow { background: #ffd54f20; }
+  .ic-pink   { background: #f48fb120; }
+
+  .section-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); display: block; margin-bottom: 2px; }
+  .section h2 { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--heading); letter-spacing: -0.5px; }
+
+  .level-badge {
+    margin-left: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+    padding: 4px 10px; border-radius: 20px; border: 1px solid; white-space: nowrap;
+  }
+
+  .lv-beginner     { color: var(--accent2); border-color: #81c99540; background: #81c99510; }
+  .lv-intermediate { color: var(--accent4); border-color: #ffb74d40; background: #ffb74d10; }
+  .lv-advanced     { color: var(--accent);  border-color: #4fc3f740; background: #4fc3f710; }
+  .lv-expert       { color: var(--accent3); border-color: #ce93d840; background: #ce93d810; }
+
+  /* ─── CODE BLOCKS ─── */
+  .code-block {
+    position: relative; background: var(--code-bg);
+    border: 1px solid var(--border); border-radius: 10px;
+    margin: 16px 0; overflow: hidden;
+  }
+
+  .code-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px; background: var(--surface3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-lang { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .code-dots { display: flex; gap: 6px; }
+  .code-dot  { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; } .dot-y { background: #febc2e; } .dot-g { background: #28c840; }
+
+  .copy-btn {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: var(--text-muted); background: none; border: 1px solid var(--border);
+    padding: 3px 10px; border-radius: 4px; cursor: pointer; transition: all 0.15s;
+  }
+  .copy-btn:hover { color: var(--text); border-color: var(--accent); }
+
+  pre {
+    padding: 20px; overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; line-height: 1.75;
+  }
+
+  /* Python syntax tokens */
+  .pk  { color: #cc99cd; }              /* keyword: def, class, if, for, return */
+  .pb  { color: var(--py-blue); }       /* builtin: print, len, dict, list */
+  .ps  { color: var(--py-green); }      /* string */
+  .pn  { color: var(--py-orange); }     /* number */
+  .pc  { color: #768390; font-style: italic; } /* comment */
+  .pf  { color: #ffd54f; }              /* function name / method */
+  .pv  { color: var(--py-teal); }       /* variable */
+  .pp  { color: var(--py-purple); }     /* class / type */
+  .po  { color: #cdd9e5; }              /* operator + punctuation */
+  .pd  { color: var(--py-red); }        /* decorator */
+
+  /* ─── CONCEPT CARDS ─── */
+  .concept-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px; margin: 20px 0;
+  }
+
+  .concept-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px; transition: all 0.2s;
+  }
+
+  .concept-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(79, 195, 247, 0.07); }
+
+  .concept-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); margin-bottom: 7px; }
+  .concept-card p  { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+
+  /* ─── INFO BOXES ─── */
+  .info-box {
+    border-radius: 10px; padding: 14px 18px; margin: 14px 0;
+    border-left: 3px solid; display: flex; gap: 12px; align-items: flex-start;
+  }
+
+  .info-box.tip     { background: #81c99510; border-color: var(--accent2); }
+  .info-box.warning { background: #ffb74d10; border-color: var(--accent4); }
+  .info-box.danger  { background: #ef9a9a10; border-color: var(--accent5); }
+  .info-box.note    { background: #4fc3f710; border-color: var(--accent); }
+  .info-box.perf    { background: #ce93d810; border-color: var(--accent3); }
+
+  .info-box-icon { font-size: 15px; flex-shrink: 0; margin-top: 2px; }
+  .info-box-content { font-size: 13.5px; line-height: 1.6; color: var(--text-muted); }
+  .info-box-content strong { color: var(--text); }
+
+  /* ─── TABLES ─── */
+  .cmd-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+
+  .cmd-table th {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted);
+    text-align: left; padding: 10px 16px;
+    background: var(--surface3); border-bottom: 1px solid var(--border);
+  }
+
+  .cmd-table td { padding: 10px 16px; border-bottom: 1px solid #131920; vertical-align: top; }
+  .cmd-table tr:hover td { background: var(--surface2); }
+  .cmd-table code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    color: var(--accent); background: var(--surface3);
+    padding: 2px 6px; border-radius: 4px; white-space: nowrap;
+  }
+  .cmd-table td:last-child { color: var(--text-muted); }
+
+  /* ─── COMPLEXITY TABLE ─── */
+  .cx-o1 { color: var(--accent2); font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; }
+  .cx-on { color: var(--accent4); font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; }
+  .cx-ok { color: var(--accent5); font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; }
+
+  /* ─── FLOW DIAGRAM ─── */
+  .flow-diagram {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px; margin: 20px 0; overflow-x: auto;
+  }
+
+  .flow-row {
+    display: flex; align-items: center; justify-content: center;
+    gap: 0; flex-wrap: nowrap; min-width: max-content; margin: 0 auto;
+  }
+
+  .flow-node {
+    background: var(--surface3); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 16px; text-align: center;
+    min-width: 100px; transition: all 0.2s;
+  }
+
+  .flow-node:hover { border-color: var(--accent); background: #4fc3f710; }
+  .flow-node span  { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); margin-bottom: 2px; }
+  .flow-node strong { font-size: 12px; color: var(--text); }
+
+  .flow-arrow { font-size: 18px; color: var(--text-dim); padding: 0 4px; }
+  .flow-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); text-align: center; margin-top: 10px; }
+
+  /* ─── HASH VISUALIZATION ─── */
+  .hash-viz {
+    font-family: 'JetBrains Mono', monospace; font-size: 13px;
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 24px; margin: 16px 0;
+    line-height: 2;
+  }
+
+  .hv-key   { color: var(--accent); }
+  .hv-hash  { color: var(--accent4); }
+  .hv-idx   { color: var(--accent2); }
+  .hv-val   { color: var(--accent3); }
+  .hv-arrow { color: var(--text-dim); }
+  .hv-dim   { color: var(--text-dim); }
+
+  /* ─── INLINE ─── */
+  code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    color: var(--accent); background: var(--surface3);
+    padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border);
+  }
+
+  p { margin-bottom: 14px; color: var(--text-muted); }
+  p strong { color: var(--text); font-weight: 600; }
+
+  h3 {
+    font-family: 'DM Sans', sans-serif; font-size: 17px;
+    font-weight: 600; color: var(--heading); margin: 28px 0 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  h3::before {
+    content: ''; display: inline-block; width: 3px; height: 16px;
+    background: var(--accent); border-radius: 2px;
+  }
+
+  ul, ol { padding-left: 20px; margin-bottom: 14px; color: var(--text-muted); }
+  li { margin-bottom: 4px; font-size: 14px; }
+  li strong { color: var(--text); }
+
+  /* ─── USE CASE STEPS ─── */
+  .workflow-steps { counter-reset: step; list-style: none; padding: 0; }
+  .workflow-steps li {
+    counter-increment: step; display: flex; gap: 16px;
+    padding: 14px 0; border-bottom: 1px solid var(--border); align-items: flex-start;
+  }
+  .workflow-steps li:last-child { border-bottom: none; }
+  .workflow-steps li::before {
+    content: counter(step, decimal-leading-zero);
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--accent); background: #4fc3f720; border: 1px solid #4fc3f740;
+    border-radius: 6px; padding: 4px 8px; flex-shrink: 0; margin-top: 2px;
+  }
+  .workflow-step-content h4 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .workflow-step-content p  { font-size: 13px; margin: 0; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { padding: 32px 20px; }
+    .hero { padding: 60px 20px 48px; }
+    .topbar { padding: 0 20px; }
+    .complexity-pills { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a href="#top" class="topbar-brand">🐍 HashMap · Python</a>
+  <span class="topbar-pill">Python 3.7+</span>
+  <span class="topbar-spacer"></span>
+  <div class="complexity-pills">
+    <span class="cpill cpill-o1">O(1) avg</span>
+    <span class="cpill cpill-on">O(n) worst</span>
+    <span class="cpill cpill-ok">O(k) key</span>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-badge">🗂️ Dictionary · Hash Table · Key-Value Store</div>
+  <h1>Python <span>HashMap</span><br><em>Mastery</em></h1>
+  <p>From <code>dict()</code> basics to custom hash tables — a complete industry-level reference for Python engineers.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">100+</div><div class="stat-label">Examples</div></div>
+    <div class="stat"><div class="stat-num">12</div><div class="stat-label">Chapters</div></div>
+    <div class="stat"><div class="stat-num">O(1)</div><div class="stat-label">Avg Lookup</div></div>
+  </div>
+</section>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-title">Table of Contents</div>
+
+    <div>
+      <div class="nav-section-label">Foundations</div>
+      <a class="nav-link" href="#intro"><span class="nav-dot"></span>01 · Introduction</a>
+      <a class="nav-link" href="#creation"><span class="nav-dot"></span>02 · Creating Dicts</a>
+      <a class="nav-link" href="#operations"><span class="nav-dot"></span>03 · Core Operations</a>
+      <a class="nav-link" href="#iteration"><span class="nav-dot"></span>04 · Iteration</a>
+    </div>
+
+    <div>
+      <div class="nav-section-label">Intermediate</div>
+      <a class="nav-link" href="#methods"><span class="nav-dot"></span>05 · Built-in Methods</a>
+      <a class="nav-link" href="#comprehension"><span class="nav-dot"></span>06 · Dict Comprehension</a>
+      <a class="nav-link" href="#merging"><span class="nav-dot"></span>07 · Merging & Updating</a>
+      <a class="nav-link" href="#nested"><span class="nav-dot"></span>08 · Nested Dicts</a>
+    </div>
+
+    <div>
+      <div class="nav-section-label">Advanced</div>
+      <a class="nav-link" href="#special"><span class="nav-dot"></span>09 · Special Dict Types</a>
+      <a class="nav-link" href="#internals"><span class="nav-dot"></span>10 · Internals & Hashing</a>
+      <a class="nav-link" href="#patterns"><span class="nav-dot"></span>11 · Design Patterns</a>
+      <a class="nav-link" href="#performance"><span class="nav-dot"></span>12 · Performance & Tips</a>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ════════════════════════════ -->
+    <!-- 01 · INTRODUCTION           -->
+    <!-- ════════════════════════════ -->
+    <section class="section" id="intro">
+      <div class="section-header">
+        <div class="section-icon ic-blue">📘</div>
+        <div>
+          <span class="section-num">Chapter 01</span>
+          <h2>Introduction to HashMap</h2>
+        </div>
+        <span class="level-badge lv-beginner">Beginner</span>
+      </div>
+
+      <p>A <strong>HashMap</strong> (called <code>dict</code> in Python) is a data structure that stores key-value pairs. It uses a <strong>hash function</strong> to compute an index into an array of buckets, enabling near-instant lookups, insertions, and deletions.</p>
+
+      <p>Python's <code>dict</code> is one of the most optimized data structures in the language — it powers object attributes, keyword arguments, module namespaces, and more.</p>
+
+      <h3>How Hashing Works</h3>
+      <div class="hash-viz">
+<span class="hv-key">"name"</span>  <span class="hv-arrow">──→</span> hash() <span class="hv-arrow">──→</span> <span class="hv-hash">5765169...1042</span> <span class="hv-arrow">──→</span> idx <span class="hv-idx">% 8 = 2</span> <span class="hv-arrow">──→</span> bucket[<span class="hv-idx">2</span>] <span class="hv-arrow">──→</span> <span class="hv-val">"Alice"</span>
+<span class="hv-key">"age"</span>   <span class="hv-arrow">──→</span> hash() <span class="hv-arrow">──→</span> <span class="hv-hash">3713082...8834</span> <span class="hv-arrow">──→</span> idx <span class="hv-idx">% 8 = 5</span> <span class="hv-arrow">──→</span> bucket[<span class="hv-idx">5</span>] <span class="hv-arrow">──→</span> <span class="hv-val">30</span>
+<span class="hv-key">"city"</span>  <span class="hv-arrow">──→</span> hash() <span class="hv-arrow">──→</span> <span class="hv-hash">9182736...4517</span> <span class="hv-arrow">──→</span> idx <span class="hv-idx">% 8 = 7</span> <span class="hv-arrow">──→</span> bucket[<span class="hv-idx">7</span>] <span class="hv-arrow">──→</span> <span class="hv-val">"Hyderabad"</span>
+      </div>
+
+      <h3>Time Complexity</h3>
+      <table class="cmd-table">
+        <thead><tr><th>Operation</th><th>Average</th><th>Worst Case</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Access <code>d[key]</code></td><td><span class="cx-o1">O(1)</span></td><td><span class="cx-on">O(n)</span></td><td>Hash collision degrades to O(n)</td></tr>
+          <tr><td>Insert <code>d[k]=v</code></td><td><span class="cx-o1">O(1)</span></td><td><span class="cx-on">O(n)</span></td><td>Amortized; resize triggers O(n)</td></tr>
+          <tr><td>Delete <code>del d[k]</code></td><td><span class="cx-o1">O(1)</span></td><td><span class="cx-on">O(n)</span></td><td>Rare worst case from collisions</td></tr>
+          <tr><td>Search <code>k in d</code></td><td><span class="cx-o1">O(1)</span></td><td><span class="cx-on">O(n)</span></td><td>Key lookup, not value search</td></tr>
+          <tr><td>Iteration</td><td><span class="cx-on">O(n)</span></td><td><span class="cx-on">O(n)</span></td><td>Always linear</td></tr>
+          <tr><td>Copy <code>d.copy()</code></td><td><span class="cx-on">O(n)</span></td><td><span class="cx-on">O(n)</span></td><td>Shallow copy</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Key Properties</h3>
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h4>🔑 Unique Keys</h4>
+          <p>Keys must be unique. Duplicate assignment overwrites the previous value.</p>
+        </div>
+        <div class="concept-card">
+          <h4>❄️ Hashable Keys</h4>
+          <p>Keys must be hashable: strings, numbers, tuples (of hashables). Lists and dicts cannot be keys.</p>
+        </div>
+        <div class="concept-card">
+          <h4>📋 Insertion Order</h4>
+          <p>Since Python 3.7+, dicts preserve insertion order as a language guarantee.</p>
+        </div>
+        <div class="concept-card">
+          <h4>🔄 Mutable Values</h4>
+          <p>Values can be any Python object: lists, functions, other dicts, None — anything.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════ -->
+    <!-- 02 · CREATING DICTS         -->
+    <!-- ════════════════════════════ -->
+    <section class="section" id="creation">
+      <div class="section-header">
+        <div class="section-icon ic-green">🏗️</div>
+        <div>
+          <span class="section-num">Chapter 02</span>
+          <h2>Creating Dictionaries</h2>
+        </div>
+        <span class="level-badge lv-beginner">Beginner</span>
+      </div>
+
+      <h3>All Ways to Create a Dict</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pc"># ── 1. Literal syntax (most common) ─────────────────────────</span>
+<span class="pv">person</span> <span class="po">=</span> <span class="po">{</span>
+    <span class="ps">"name"</span><span class="po">:</span> <span class="ps">"Alice"</span><span class="po">,</span>
+    <span class="ps">"age"</span><span class="po">:</span>  <span class="pn">30</span><span class="po">,</span>
+    <span class="ps">"city"</span><span class="po">:</span> <span class="ps">"Hyderabad"</span><span class="po">,</span>
+<span class="po">}</span>
+
+<span class="pc"># ── 2. dict() constructor with keyword arguments ─────────────</span>
+<span class="pv">person</span> <span class="po">=</span> <span class="pb">dict</span><span class="po">(</span>name<span class="po">=</span><span class="ps">"Alice"</span><span class="po">,</span> age<span class="po">=</span><span class="pn">30</span><span class="po">,</span> city<span class="po">=</span><span class="ps">"Hyderabad"</span><span class="po">)</span>
+
+<span class="pc"># ── 3. From a list of (key, value) tuples ────────────────────</span>
+<span class="pv">pairs</span> <span class="po">=</span> <span class="po">[(</span><span class="ps">"a"</span><span class="po">,</span> <span class="pn">1</span><span class="po">),</span> <span class="po">(</span><span class="ps">"b"</span><span class="po">,</span> <span class="pn">2</span><span class="po">),</span> <span class="po">(</span><span class="ps">"c"</span><span class="po">,</span> <span class="pn">3</span><span class="po">)]</span>
+<span class="pv">d</span> <span class="po">=</span> <span class="pb">dict</span><span class="po">(</span><span class="pv">pairs</span><span class="po">)</span>
+
+<span class="pc"># ── 4. From two parallel lists with zip() ────────────────────</span>
+<span class="pv">keys</span>   <span class="po">=</span> <span class="po">[</span><span class="ps">"x"</span><span class="po">,</span> <span class="ps">"y"</span><span class="po">,</span> <span class="ps">"z"</span><span class="po">]</span>
+<span class="pv">values</span> <span class="po">=</span> <span class="po">[</span><span class="pn">10</span><span class="po">,</span> <span class="pn">20</span><span class="po">,</span> <span class="pn">30</span><span class="po">]</span>
+<span class="pv">d</span> <span class="po">=</span> <span class="pb">dict</span><span class="po">(</span><span class="pb">zip</span><span class="po">(</span><span class="pv">keys</span><span class="po">,</span> <span class="pv">values</span><span class="po">))</span>   <span class="pc"># {'x': 10, 'y': 20, 'z': 30}</span>
+
+<span class="pc"># ── 5. dict.fromkeys() — same default value for all keys ─────</span>
+<span class="pv">d</span> <span class="po">=</span> <span class="pb">dict</span><span class="po">.</span><span class="pf">fromkeys</span><span class="po">([</span><span class="ps">"a"</span><span class="po">,</span> <span class="ps">"b"</span><span class="po">,</span> <span class="ps">"c"</span><span class="po">],</span> <span class="pn">0</span><span class="po">)</span>  <span class="pc"># {'a': 0, 'b': 0, 'c': 0}</span>
+<span class="pv">visited</span> <span class="po">=</span> <span class="pb">dict</span><span class="po">.</span><span class="pf">fromkeys</span><span class="po">([</span><span class="ps">"home"</span><span class="po">,</span> <span class="ps">"work"</span><span class="po">],</span> <span class="pk">False</span><span class="po">)</span>
+
+<span class="pc"># ── 6. Empty dict ─────────────────────────────────────────────</span>
+<span class="pv">empty</span> <span class="po">=</span> <span class="po">{}</span>
+<span class="pv">empty</span> <span class="po">=</span> <span class="pb">dict</span><span class="po">()</span>
+
+<span class="pc"># ── 7. Dict comprehension (covered in detail later) ──────────</span>
+<span class="pv">squares</span> <span class="po">=</span> <span class="po">{</span><span class="pv">n</span><span class="po">:</span> <span class="pv">n</span><span class="po">**</span><span class="pn">2</span> <span class="pk">for</span> <span class="pv">n</span> <span class="pk">in</span> <span class="pb">range</span><span class="po">(</span><span class="pn">1</span><span class="po">,</span> <span class="pn">6</span><span class="po">)}</span>  <span class="pc"># {1:1, 2:4, 3:9, 4:16, 5:25}</span></pre>
+      </div>
+
+      <h3>Valid Key Types</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pc"># ✅ Valid (hashable) keys</span>
+<span class="pv">d</span> <span class="po">=</span> <span class="po">{</span>
+    <span class="ps">"string_key"</span><span class="po">:</span>        <span class="pn">1</span><span class="po">,</span>
+    <span class="pn">42</span><span class="po">:</span>                   <span class="pn">2</span><span class="po">,</span>   <span class="pc"># int</span>
+    <span class="pn">3.14</span><span class="po">:</span>                 <span class="pn">3</span><span class="po">,</span>   <span class="pc"># float</span>
+    <span class="pk">True</span><span class="po">:</span>                 <span class="pn">4</span><span class="po">,</span>   <span class="pc"># bool (True == 1, careful!)</span>
+    <span class="po">(</span><span class="pn">1</span><span class="po">,</span> <span class="pn">2</span><span class="po">):</span>               <span class="pn">5</span><span class="po">,</span>   <span class="pc"># tuple of hashables</span>
+    <span class="pb">frozenset</span><span class="po">({</span><span class="pn">1</span><span class="po">,</span> <span class="pn">2</span><span class="po">}):</span>  <span class="pn">6</span><span class="po">,</span>   <span class="pc"># frozenset</span>
+<span class="po">}</span>
+
+<span class="pc"># ❌ Invalid (unhashable) keys — raise TypeError</span>
+<span class="pv">d</span><span class="po">[[</span><span class="pn">1</span><span class="po">,</span> <span class="pn">2</span><span class="po">]]</span>  <span class="po">=</span> <span class="pn">7</span>   <span class="pc"># TypeError: list is unhashable</span>
+<span class="pv">d</span><span class="po">[{</span><span class="pn">1</span><span class="po">:</span><span class="pn">2</span><span class="po">}]</span>  <span class="po">=</span> <span class="pn">8</span>   <span class="pc"># TypeError: dict is unhashable</span>
+<span class="pv">d</span><span class="po">[{</span><span class="pn">1</span><span class="po">,</span><span class="pn">2</span><span class="po">}]</span>  <span class="po">=</span> <span class="pn">9</span>   <span class="pc"># TypeError: set is unhashable</span>
+
+<span class="pc"># ⚠️  bool/int overlap gotcha</span>
+<span class="pv">d</span> <span class="po">=</span> <span class="po">{</span><span class="pk">True</span><span class="po">:</span> <span class="ps">"yes"</span><span class="po">,</span> <span class="pn">1</span><span class="po">:</span> <span class="ps">"one"</span><span class="po">}</span>
+<span class="pb">print</span><span class="po">(</span><span class="pv">d</span><span class="po">)</span>  <span class="pc"># {True: 'one'}  ← 1 overwrites True because True == 1</span></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════ -->
+    <!-- 03 · CORE OPERATIONS        -->
+    <!-- ════════════════════════════ -->
+    <section class="section" id="operations">
+      <div class="section-header">
+        <div class="section-icon ic-orange">⚡</div>
+        <div>
+          <span class="section-num">Chapter 03</span>
+          <h2>Core Operations</h2>
+        </div>
+        <span class="level-badge lv-beginner">Beginner</span>
+      </div>
+
+      <h3>Read, Write, Delete</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pv">user</span> <span class="po">=</span> <span class="po">{</span><span class="ps">"name"</span><span class="po">:</span> <span class="ps">"Bob"</span><span class="po">,</span> <span class="ps">"age"</span><span class="po">:</span> <span class="pn">25</span><span class="po">,</span> <span class="ps">"role"</span><span class="po">:</span> <span class="ps">"dev"</span><span class="po">}</span>
+
+<span class="pc"># ── READ ─────────────────────────────────────────────────────</span>
+<span class="pb">print</span><span class="po">(</span><span class="pv">user</span><span class="po">[</span><span class="ps">"name"</span><span class="po">])</span>                 <span class="pc"># "Bob" — raises KeyError if missing</span>
+<span class="pb">print</span><span class="po">(</span><span class="pv">user</span><span class="po">.</span><span class="pf">get</span><span class="po">(</span><span class="ps">"name"</span><span class="po">))</span>             <span class="pc"># "Bob" — returns None if missing</span>
+<span class="pb">print</span><span class="po">(</span><span class="pv">user</span><span class="po">.</span><span class="pf">get</span><span class="po">(</span><span class="ps">"salary"</span><span class="po">,</span> <span class="pn">0</span><span class="po">))</span>       <span class="pc"># 0 — default fallback value</span>
+
+<span class="pc"># ── WRITE ────────────────────────────────────────────────────</span>
+<span class="pv">user</span><span class="po">[</span><span class="ps">"age"</span><span class="po">]</span> <span class="po">=</span> <span class="pn">26</span>                     <span class="pc"># update existing key</span>
+<span class="pv">user</span><span class="po">[</span><span class="ps">"email"</span><span class="po">]</span> <span class="po">=</span> <span class="ps">"bob@example.com"</span>  <span class="pc"># add new key</span>
+
+<span class="pc"># ── DELETE ───────────────────────────────────────────────────</span>
+<span class="pk">del</span> <span class="pv">user</span><span class="po">[</span><span class="ps">"role"</span><span class="po">]</span>                    <span class="pc"># removes key; KeyError if missing</span>
+<span class="pv">val</span>  <span class="po">=</span> <span class="pv">user</span><span class="po">.</span><span class="pf">pop</span><span class="po">(</span><span class="ps">"age"</span><span class="po">)</span>              <span class="pc"># removes and returns value</span>
+<span class="pv">val</span>  <span class="po">=</span> <span class="pv">user</span><span class="po">.</span><span class="pf">pop</span><span class="po">(</span><span class="ps">"salary"</span><span class="po">,</span> <span class="pk">None</span><span class="po">)</span>   <span class="pc"># safe pop with default</span>
+<span class="pv">item</span> <span class="po">=</span> <span class="pv">user</span><span class="po">.</span><span class="pf">popitem</span><span class="po">()</span>               <span class="pc"># removes & returns last (key, val) pair</span>
+<span class="pv">user</span><span class="po">.</span><span class="pf">clear</span><span class="po">()</span>                        <span class="pc"># removes all items
+
+# ── MEMBERSHIP ───────────────────────────────────────────────</span>
+<span class="ps">"name"</span> <span class="pk">in</span> <span class="pv">user</span>      <span class="pc"># True  — key membership (O(1))</span>
+<span class="ps">"Bob"</span>  <span class="pk">in</span> <span class="pv">user</span>      <span class="pc"># False — checks keys, NOT values!</span>
+<span class="ps">"Bob"</span>  <span class="pk">in</span> <span class="pv">user</span><span class="po">.</span><span class="pf">values</span><span class="po">()</span>  <span class="pc"># True  — value search O(n)</span></pre>
+      </div>
+
+      <h3>setdefault — Atomic Get-or-Set</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pc"># setdefault: return value if key exists, else set + return default</span>
+<span class="pv">d</span> <span class="po">=</span> <span class="po">{}</span>
+<span class="pv">d</span><span class="po">.</span><span class="pf">setdefault</span><span class="po">(</span><span class="ps">"count"</span><span class="po">,</span> <span class="pn">0</span><span class="po">)</span>          <span class="pc"># sets d["count"] = 0, returns 0</span>
+<span class="pv">d</span><span class="po">.</span><span class="pf">setdefault</span><span class="po">(</span><span class="ps">"count"</span><span class="po">,</span> <span class="pn">99</span><span class="po">)</span>         <span class="pc"># key exists → returns 0, d unchanged</span>
+
+<span class="pc"># Classic use: grouping into lists</span>
+<span class="pv">data</span> <span class="po">=</span> <span class="po">[(</span><span class="ps">"fruits"</span><span class="po">,</span> <span class="ps">"apple"</span><span class="po">),</span> <span class="po">(</span><span class="ps">"vegs"</span><span class="po">,</span> <span class="ps">"carrot"</span><span class="po">),</span> <span class="po">(</span><span class="ps">"fruits"</span><span class="po">,</span> <span class="ps">"mango"</span><span class="po">)]</span>
+<span class="pv">groups</span> <span class="po">=</span> <span class="po">{}</span>
+<span class="pk">for</span> <span class="pv">category</span><span class="po">,</span> <span class="pv">item</span> <span class="pk">in</span> <span class="pv">data</span><span class="po">:</span>
+    <span class="pv">groups</span><span class="po">.</span><span class="pf">setdefault</span><span class="po">(</span><span class="pv">category</span><span class="po">,</span> <span class="po">[])</span><span class="po">.</span><span class="pf">append</span><span class="po">(</span><span class="pv">item</span><span class="po">)</span>
+<span class="pc"># {'fruits': ['apple', 'mango'], 'vegs': ['carrot']}</span></pre>
+      </div>
+
+      <div class="info-box tip">
+        <span class="info-box-icon">💡</span>
+        <div class="info-box-content"><strong>Industry tip:</strong> Prefer <code>dict.get(key, default)</code> over <code>d[key]</code> when the key's existence is uncertain — avoids try/except overhead and makes intent clear.</div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════ -->
+    <!-- 04 · ITERATION              -->
+    <!-- ════════════════════════════ -->
+    <section class="section" id="iteration">
+      <div class="section-header">
+        <div class="section-icon ic-teal">🔄</div>
+        <div>
+          <span class="section-num">Chapter 04</span>
+          <h2>Iteration</h2>
+        </div>
+        <span class="level-badge lv-beginner">Beginner</span>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pv">inventory</span> <span class="po">=</span> <span class="po">{</span><span class="ps">"apple"</span><span class="po">:</span> <span class="pn">50</span><span class="po">,</span> <span class="ps">"banana"</span><span class="po">:</span> <span class="pn">30</span><span class="po">,</span> <span class="ps">"cherry"</span><span class="po">:</span> <span class="pn">80</span><span class="po">}</span>
+
+<span class="pc"># ── Iterate keys (default) ───────────────────────────────────</span>
+<span class="pk">for</span> <span class="pv">key</span> <span class="pk">in</span> <span class="pv">inventory</span><span class="po">:</span>
+    <span class="pb">print</span><span class="po">(</span><span class="pv">key</span><span class="po">)</span>             <span class="pc"># apple, banana, cherry</span>
+
+<span class="pk">for</span> <span class="pv">key</span> <span class="pk">in</span> <span class="pv">inventory</span><span class="po">.</span><span class="pf">keys</span><span class="po">():</span>  <span class="pc"># explicit — same result</span>
+    <span class="pb">print</span><span class="po">(</span><span class="pv">key</span><span class="po">)</span>
+
+<span class="pc"># ── Iterate values ───────────────────────────────────────────</span>
+<span class="pk">for</span> <span class="pv">qty</span> <span class="pk">in</span> <span class="pv">inventory</span><span class="po">.</span><span class="pf">values</span><span class="po">():</span>
+    <span class="pb">print</span><span class="po">(</span><span class="pv">qty</span><span class="po">)</span>              <span class="pc"># 50, 30, 80</span>
+
+<span class="pc"># ── Iterate key-value pairs ──────────────────────────────────</span>
+<span class="pk">for</span> <span class="pv">fruit</span><span class="po">,</span> <span class="pv">qty</span> <span class="pk">in</span> <span class="pv">inventory</span><span class="po">.</span><span class="pf">items</span><span class="po">():</span>
+    <span class="pb">print</span><span class="po">(</span><span class="ps">f"</span><span class="pv">{fruit}</span><span class="ps">: </span><span class="pv">{qty}</span><span class="ps"> units"</span><span class="po">)</span>
+
+<span class="pc"># ── Enumerate with index ─────────────────────────────────────</span>
+<span class="pk">for</span> <span class="pv">i</span><span class="po">,</span> <span class="po">(</span><span class="pv">k</span><span class="po">,</span> <span class="pv">v</span><span class="po">)</span> <span class="pk">in</span> <span class="pb">enumerate</span><span class="po">(</span><span class="pv">inventory</span><span class="po">.</span><span class="pf">items</span><span class="po">()):</span>
+    <span class="pb">print</span><span class="po">(</span><span class="ps">f"</span><span class="pv">{i}</span><span class="ps">: </span><span class="pv">{k}</span><span class="ps"> → </span><span class="pv">{v}</span><span class="ps">"</span><span class="po">)</span>
+
+<span class="pc"># ── Sorted iteration ─────────────────────────────────────────</span>
+<span class="pk">for</span> <span class="pv">k</span> <span class="pk">in</span> <span class="pb">sorted</span><span class="po">(</span><span class="pv">inventory</span><span class="po">):</span>
+    <span class="pb">print</span><span class="po">(</span><span class="pv">k</span><span class="po">)</span>
+
+<span class="pk">for</span> <span class="pv">k</span><span class="po">,</span> <span class="pv">v</span> <span class="pk">in</span> <span class="pb">sorted</span><span class="po">(</span><span class="pv">inventory</span><span class="po">.</span><span class="pf">items</span><span class="po">(),</span> <span class="pv">key</span><span class="po">=</span><span class="pk">lambda</span> <span class="pv">x</span><span class="po">:</span> <span class="pv">x</span><span class="po">[</span><span class="pn">1</span><span class="po">],</span> <span class="pv">reverse</span><span class="po">=</span><span class="pk">True</span><span class="po">):</span>
+    <span class="pb">print</span><span class="po">(</span><span class="ps">f"</span><span class="pv">{k}</span><span class="ps">: </span><span class="pv">{v}</span><span class="ps">"</span><span class="po">)</span>        <span class="pc"># sorted by qty descending
+
+# ── ⚠️ Never modify dict size while iterating ────────────────</span>
+<span class="pc"># RuntimeError: dictionary changed size during iteration</span>
+<span class="pc"># Safe pattern: iterate over a copy</span>
+<span class="pk">for</span> <span class="pv">k</span> <span class="pk">in</span> <span class="pb">list</span><span class="po">(</span><span class="pv">inventory</span><span class="po">.</span><span class="pf">keys</span><span class="po">()):</span>
+    <span class="pk">if</span> <span class="pv">inventory</span><span class="po">[</span><span class="pv">k</span><span class="po">]</span> <span class="po"><</span> <span class="pn">40</span><span class="po">:</span>
+        <span class="pk">del</span> <span class="pv">inventory</span><span class="po">[</span><span class="pv">k</span><span class="po">]</span></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════ -->
+    <!-- 05 · BUILT-IN METHODS       -->
+    <!-- ════════════════════════════ -->
+    <section class="section" id="methods">
+      <div class="section-header">
+        <div class="section-icon ic-purple">🛠️</div>
+        <div>
+          <span class="section-num">Chapter 05</span>
+          <h2>Built-in Methods</h2>
+        </div>
+        <span class="level-badge lv-intermediate">Intermediate</span>
+      </div>
+
+      <table class="cmd-table">
+        <thead><tr><th>Method</th><th>Returns</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>d.get(k, v)</code></td><td>value or v</td><td>Safe access with fallback</td></tr>
+          <tr><td><code>d.setdefault(k, v)</code></td><td>value</td><td>Get or set-and-get</td></tr>
+          <tr><td><code>d.pop(k, v)</code></td><td>value</td><td>Remove and return value</td></tr>
+          <tr><td><code>d.popitem()</code></td><td>(k, v)</td><td>Remove and return last item</td></tr>
+          <tr><td><code>d.update(other)</code></td><td>None</td><td>Merge from another dict/iterable</td></tr>
+          <tr><td><code>d.copy()</code></td><td>dict</td><td>Shallow copy</td></tr>
+          <tr><td><code>d.clear()</code></td><td>None</td><td>Remove all items</td></tr>
+          <tr><td><code>d.keys()</code></td><td>dict_keys</td><td>View of all keys</td></tr>
+          <tr><td><code>d.values()</code></td><td>dict_values</td><td>View of all values</td></tr>
+          <tr><td><code>d.items()</code></td><td>dict_items</td><td>View of (key, value) pairs</td></tr>
+          <tr><td><code>len(d)</code></td><td>int</td><td>Number of items</td></tr>
+          <tr><td><code>dict.fromkeys(it, v)</code></td><td>dict</td><td>Class method — new dict from keys</td></tr>
+        </tbody>
+      </table>
+
+      <div class="info-box note">
+        <span class="info-box-icon">📌</span>
+        <div class="info-box-content"><strong>Dict views</strong> (<code>.keys()</code>, <code>.values()</code>, <code>.items()</code>) are dynamic — they reflect changes to the dict in real-time. They support set-like operations: <code>d1.keys() & d2.keys()</code> gives the common keys.</div>
+      </div>
+
+      <h3>View Set Operations</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pv">a</span> <span class="po">=</span> <span class="po">{</span><span class="ps">"x"</span><span class="po">:</span> <span class="pn">1</span><span class="po">,</span> <span class="ps">"y"</span><span class="po">:</span> <span class="pn">2</span><span class="po">,</span> <span class="ps">"z"</span><span class="po">:</span> <span class="pn">3</span><span class="po">}</span>
+<span class="pv">b</span> <span class="po">=</span> <span class="po">{</span><span class="ps">"y"</span><span class="po">:</span> <span class="pn">20</span><span class="po">,</span> <span class="ps">"z"</span><span class="po">:</span> <span class="pn">30</span><span class="po">,</span> <span class="ps">"w"</span><span class="po">:</span> <span class="pn">40</span><span class="po">}</span>
+
+<span class="pv">a</span><span class="po">.</span><span class="pf">keys</span><span class="po">()</span> <span class="po">&</span> <span class="pv">b</span><span class="po">.</span><span class="pf">keys</span><span class="po">()</span>   <span class="pc"># {'y', 'z'}      — intersection</span>
+<span class="pv">a</span><span class="po">.</span><span class="pf">keys</span><span class="po">()</span> <span class="po">|</span> <span class="pv">b</span><span class="po">.</span><span class="pf">keys</span><span class="po">()</span>   <span class="pc"># {'x','y','z','w'} — union</span>
+<span class="pv">a</span><span class="po">.</span><span class="pf">keys</span><span class="po">()</span> <span class="po">-</span> <span class="pv">b</span><span class="po">.</span><span class="pf">keys</span><span class="po">()</span>   <span class="pc"># {'x'}           — difference</span>
+<span class="pv">a</span><span class="po">.</span><span class="pf">keys</span><span class="po">()</span> <span class="po">^</span> <span class="pv">b</span><span class="po">.</span><span class="pf">keys</span><span class="po">()</span>   <span class="pc"># {'x', 'w'}      — symmetric diff</span></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════ -->
+    <!-- 06 · DICT COMPREHENSION     -->
+    <!-- ════════════════════════════ -->
+    <section class="section" id="comprehension">
+      <div class="section-header">
+        <div class="section-icon ic-yellow">✨</div>
+        <div>
+          <span class="section-num">Chapter 06</span>
+          <h2>Dict Comprehension</h2>
+        </div>
+        <span class="level-badge lv-intermediate">Intermediate</span>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pc"># ── Syntax ───────────────────────────────────────────────────</span>
+<span class="pc"># {key_expr: val_expr for item in iterable [if condition]}</span>
+
+<span class="pc"># ── Basic ────────────────────────────────────────────────────</span>
+<span class="pv">squares</span> <span class="po">=</span> <span class="po">{</span><span class="pv">n</span><span class="po">:</span> <span class="pv">n</span><span class="po">**</span><span class="pn">2</span> <span class="pk">for</span> <span class="pv">n</span> <span class="pk">in</span> <span class="pb">range</span><span class="po">(</span><span class="pn">1</span><span class="po">,</span> <span class="pn">6</span><span class="po">)}</span>
+
+<span class="pc"># ── With filter ──────────────────────────────────────────────</span>
+<span class="pv">even_sq</span> <span class="po">=</span> <span class="po">{</span><span class="pv">n</span><span class="po">:</span> <span class="pv">n</span><span class="po">**</span><span class="pn">2</span> <span class="pk">for</span> <span class="pv">n</span> <span class="pk">in</span> <span class="pb">range</span><span class="po">(</span><span class="pn">10</span><span class="po">)</span> <span class="pk">if</span> <span class="pv">n</span> <span class="po">%</span> <span class="pn">2</span> <span class="po">==</span> <span class="pn">0</span><span class="po">}</span>
+
+<span class="pc"># ── Invert a dict (swap key ↔ value) ─────────────────────────</span>
+<span class="pv">original</span> <span class="po">=</span> <span class="po">{</span><span class="ps">"a"</span><span class="po">:</span> <span class="pn">1</span><span class="po">,</span> <span class="ps">"b"</span><span class="po">:</span> <span class="pn">2</span><span class="po">,</span> <span class="ps">"c"</span><span class="po">:</span> <span class="pn">3</span><span class="po">}</span>
+<span class="pv">inverted</span> <span class="po">=</span> <span class="po">{</span><span class="pv">v</span><span class="po">:</span> <span class="pv">k</span> <span class="pk">for</span> <span class="pv">k</span><span class="po">,</span> <span class="pv">v</span> <span class="pk">in</span> <span class="pv">original</span><span class="po">.</span><span class="pf">items</span><span class="po">()}</span>  <span class="pc"># {1:'a', 2:'b', 3:'c'}</span>
+
+<span class="pc"># ── Transform keys ───────────────────────────────────────────</span>
+<span class="pv">raw</span> <span class="po">=</span> <span class="po">{</span><span class="ps">"First Name"</span><span class="po">:</span> <span class="ps">"Alice"</span><span class="po">,</span> <span class="ps">"Last Name"</span><span class="po">:</span> <span class="ps">"Smith"</span><span class="po">}</span>
+<span class="pv">clean</span> <span class="po">=</span> <span class="po">{</span><span class="pv">k</span><span class="po">.</span><span class="pf">lower</span><span class="po">()</span><span class="po">.</span><span class="pf">replace</span><span class="po">(</span><span class="ps">" "</span><span class="po">,</span> <span class="ps">"_"</span><span class="po">):</span> <span class="pv">v</span> <span class="pk">for</span> <span class="pv">k</span><span class="po">,</span> <span class="pv">v</span> <span class="pk">in</span> <span class="pv">raw</span><span class="po">.</span><span class="pf">items</span><span class="po">()}</span>
+<span class="pc"># {'first_name': 'Alice', 'last_name': 'Smith'}</span>
+
+<span class="pc"># ── From enumerated list ─────────────────────────────────────</span>
+<span class="pv">items</span> <span class="po">=</span> <span class="po">[</span><span class="ps">"apple"</span><span class="po">,</span> <span class="ps">"banana"</span><span class="po">,</span> <span class="ps">"cherry"</span><span class="po">]</span>
+<span class="pv">index_map</span> <span class="po">=</span> <span class="po">{</span><span class="pv">v</span><span class="po">:</span> <span class="pv">i</span> <span class="pk">for</span> <span class="pv">i</span><span class="po">,</span> <span class="pv">v</span> <span class="pk">in</span> <span class="pb">enumerate</span><span class="po">(</span><span class="pv">items</span><span class="po">)}</span>
+<span class="pc"># {'apple': 0, 'banana': 1, 'cherry': 2}</span>
+
+<span class="pc"># ── Conditional value ────────────────────────────────────────</span>
+<span class="pv">scores</span> <span class="po">=</span> <span class="po">{</span><span class="ps">"Alice"</span><span class="po">:</span> <span class="pn">85</span><span class="po">,</span> <span class="ps">"Bob"</span><span class="po">:</span> <span class="pn">42</span><span class="po">,</span> <span class="ps">"Eve"</span><span class="po">:</span> <span class="pn">91</span><span class="po">}</span>
+<span class="pv">grades</span> <span class="po">=</span> <span class="po">{</span><span class="pv">k</span><span class="po">:</span> <span class="ps">"pass"</span> <span class="pk">if</span> <span class="pv">v</span> <span class="po">>=</span> <span class="pn">50</span> <span class="pk">else</span> <span class="ps">"fail"</span> <span class="pk">for</span> <span class="pv">k</span><span class="po">,</span> <span class="pv">v</span> <span class="pk">in</span> <span class="pv">scores</span><span class="po">.</span><span class="pf">items</span><span class="po">()}</span>
+<span class="pc"># {'Alice': 'pass', 'Bob': 'fail', 'Eve': 'pass'}</span>
+
+<span class="pc"># ── Nested comprehension ─────────────────────────────────────</span>
+<span class="pv">matrix</span> <span class="po">=</span> <span class="po">{(</span><span class="pv">r</span><span class="po">,</span> <span class="pv">c</span><span class="po">):</span> <span class="pv">r</span> <span class="po">*</span> <span class="pv">c</span> <span class="pk">for</span> <span class="pv">r</span> <span class="pk">in</span> <span class="pb">range</span><span class="po">(</span><span class="pn">3</span><span class="po">)</span> <span class="pk">for</span> <span class="pv">c</span> <span class="pk">in</span> <span class="pb">range</span><span class="po">(</span><span class="pn">3</span><span class="po">)}</span>
+<span class="pc"># {(0,0):0, (0,1):0, (1,1):1, (2,2):4, ...}</span></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════ -->
+    <!-- 07 · MERGING & UPDATING     -->
+    <!-- ════════════════════════════ -->
+    <section class="section" id="merging">
+      <div class="section-header">
+        <div class="section-icon ic-green">🔀</div>
+        <div>
+          <span class="section-num">Chapter 07</span>
+          <h2>Merging & Updating</h2>
+        </div>
+        <span class="level-badge lv-intermediate">Intermediate</span>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pv">defaults</span> <span class="po">=</span> <span class="po">{</span><span class="ps">"theme"</span><span class="po">:</span> <span class="ps">"dark"</span><span class="po">,</span>  <span class="ps">"lang"</span><span class="po">:</span> <span class="ps">"en"</span><span class="po">,</span> <span class="ps">"tz"</span><span class="po">:</span> <span class="ps">"UTC"</span><span class="po">}</span>
+<span class="pv">overrides</span> <span class="po">=</span> <span class="po">{</span><span class="ps">"lang"</span><span class="po">:</span> <span class="ps">"te"</span><span class="po">,</span> <span class="ps">"tz"</span><span class="po">:</span> <span class="ps">"IST"</span><span class="po">}</span>
+
+<span class="pc"># ── Method 1: update() — mutates in-place ────────────────────</span>
+<span class="pv">config</span> <span class="po">=</span> <span class="pv">defaults</span><span class="po">.</span><span class="pf">copy</span><span class="po">()</span>
+<span class="pv">config</span><span class="po">.</span><span class="pf">update</span><span class="po">(</span><span class="pv">overrides</span><span class="po">)</span>
+
+<span class="pc"># ── Method 2: ** unpacking — new dict ────────────────────────</span>
+<span class="pv">config</span> <span class="po">=</span> <span class="po">{**</span><span class="pv">defaults</span><span class="po">,</span> <span class="po">**</span><span class="pv">overrides</span><span class="po">}</span>    <span class="pc"># Python 3.5+</span>
+<span class="pc"># right-side keys win on collision</span>
+
+<span class="pc"># ── Method 3: | operator — new dict (Python 3.9+) ────────────</span>
+<span class="pv">config</span> <span class="po">=</span> <span class="pv">defaults</span> <span class="po">|</span> <span class="pv">overrides</span>         <span class="pc"># returns new dict</span>
+<span class="pv">defaults</span> <span class="po">|=</span> <span class="pv">overrides</span>                  <span class="pc"># in-place update (3.9+)</span>
+
+<span class="pc"># ── Merge multiple dicts ─────────────────────────────────────</span>
+<span class="pv">result</span> <span class="po">=</span> <span class="po">{**</span><span class="pv">d1</span><span class="po">,</span> <span class="po">**</span><span class="pv">d2</span><span class="po">,</span> <span class="po">**</span><span class="pv">d3</span><span class="po">}</span>
+<span class="pv">result</span> <span class="po">=</span> <span class="pv">d1</span> <span class="po">|</span> <span class="pv">d2</span> <span class="po">|</span> <span class="pv">d3</span>               <span class="pc"># Python 3.9+
+
+# ── Deep merge (custom) ──────────────────────────────────────</span>
+<span class="pk">def</span> <span class="pf">deep_merge</span><span class="po">(</span><span class="pv">base</span><span class="po">:</span> <span class="pb">dict</span><span class="po">,</span> <span class="pv">override</span><span class="po">:</span> <span class="pb">dict</span><span class="po">)</span> <span class="po">-></span> <span class="pb">dict</span><span class="po">:</span>
+    <span class="pv">result</span> <span class="po">=</span> <span class="pv">base</span><span class="po">.</span><span class="pf">copy</span><span class="po">()</span>
+    <span class="pk">for</span> <span class="pv">key</span><span class="po">,</span> <span class="pv">val</span> <span class="pk">in</span> <span class="pv">override</span><span class="po">.</span><span class="pf">items</span><span class="po">():</span>
+        <span class="pk">if</span> <span class="pv">key</span> <span class="pk">in</span> <span class="pv">result</span> <span class="pk">and</span> <span class="pb">isinstance</span><span class="po">(</span><span class="pv">result</span><span class="po">[</span><span class="pv">key</span><span class="po">],</span> <span class="pb">dict</span><span class="po">)</span> <span class="pk">and</span> <span class="pb">isinstance</span><span class="po">(</span><span class="pv">val</span><span class="po">,</span> <span class="pb">dict</span><span class="po">):</span>
+            <span class="pv">result</span><span class="po">[</span><span class="pv">key</span><span class="po">]</span> <span class="po">=</span> <span class="pf">deep_merge</span><span class="po">(</span><span class="pv">result</span><span class="po">[</span><span class="pv">key</span><span class="po">],</span> <span class="pv">val</span><span class="po">)</span>
+        <span class="pk">else</span><span class="po">:</span>
+            <span class="pv">result</span><span class="po">[</span><span class="pv">key</span><span class="po">]</span> <span class="po">=</span> <span class="pv">val</span>
+    <span class="pk">return</span> <span class="pv">result</span></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════ -->
+    <!-- 08 · NESTED DICTS           -->
+    <!-- ════════════════════════════ -->
+    <section class="section" id="nested">
+      <div class="section-header">
+        <div class="section-icon ic-pink">🗃️</div>
+        <div>
+          <span class="section-num">Chapter 08</span>
+          <h2>Nested Dictionaries</h2>
+        </div>
+        <span class="level-badge lv-intermediate">Intermediate</span>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pc"># ── Structure ────────────────────────────────────────────────</span>
+<span class="pv">org</span> <span class="po">=</span> <span class="po">{</span>
+    <span class="ps">"engineering"</span><span class="po">:</span> <span class="po">{</span>
+        <span class="ps">"alice"</span><span class="po">:</span> <span class="po">{</span><span class="ps">"role"</span><span class="po">:</span> <span class="ps">"SDE-2"</span><span class="po">,</span> <span class="ps">"yoe"</span><span class="po">:</span> <span class="pn">4</span><span class="po">},</span>
+        <span class="ps">"bob"</span><span class="po">:</span>   <span class="po">{</span><span class="ps">"role"</span><span class="po">:</span> <span class="ps">"SDE-1"</span><span class="po">,</span> <span class="ps">"yoe"</span><span class="po">:</span> <span class="pn">1</span><span class="po">},</span>
+    <span class="po">},</span>
+    <span class="ps">"design"</span><span class="po">:</span> <span class="po">{</span>
+        <span class="ps">"carol"</span><span class="po">:</span> <span class="po">{</span><span class="ps">"role"</span><span class="po">:</span> <span class="ps">"Lead"</span><span class="po">,</span>  <span class="ps">"yoe"</span><span class="po">:</span> <span class="pn">6</span><span class="po">},</span>
+    <span class="po">},</span>
+<span class="po">}</span>
+
+<span class="pc"># ── Access ───────────────────────────────────────────────────</span>
+<span class="pv">alice_role</span> <span class="po">=</span> <span class="pv">org</span><span class="po">[</span><span class="ps">"engineering"</span><span class="po">][</span><span class="ps">"alice"</span><span class="po">][</span><span class="ps">"role"</span><span class="po">]</span>  <span class="pc"># "SDE-2"</span>
+
+<span class="pc"># ── Safe access with .get() chaining ────────────────────────</span>
+<span class="pv">role</span> <span class="po">=</span> <span class="pv">org</span><span class="po">.</span><span class="pf">get</span><span class="po">(</span><span class="ps">"hr"</span><span class="po">,</span> <span class="po">{}).</span><span class="pf">get</span><span class="po">(</span><span class="ps">"dave"</span><span class="po">,</span> <span class="po">{}).</span><span class="pf">get</span><span class="po">(</span><span class="ps">"role"</span><span class="po">,</span> <span class="ps">"unknown"</span><span class="po">)</span>
+
+<span class="pc"># ── Generic deep getter ──────────────────────────────────────</span>
+<span class="pk">from</span> <span class="pv">functools</span> <span class="pk">import</span> <span class="pv">reduce</span>
+
+<span class="pk">def</span> <span class="pf">deep_get</span><span class="po">(</span><span class="pv">d</span><span class="po">,</span> <span class="pv">keys</span><span class="po">,</span> <span class="pv">default</span><span class="po">=</span><span class="pk">None</span><span class="po">):</span>
+    <span class="pk">return</span> <span class="pv">reduce</span><span class="po">(</span><span class="pk">lambda</span> <span class="pv">obj</span><span class="po">,</span> <span class="pv">k</span><span class="po">:</span> <span class="pv">obj</span><span class="po">.</span><span class="pf">get</span><span class="po">(</span><span class="pv">k</span><span class="po">,</span> <span class="po">{}</span><span class="po">)</span> <span class="pk">if</span> <span class="pb">isinstance</span><span class="po">(</span><span class="pv">obj</span><span class="po">,</span> <span class="pb">dict</span><span class="po">)</span> <span class="pk">else</span> <span class="pv">default</span><span class="po">,</span> <span class="pv">keys</span><span class="po">,</span> <span class="pv">d</span><span class="po">)</span>
+
+<span class="pv">role</span> <span class="po">=</span> <span class="pf">deep_get</span><span class="po">(</span><span class="pv">org</span><span class="po">,</span> <span class="po">[</span><span class="ps">"engineering"</span><span class="po">,</span> <span class="ps">"alice"</span><span class="po">,</span> <span class="ps">"role"</span><span class="po">])</span>  <span class="pc"># "SDE-2"</span>
+
+<span class="pc"># ── Copy ─────────────────────────────────────────────────────</span>
+<span class="pk">import</span> <span class="pv">copy</span>
+<span class="pv">shallow</span> <span class="po">=</span> <span class="pv">org</span><span class="po">.</span><span class="pf">copy</span><span class="po">()</span>           <span class="pc"># nested dicts still shared!</span>
+<span class="pv">deep</span>    <span class="po">=</span> <span class="pv">copy</span><span class="po">.</span><span class="pf">deepcopy</span><span class="po">(</span><span class="pv">org</span><span class="po">)</span>  <span class="pc"># fully independent clone</span></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════ -->
+    <!-- 09 · SPECIAL DICT TYPES     -->
+    <!-- ════════════════════════════ -->
+    <section class="section" id="special">
+      <div class="section-header">
+        <div class="section-icon ic-blue">🧰</div>
+        <div>
+          <span class="section-num">Chapter 09</span>
+          <h2>Special Dictionary Types</h2>
+        </div>
+        <span class="level-badge lv-advanced">Advanced</span>
+      </div>
+
+      <h3>collections.defaultdict</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">from</span> <span class="pv">collections</span> <span class="pk">import</span> <span class="pp">defaultdict</span>
+
+<span class="pc"># Never raises KeyError — creates default on first access</span>
+<span class="pv">word_count</span> <span class="po">=</span> <span class="pp">defaultdict</span><span class="po">(</span><span class="pb">int</span><span class="po">)</span>
+<span class="pk">for</span> <span class="pv">word</span> <span class="pk">in</span> <span class="ps">"the cat sat on the mat"</span><span class="po">.</span><span class="pf">split</span><span class="po">():</span>
+    <span class="pv">word_count</span><span class="po">[</span><span class="pv">word</span><span class="po">]</span> <span class="po">+=</span> <span class="pn">1</span>
+<span class="pc"># {'the': 2, 'cat': 1, 'sat': 1, 'on': 1, 'mat': 1}</span>
+
+<span class="pc"># Group items</span>
+<span class="pv">groups</span> <span class="po">=</span> <span class="pp">defaultdict</span><span class="po">(</span><span class="pb">list</span><span class="po">)</span>
+<span class="pk">for</span> <span class="pv">student</span><span class="po">,</span> <span class="pv">grade</span> <span class="pk">in</span> <span class="po">[(</span><span class="ps">"A"</span><span class="po">,</span><span class="ps">"math"</span><span class="po">),</span> <span class="po">(</span><span class="ps">"B"</span><span class="po">,</span><span class="ps">"sci"</span><span class="po">),</span> <span class="po">(</span><span class="ps">"A"</span><span class="po">,</span><span class="ps">"sci"</span><span class="po">)]:</span>
+    <span class="pv">groups</span><span class="po">[</span><span class="pv">student</span><span class="po">].</span><span class="pf">append</span><span class="po">(</span><span class="pv">grade</span><span class="po">)</span>
+<span class="pc"># {'A': ['math', 'sci'], 'B': ['sci']}</span>
+
+<span class="pc"># Nested defaultdict</span>
+<span class="pv">nested</span> <span class="po">=</span> <span class="pp">defaultdict</span><span class="po">(</span><span class="pk">lambda</span><span class="po">:</span> <span class="pp">defaultdict</span><span class="po">(</span><span class="pb">int</span><span class="po">))</span>
+<span class="pv">nested</span><span class="po">[</span><span class="ps">"row1"</span><span class="po">][</span><span class="ps">"col1"</span><span class="po">]</span> <span class="po">+=</span> <span class="pn">1</span>  <span class="pc"># no KeyError, no pre-init needed</span></pre>
+      </div>
+
+      <h3>collections.Counter</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">from</span> <span class="pv">collections</span> <span class="pk">import</span> <span class="pp">Counter</span>
+
+<span class="pv">c</span> <span class="po">=</span> <span class="pp">Counter</span><span class="po">(</span><span class="ps">"mississippi"</span><span class="po">)</span>
+<span class="pc"># Counter({'s': 4, 'i': 4, 'p': 2, 'm': 1})</span>
+
+<span class="pv">c</span><span class="po">.</span><span class="pf">most_common</span><span class="po">(</span><span class="pn">3</span><span class="po">)</span>       <span class="pc"># [('s', 4), ('i', 4), ('p', 2)]</span>
+<span class="pv">c</span><span class="po">[</span><span class="ps">"z"</span><span class="po">]</span>                  <span class="pc"># 0 — missing keys return 0, not KeyError</span>
+
+<span class="pc"># Arithmetic on Counters</span>
+<span class="pv">c1</span> <span class="po">=</span> <span class="pp">Counter</span><span class="po">(</span>a<span class="po">=</span><span class="pn">3</span><span class="po">,</span> b<span class="po">=</span><span class="pn">1</span><span class="po">)</span>
+<span class="pv">c2</span> <span class="po">=</span> <span class="pp">Counter</span><span class="po">(</span>a<span class="po">=</span><span class="pn">1</span><span class="po">,</span> b<span class="po">=</span><span class="pn">2</span><span class="po">)</span>
+<span class="pb">print</span><span class="po">(</span><span class="pv">c1</span> <span class="po">+</span> <span class="pv">c2</span><span class="po">)</span>           <span class="pc"># Counter({'a': 4, 'b': 3})</span>
+<span class="pb">print</span><span class="po">(</span><span class="pv">c1</span> <span class="po">-</span> <span class="pv">c2</span><span class="po">)</span>           <span class="pc"># Counter({'a': 2})  — negatives dropped</span>
+<span class="pb">print</span><span class="po">(</span><span class="pv">c1</span> <span class="po">&</span> <span class="pv">c2</span><span class="po">)</span>           <span class="pc"># Counter({'a': 1, 'b': 1}) — min</span>
+<span class="pb">print</span><span class="po">(</span><span class="pv">c1</span> <span class="po">|</span> <span class="pv">c2</span><span class="po">)</span>           <span class="pc"># Counter({'a': 3, 'b': 2}) — max</span>
+
+<span class="pc"># Word frequency — classic interview pattern</span>
+<span class="pv">words</span> <span class="po">=</span> <span class="ps">"to be or not to be"</span><span class="po">.</span><span class="pf">split</span><span class="po">()</span>
+<span class="pb">print</span><span class="po">(</span><span class="pp">Counter</span><span class="po">(</span><span class="pv">words</span><span class="po">).</span><span class="pf">most_common</span><span class="po">(</span><span class="pn">2</span><span class="po">))</span>  <span class="pc"># [('to', 2), ('be', 2)]</span></pre>
+      </div>
+
+      <h3>collections.OrderedDict</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">from</span> <span class="pv">collections</span> <span class="pk">import</span> <span class="pp">OrderedDict</span>
+
+<span class="pc"># Still useful for: move_to_end(), LRU cache implementation</span>
+<span class="pv">od</span> <span class="po">=</span> <span class="pp">OrderedDict</span><span class="po">()</span>
+<span class="pv">od</span><span class="po">[</span><span class="ps">"a"</span><span class="po">]</span> <span class="po">=</span> <span class="pn">1</span>
+<span class="pv">od</span><span class="po">[</span><span class="ps">"b"</span><span class="po">]</span> <span class="po">=</span> <span class="pn">2</span>
+<span class="pv">od</span><span class="po">[</span><span class="ps">"c"</span><span class="po">]</span> <span class="po">=</span> <span class="pn">3</span>
+
+<span class="pv">od</span><span class="po">.</span><span class="pf">move_to_end</span><span class="po">(</span><span class="ps">"a"</span><span class="po">)</span>        <span class="pc"># move 'a' to the end</span>
+<span class="pv">od</span><span class="po">.</span><span class="pf">move_to_end</span><span class="po">(</span><span class="ps">"c"</span><span class="po">,</span> <span class="pk">last</span><span class="po">=</span><span class="pk">False</span><span class="po">)</span>  <span class="pc"># move 'c' to the front</span>
+<span class="pb">print</span><span class="po">(</span><span class="pb">list</span><span class="po">(</span><span class="pv">od</span><span class="po">))</span>            <span class="pc"># ['c', 'b', 'a']</span></pre>
+      </div>
+
+      <h3>types.MappingProxyType — Immutable Dict</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">from</span> <span class="pv">types</span> <span class="pk">import</span> <span class="pp">MappingProxyType</span>
+
+<span class="pv">CONSTANTS</span> <span class="po">=</span> <span class="pp">MappingProxyType</span><span class="po">({</span>
+    <span class="ps">"MAX_RETRIES"</span><span class="po">:</span> <span class="pn">3</span><span class="po">,</span>
+    <span class="ps">"TIMEOUT_S"</span><span class="po">:</span>   <span class="pn">30</span><span class="po">,</span>
+    <span class="ps">"BASE_URL"</span><span class="po">:</span>    <span class="ps">"https://api.example.com"</span><span class="po">,</span>
+<span class="po">})</span>
+
+<span class="pv">CONSTANTS</span><span class="po">[</span><span class="ps">"MAX_RETRIES"</span><span class="po">]</span>         <span class="pc"># 3 — reads fine</span>
+<span class="pv">CONSTANTS</span><span class="po">[</span><span class="ps">"MAX_RETRIES"</span><span class="po">]</span> <span class="po">=</span> <span class="pn">5</span>     <span class="pc"># TypeError: read-only ✅</span></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════ -->
+    <!-- 10 · INTERNALS & HASHING    -->
+    <!-- ════════════════════════════ -->
+    <section class="section" id="internals">
+      <div class="section-header">
+        <div class="section-icon ic-red">⚙️</div>
+        <div>
+          <span class="section-num">Chapter 10</span>
+          <h2>Internals & Custom Hashing</h2>
+        </div>
+        <span class="level-badge lv-advanced">Advanced</span>
+      </div>
+
+      <h3>The hash() Function</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pc"># hash() returns an integer used to index into internal array</span>
+<span class="pb">hash</span><span class="po">(</span><span class="ps">"hello"</span><span class="po">)</span>      <span class="pc"># e.g. 8022161859718... (changes per process)</span>
+<span class="pb">hash</span><span class="po">(</span><span class="pn">42</span><span class="po">)</span>           <span class="pc"># 42  (integers hash to themselves)</span>
+<span class="pb">hash</span><span class="po">(</span><span class="pn">3.14</span><span class="po">)</span>         <span class="pc"># consistent with numeric equality</span>
+<span class="pb">hash</span><span class="po">(</span><span class="pk">True</span><span class="po">)</span>         <span class="pc"># 1  (True == 1, so hash(True) == hash(1))</span>
+<span class="pb">hash</span><span class="po">((</span><span class="pn">1</span><span class="po">,</span> <span class="pn">2</span><span class="po">,</span> <span class="pn">3</span><span class="po">))</span>   <span class="pc"># tuples hash if all elements are hashable</span>
+
+<span class="pc"># HASH RANDOMIZATION: Python randomizes hash seeds per process</span>
+<span class="pc"># to prevent hash collision DoS attacks. Set PYTHONHASHSEED=0</span>
+<span class="pc"># for reproducibility in testing/debugging only.</span>
+
+<span class="pc"># Equality and hashing contract:
+# a == b  →  hash(a) == hash(b)   (must hold!)
+# hash(a) == hash(b)  does NOT imply a == b  (collision)</span></pre>
+      </div>
+
+      <h3>Custom __hash__ and __eq__</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">from</span> <span class="pv">dataclasses</span> <span class="pk">import</span> <span class="pv">dataclass</span>
+
+<span class="pc"># ── Manual implementation ─────────────────────────────────────</span>
+<span class="pk">class</span> <span class="pp">Point</span><span class="po">:</span>
+    <span class="pk">def</span> <span class="pf">__init__</span><span class="po">(</span><span class="pv">self</span><span class="po">,</span> <span class="pv">x</span><span class="po">:</span> <span class="pb">float</span><span class="po">,</span> <span class="pv">y</span><span class="po">:</span> <span class="pb">float</span><span class="po">):</span>
+        <span class="pv">self</span><span class="po">.</span><span class="pv">x</span><span class="po">,</span> <span class="pv">self</span><span class="po">.</span><span class="pv">y</span> <span class="po">=</span> <span class="pv">x</span><span class="po">,</span> <span class="pv">y</span>
+
+    <span class="pk">def</span> <span class="pf">__eq__</span><span class="po">(</span><span class="pv">self</span><span class="po">,</span> <span class="pv">other</span><span class="po">)</span> <span class="po">-></span> <span class="pb">bool</span><span class="po">:</span>
+        <span class="pk">if</span> <span class="pk">not</span> <span class="pb">isinstance</span><span class="po">(</span><span class="pv">other</span><span class="po">,</span> <span class="pp">Point</span><span class="po">):</span> <span class="pk">return</span> <span class="pk">NotImplemented</span>
+        <span class="pk">return</span> <span class="pv">self</span><span class="po">.</span><span class="pv">x</span> <span class="po">==</span> <span class="pv">other</span><span class="po">.</span><span class="pv">x</span> <span class="pk">and</span> <span class="pv">self</span><span class="po">.</span><span class="pv">y</span> <span class="po">==</span> <span class="pv">other</span><span class="po">.</span><span class="pv">y</span>
+
+    <span class="pk">def</span> <span class="pf">__hash__</span><span class="po">(</span><span class="pv">self</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+        <span class="pk">return</span> <span class="pb">hash</span><span class="po">((</span><span class="pv">self</span><span class="po">.</span><span class="pv">x</span><span class="po">,</span> <span class="pv">self</span><span class="po">.</span><span class="pv">y</span><span class="po">))</span>   <span class="pc"># delegate to tuple hash</span>
+
+<span class="pv">d</span> <span class="po">=</span> <span class="po">{</span><span class="pp">Point</span><span class="po">(</span><span class="pn">1</span><span class="po">,</span> <span class="pn">2</span><span class="po">):</span> <span class="ps">"origin"</span><span class="po">}</span>
+<span class="pb">print</span><span class="po">(</span><span class="pv">d</span><span class="po">[</span><span class="pp">Point</span><span class="po">(</span><span class="pn">1</span><span class="po">,</span> <span class="pn">2</span><span class="po">)])</span>   <span class="pc"># "origin" ✅
+
+# ── Using dataclass (frozen=True makes it hashable) ───────────</span>
+<span class="pd">@dataclass</span><span class="po">(</span>frozen<span class="po">=</span><span class="pk">True</span><span class="po">)</span>
+<span class="pk">class</span> <span class="pp">Coordinate</span><span class="po">:</span>
+    <span class="pv">lat</span><span class="po">:</span>  <span class="pb">float</span>
+    <span class="pv">lon</span><span class="po">:</span>  <span class="pb">float</span>
+
+<span class="pv">cache</span> <span class="po">=</span> <span class="po">{</span><span class="pp">Coordinate</span><span class="po">(</span><span class="pn">17.38</span><span class="po">,</span> <span class="pn">78.47</span><span class="po">):</span> <span class="ps">"Hyderabad"</span><span class="po">}</span>  <span class="pc"># works!</span></pre>
+      </div>
+
+      <h3>Python Dict Internals (CPython)</h3>
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h4>🔢 Compact Arrays</h4>
+          <p>CPython 3.6+ dicts use a compact array + separate hash table indices. Reduces memory by ~20-25%.</p>
+        </div>
+        <div class="concept-card">
+          <h4>📐 Load Factor</h4>
+          <p>Dict resizes when 2/3 full (load factor ≈ 0.67). New size is roughly 4× current entries.</p>
+        </div>
+        <div class="concept-card">
+          <h4>🔗 Open Addressing</h4>
+          <p>Collisions resolved by probing (not chaining). Uses perturbation for pseudo-random probe sequence.</p>
+        </div>
+        <div class="concept-card">
+          <h4>⚡ Key Sharing</h4>
+          <p>Objects of the same class share a single key array (split-table dict), reducing instance memory.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════ -->
+    <!-- 11 · DESIGN PATTERNS        -->
+    <!-- ════════════════════════════ -->
+    <section class="section" id="patterns">
+      <div class="section-header">
+        <div class="section-icon ic-teal">🏗️</div>
+        <div>
+          <span class="section-num">Chapter 11</span>
+          <h2>Industry Design Patterns</h2>
+        </div>
+        <span class="level-badge lv-expert">Expert</span>
+      </div>
+
+      <h3>LRU Cache with OrderedDict</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">from</span> <span class="pv">collections</span> <span class="pk">import</span> <span class="pp">OrderedDict</span>
+
+<span class="pk">class</span> <span class="pp">LRUCache</span><span class="po">:</span>
+    <span class="pk">def</span> <span class="pf">__init__</span><span class="po">(</span><span class="pv">self</span><span class="po">,</span> <span class="pv">capacity</span><span class="po">:</span> <span class="pb">int</span><span class="po">):</span>
+        <span class="pv">self</span><span class="po">.</span><span class="pv">capacity</span> <span class="po">=</span> <span class="pv">capacity</span>
+        <span class="pv">self</span><span class="po">.</span><span class="pv">cache</span>    <span class="po">=</span> <span class="pp">OrderedDict</span><span class="po">()</span>
+
+    <span class="pk">def</span> <span class="pf">get</span><span class="po">(</span><span class="pv">self</span><span class="po">,</span> <span class="pv">key</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+        <span class="pk">if</span> <span class="pv">key</span> <span class="pk">not in</span> <span class="pv">self</span><span class="po">.</span><span class="pv">cache</span><span class="po">:</span>
+            <span class="pk">return</span> <span class="po">-</span><span class="pn">1</span>
+        <span class="pv">self</span><span class="po">.</span><span class="pv">cache</span><span class="po">.</span><span class="pf">move_to_end</span><span class="po">(</span><span class="pv">key</span><span class="po">)</span>  <span class="pc"># mark as recently used</span>
+        <span class="pk">return</span> <span class="pv">self</span><span class="po">.</span><span class="pv">cache</span><span class="po">[</span><span class="pv">key</span><span class="po">]</span>
+
+    <span class="pk">def</span> <span class="pf">put</span><span class="po">(</span><span class="pv">self</span><span class="po">,</span> <span class="pv">key</span><span class="po">:</span> <span class="pb">int</span><span class="po">,</span> <span class="pv">value</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pk">None</span><span class="po">:</span>
+        <span class="pk">if</span> <span class="pv">key</span> <span class="pk">in</span> <span class="pv">self</span><span class="po">.</span><span class="pv">cache</span><span class="po">:</span>
+            <span class="pv">self</span><span class="po">.</span><span class="pv">cache</span><span class="po">.</span><span class="pf">move_to_end</span><span class="po">(</span><span class="pv">key</span><span class="po">)</span>
+        <span class="pv">self</span><span class="po">.</span><span class="pv">cache</span><span class="po">[</span><span class="pv">key</span><span class="po">]</span> <span class="po">=</span> <span class="pv">value</span>
+        <span class="pk">if</span> <span class="pb">len</span><span class="po">(</span><span class="pv">self</span><span class="po">.</span><span class="pv">cache</span><span class="po">)</span> <span class="po">></span> <span class="pv">self</span><span class="po">.</span><span class="pv">capacity</span><span class="po">:</span>
+            <span class="pv">self</span><span class="po">.</span><span class="pv">cache</span><span class="po">.</span><span class="pf">popitem</span><span class="po">(</span>last<span class="po">=</span><span class="pk">False</span><span class="po">)</span>  <span class="pc"># evict LRU</span></pre>
+      </div>
+
+      <h3>Dispatch Table (replace if-elif chains)</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pc"># ❌ Verbose</span>
+<span class="pk">def</span> <span class="pf">handle</span><span class="po">(</span><span class="pv">op</span><span class="po">):</span>
+    <span class="pk">if</span>   <span class="pv">op</span> <span class="po">==</span> <span class="ps">"add"</span><span class="po">:</span>    <span class="pk">return</span> <span class="pk">lambda</span> <span class="pv">a</span><span class="po">,</span><span class="pv">b</span><span class="po">:</span> <span class="pv">a</span><span class="po">+</span><span class="pv">b</span>
+    <span class="pk">elif</span> <span class="pv">op</span> <span class="po">==</span> <span class="ps">"sub"</span><span class="po">:</span>    <span class="pk">return</span> <span class="pk">lambda</span> <span class="pv">a</span><span class="po">,</span><span class="pv">b</span><span class="po">:</span> <span class="pv">a</span><span class="po">-</span><span class="pv">b</span>
+    <span class="pk">elif</span> <span class="pv">op</span> <span class="po">==</span> <span class="ps">"mul"</span><span class="po">:</span>    <span class="pk">return</span> <span class="pk">lambda</span> <span class="pv">a</span><span class="po">,</span><span class="pv">b</span><span class="po">:</span> <span class="pv">a</span><span class="po">*</span><span class="pv">b</span>
+
+<span class="pc"># ✅ Dispatch table — O(1) lookup, easy to extend</span>
+<span class="pv">OPERATIONS</span><span class="po">:</span> <span class="pb">dict</span><span class="po">[</span><span class="pb">str</span><span class="po">,</span> <span class="pb">callable</span><span class="po">]</span> <span class="po">=</span> <span class="po">{</span>
+    <span class="ps">"add"</span><span class="po">:</span> <span class="pk">lambda</span> <span class="pv">a</span><span class="po">,</span> <span class="pv">b</span><span class="po">:</span> <span class="pv">a</span> <span class="po">+</span> <span class="pv">b</span><span class="po">,</span>
+    <span class="ps">"sub"</span><span class="po">:</span> <span class="pk">lambda</span> <span class="pv">a</span><span class="po">,</span> <span class="pv">b</span><span class="po">:</span> <span class="pv">a</span> <span class="po">-</span> <span class="pv">b</span><span class="po">,</span>
+    <span class="ps">"mul"</span><span class="po">:</span> <span class="pk">lambda</span> <span class="pv">a</span><span class="po">,</span> <span class="pv">b</span><span class="po">:</span> <span class="pv">a</span> <span class="po">*</span> <span class="pv">b</span><span class="po">,</span>
+    <span class="ps">"div"</span><span class="po">:</span> <span class="pk">lambda</span> <span class="pv">a</span><span class="po">,</span> <span class="pv">b</span><span class="po">:</span> <span class="pv">a</span> <span class="po">/</span> <span class="pv">b</span><span class="po">,</span>
+<span class="po">}</span>
+
+<span class="pv">result</span> <span class="po">=</span> <span class="pv">OPERATIONS</span><span class="po">.</span><span class="pf">get</span><span class="po">(</span><span class="pv">op</span><span class="po">,</span> <span class="pk">lambda</span> <span class="po">*</span><span class="pv">_</span><span class="po">:</span> <span class="pk">None</span><span class="po">)(</span><span class="pv">a</span><span class="po">,</span> <span class="pv">b</span><span class="po">)</span></pre>
+      </div>
+
+      <h3>Memoization / Caching</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pc"># ── Manual memoization ───────────────────────────────────────</span>
+<span class="pv">_memo</span><span class="po">:</span> <span class="pb">dict</span><span class="po">[</span><span class="pb">int</span><span class="po">,</span> <span class="pb">int</span><span class="po">]</span> <span class="po">=</span> <span class="po">{}</span>
+
+<span class="pk">def</span> <span class="pf">fib</span><span class="po">(</span><span class="pv">n</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pk">if</span> <span class="pv">n</span> <span class="po"><</span> <span class="pn">2</span><span class="po">:</span> <span class="pk">return</span> <span class="pv">n</span>
+    <span class="pk">if</span> <span class="pv">n</span> <span class="pk">not in</span> <span class="pv">_memo</span><span class="po">:</span>
+        <span class="pv">_memo</span><span class="po">[</span><span class="pv">n</span><span class="po">]</span> <span class="po">=</span> <span class="pf">fib</span><span class="po">(</span><span class="pv">n</span><span class="po">-</span><span class="pn">1</span><span class="po">)</span> <span class="po">+</span> <span class="pf">fib</span><span class="po">(</span><span class="pv">n</span><span class="po">-</span><span class="pn">2</span><span class="po">)</span>
+    <span class="pk">return</span> <span class="pv">_memo</span><span class="po">[</span><span class="pv">n</span><span class="po">]</span>
+
+<span class="pc"># ── functools.lru_cache (preferred in production) ────────────</span>
+<span class="pk">from</span> <span class="pv">functools</span> <span class="pk">import</span> <span class="pv">lru_cache</span><span class="po">,</span> <span class="pv">cache</span>
+
+<span class="pd">@lru_cache</span><span class="po">(</span>maxsize<span class="po">=</span><span class="pn">128</span><span class="po">)</span>
+<span class="pk">def</span> <span class="pf">expensive</span><span class="po">(</span><span class="pv">n</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pk">return</span> <span class="pv">n</span> <span class="po">**</span> <span class="pn">3</span>
+
+<span class="pd">@cache</span>  <span class="pc"># Python 3.9+ — unbounded LRU</span>
+<span class="pk">def</span> <span class="pf">fib</span><span class="po">(</span><span class="pv">n</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pk">return</span> <span class="pv">n</span> <span class="pk">if</span> <span class="pv">n</span> <span class="po"><</span> <span class="pn">2</span> <span class="pk">else</span> <span class="pf">fib</span><span class="po">(</span><span class="pv">n</span><span class="po">-</span><span class="pn">1</span><span class="po">)</span> <span class="po">+</span> <span class="pf">fib</span><span class="po">(</span><span class="pv">n</span><span class="po">-</span><span class="pn">2</span><span class="po">)</span></pre>
+      </div>
+
+      <h3>Type-Safe Dicts with TypedDict</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pk">from</span> <span class="pv">typing</span> <span class="pk">import</span> <span class="pp">TypedDict</span><span class="po">,</span> <span class="pp">NotRequired</span>
+
+<span class="pk">class</span> <span class="pp">UserProfile</span><span class="po">(</span><span class="pp">TypedDict</span><span class="po">):</span>
+    <span class="pv">id</span><span class="po">:</span>      <span class="pb">int</span>
+    <span class="pv">name</span><span class="po">:</span>    <span class="pb">str</span>
+    <span class="pv">email</span><span class="po">:</span>   <span class="pb">str</span>
+    <span class="pv">avatar</span><span class="po">:</span>  <span class="pp">NotRequired</span><span class="po">[</span><span class="pb">str</span><span class="po">]</span>   <span class="pc"># optional key (3.11+)</span>
+
+<span class="pk">def</span> <span class="pf">process_user</span><span class="po">(</span><span class="pv">user</span><span class="po">:</span> <span class="pp">UserProfile</span><span class="po">)</span> <span class="po">-></span> <span class="pb">str</span><span class="po">:</span>
+    <span class="pk">return</span> <span class="ps">f"Hello </span><span class="pv">{user['name']}</span><span class="ps">!"</span>
+
+<span class="pc"># Mypy/pyright will type-check this at dev time</span>
+<span class="pf">process_user</span><span class="po">({</span><span class="ps">"id"</span><span class="po">:</span> <span class="pn">1</span><span class="po">,</span> <span class="ps">"name"</span><span class="po">:</span> <span class="ps">"Alice"</span><span class="po">,</span> <span class="ps">"email"</span><span class="po">:</span> <span class="ps">"a@x.com"</span><span class="po">})</span></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════ -->
+    <!-- 12 · PERFORMANCE & TIPS     -->
+    <!-- ════════════════════════════ -->
+    <section class="section" id="performance">
+      <div class="section-header">
+        <div class="section-icon ic-orange">🚀</div>
+        <div>
+          <span class="section-num">Chapter 12</span>
+          <h2>Performance & Best Practices</h2>
+        </div>
+        <span class="level-badge lv-expert">Expert</span>
+      </div>
+
+      <h3>Memory & Speed Tips</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pc"># ── 1. Use key membership, not value search ──────────────────</span>
+<span class="ps">"key"</span> <span class="pk">in</span> <span class="pv">d</span>             <span class="pc"># O(1) ✅</span>
+<span class="ps">"val"</span> <span class="pk">in</span> <span class="pv">d</span><span class="po">.</span><span class="pf">values</span><span class="po">()</span>   <span class="pc"># O(n) ❌ — use a set instead</span>
+
+<span class="pc"># ── 2. Pre-size if you know the size ─────────────────────────</span>
+<span class="pc"># CPython doesn't expose dict pre-allocation in pure Python,</span>
+<span class="pc"># but building from a list comprehension avoids incremental resizes</span>
+<span class="pv">d</span> <span class="po">=</span> <span class="po">{</span><span class="pv">k</span><span class="po">:</span> <span class="pv">v</span> <span class="pk">for</span> <span class="pv">k</span><span class="po">,</span> <span class="pv">v</span> <span class="pk">in</span> <span class="pv">large_pairs</span><span class="po">}</span>  <span class="pc"># faster than d[k]=v in loop</span>
+
+<span class="pc"># ── 3. Avoid repeated key lookups ───────────────────────────</span>
+<span class="pc"># ❌ Two lookups</span>
+<span class="pk">if</span> <span class="ps">"score"</span> <span class="pk">in</span> <span class="pv">d</span><span class="po">:</span>
+    <span class="pv">x</span> <span class="po">=</span> <span class="pv">d</span><span class="po">[</span><span class="ps">"score"</span><span class="po">]</span>
+
+<span class="pc"># ✅ One lookup</span>
+<span class="pv">x</span> <span class="po">=</span> <span class="pv">d</span><span class="po">.</span><span class="pf">get</span><span class="po">(</span><span class="ps">"score"</span><span class="po">)</span>
+<span class="pk">if</span> <span class="pv">x</span> <span class="pk">is not</span> <span class="pk">None</span><span class="po">:</span>  <span class="pc"># or  if x is not None</span>
+    <span class="pv">process</span><span class="po">(</span><span class="pv">x</span><span class="po">)</span>
+
+<span class="pc"># ── 4. dict vs Counter vs defaultdict ───────────────────────</span>
+<span class="pc"># Counting elements:</span>
+<span class="pc"># Counter  > defaultdict(int)  > plain dict  (speed)</span>
+
+<span class="pc"># ── 5. Memory: sys.getsizeof ─────────────────────────────────</span>
+<span class="pk">import</span> <span class="pv">sys</span>
+<span class="pb">print</span><span class="po">(</span><span class="pv">sys</span><span class="po">.</span><span class="pf">getsizeof</span><span class="po">({}))</span>         <span class="pc"># ~232 bytes (empty dict)</span>
+<span class="pb">print</span><span class="po">(</span><span class="pv">sys</span><span class="po">.</span><span class="pf">getsizeof</span><span class="po">({</span><span class="ps">"a"</span><span class="po">:</span><span class="pn">1</span><span class="po">}))</span>     <span class="pc"># ~232 bytes (same — over-allocated)
+# Note: getsizeof doesn't count referenced objects!</span>
+
+<span class="pc"># ── 6. Thread safety ─────────────────────────────────────────</span>
+<span class="pc"># Single dict operations (d[k]=v, del d[k]) are thread-safe in CPython</span>
+<span class="pc"># due to the GIL. But compound operations are NOT:</span>
+<span class="pk">import</span> <span class="pv">threading</span>
+<span class="pv">lock</span> <span class="po">=</span> <span class="pv">threading</span><span class="po">.</span><span class="pp">Lock</span><span class="po">()</span>
+<span class="pk">with</span> <span class="pv">lock</span><span class="po">:</span>
+    <span class="pv">d</span><span class="po">[</span><span class="pv">k</span><span class="po">]</span> <span class="po">=</span> <span class="pv">d</span><span class="po">.</span><span class="pf">get</span><span class="po">(</span><span class="pv">k</span><span class="po">,</span> <span class="pn">0</span><span class="po">)</span> <span class="po">+</span> <span class="pn">1</span>  <span class="pc"># safe compound increment</span></pre>
+      </div>
+
+      <h3>Common Interview Patterns</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Python · Interview Patterns</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="pc"># ── Two Sum ──────────────────────────────────────────────────</span>
+<span class="pk">def</span> <span class="pf">two_sum</span><span class="po">(</span><span class="pv">nums</span><span class="po">:</span> <span class="pb">list</span><span class="po">[</span><span class="pb">int</span><span class="po">],</span> <span class="pv">target</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">list</span><span class="po">[</span><span class="pb">int</span><span class="po">]:</span>
+    <span class="pv">seen</span><span class="po">:</span> <span class="pb">dict</span><span class="po">[</span><span class="pb">int</span><span class="po">,</span> <span class="pb">int</span><span class="po">]</span> <span class="po">=</span> <span class="po">{}</span>
+    <span class="pk">for</span> <span class="pv">i</span><span class="po">,</span> <span class="pv">n</span> <span class="pk">in</span> <span class="pb">enumerate</span><span class="po">(</span><span class="pv">nums</span><span class="po">):</span>
+        <span class="pv">complement</span> <span class="po">=</span> <span class="pv">target</span> <span class="po">-</span> <span class="pv">n</span>
+        <span class="pk">if</span> <span class="pv">complement</span> <span class="pk">in</span> <span class="pv">seen</span><span class="po">:</span>
+            <span class="pk">return</span> <span class="po">[</span><span class="pv">seen</span><span class="po">[</span><span class="pv">complement</span><span class="po">],</span> <span class="pv">i</span><span class="po">]</span>
+        <span class="pv">seen</span><span class="po">[</span><span class="pv">n</span><span class="po">]</span> <span class="po">=</span> <span class="pv">i</span>
+    <span class="pk">return</span> <span class="po">[]</span>
+
+<span class="pc"># ── Anagram check ────────────────────────────────────────────</span>
+<span class="pk">def</span> <span class="pf">is_anagram</span><span class="po">(</span><span class="pv">s</span><span class="po">:</span> <span class="pb">str</span><span class="po">,</span> <span class="pv">t</span><span class="po">:</span> <span class="pb">str</span><span class="po">)</span> <span class="po">-></span> <span class="pb">bool</span><span class="po">:</span>
+    <span class="pk">from</span> <span class="pv">collections</span> <span class="pk">import</span> <span class="pp">Counter</span>
+    <span class="pk">return</span> <span class="pp">Counter</span><span class="po">(</span><span class="pv">s</span><span class="po">)</span> <span class="po">==</span> <span class="pp">Counter</span><span class="po">(</span><span class="pv">t</span><span class="po">)</span>
+
+<span class="pc"># ── First unique character ───────────────────────────────────</span>
+<span class="pk">def</span> <span class="pf">first_unique</span><span class="po">(</span><span class="pv">s</span><span class="po">:</span> <span class="pb">str</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pk">from</span> <span class="pv">collections</span> <span class="pk">import</span> <span class="pp">Counter</span>
+    <span class="pv">freq</span> <span class="po">=</span> <span class="pp">Counter</span><span class="po">(</span><span class="pv">s</span><span class="po">)</span>
+    <span class="pk">return</span> <span class="pb">next</span><span class="po">((</span><span class="pv">i</span> <span class="pk">for</span> <span class="pv">i</span><span class="po">,</span> <span class="pv">c</span> <span class="pk">in</span> <span class="pb">enumerate</span><span class="po">(</span><span class="pv">s</span><span class="po">)</span> <span class="pk">if</span> <span class="pv">freq</span><span class="po">[</span><span class="pv">c</span><span class="po">]</span> <span class="po">==</span> <span class="pn">1</span><span class="po">),</span> <span class="po">-</span><span class="pn">1</span><span class="po">)</span>
+
+<span class="pc"># ── Subarray sum equals k ────────────────────────────────────</span>
+<span class="pk">def</span> <span class="pf">subarray_sum</span><span class="po">(</span><span class="pv">nums</span><span class="po">:</span> <span class="pb">list</span><span class="po">[</span><span class="pb">int</span><span class="po">],</span> <span class="pv">k</span><span class="po">:</span> <span class="pb">int</span><span class="po">)</span> <span class="po">-></span> <span class="pb">int</span><span class="po">:</span>
+    <span class="pv">prefix_count</span><span class="po">:</span> <span class="pb">dict</span><span class="po">[</span><span class="pb">int</span><span class="po">,</span> <span class="pb">int</span><span class="po">]</span> <span class="po">=</span> <span class="po">{</span><span class="pn">0</span><span class="po">:</span> <span class="pn">1</span><span class="po">}</span>
+    <span class="pv">total</span><span class="po">,</span> <span class="pv">count</span> <span class="po">=</span> <span class="pn">0</span><span class="po">,</span> <span class="pn">0</span>
+    <span class="pk">for</span> <span class="pv">n</span> <span class="pk">in</span> <span class="pv">nums</span><span class="po">:</span>
+        <span class="pv">total</span> <span class="po">+=</span> <span class="pv">n</span>
+        <span class="pv">count</span> <span class="po">+=</span> <span class="pv">prefix_count</span><span class="po">.</span><span class="pf">get</span><span class="po">(</span><span class="pv">total</span> <span class="po">-</span> <span class="pv">k</span><span class="po">,</span> <span class="pn">0</span><span class="po">)</span>
+        <span class="pv">prefix_count</span><span class="po">[</span><span class="pv">total</span><span class="po">]</span> <span class="po">=</span> <span class="pv">prefix_count</span><span class="po">.</span><span class="pf">get</span><span class="po">(</span><span class="pv">total</span><span class="po">,</span> <span class="pn">0</span><span class="po">)</span> <span class="po">+</span> <span class="pn">1</span>
+    <span class="pk">return</span> <span class="pv">count</span></pre>
+      </div>
+
+      <h3>Quick Reference</h3>
+      <table class="cmd-table">
+        <thead><tr><th>Task</th><th>Best Approach</th></tr></thead>
+        <tbody>
+          <tr><td>Count occurrences</td><td><code>collections.Counter</code></td></tr>
+          <tr><td>Group items by key</td><td><code>collections.defaultdict(list)</code></td></tr>
+          <tr><td>Safe access with default</td><td><code>d.get(key, default)</code></td></tr>
+          <tr><td>Merge two dicts</td><td><code>d1 | d2</code> (Python 3.9+)</td></tr>
+          <tr><td>Immutable dict</td><td><code>types.MappingProxyType</code></td></tr>
+          <tr><td>LRU cache</td><td><code>functools.lru_cache</code></td></tr>
+          <tr><td>Typed dict</td><td><code>typing.TypedDict</code></td></tr>
+          <tr><td>Deep copy</td><td><code>copy.deepcopy(d)</code></td></tr>
+          <tr><td>Invert a dict</td><td><code>{v: k for k, v in d.items()}</code></td></tr>
+          <tr><td>Sort by value</td><td><code>sorted(d.items(), key=lambda x: x[1])</code></td></tr>
+          <tr><td>Iterate in order</td><td>Default — dicts are ordered since 3.7</td></tr>
+          <tr><td>Set-like ops on keys</td><td><code>d1.keys() & d2.keys()</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="info-box perf">
+        <span class="info-box-icon">⚡</span>
+        <div class="info-box-content">
+          <strong>Key gotchas to remember:</strong><br>
+          1. <code>True</code>, <code>1</code>, and <code>1.0</code> are the same key (equal + same hash).<br>
+          2. Never delete dict keys while iterating — copy keys first with <code>list(d.keys())</code>.<br>
+          3. <code>d.get()</code> never raises; <code>d[key]</code> raises <code>KeyError</code> on missing keys.<br>
+          4. <code>dict.copy()</code> is shallow — nested objects are shared references.<br>
+          5. Dict views (<code>.keys()</code>, <code>.values()</code>, <code>.items()</code>) reflect live changes.
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+<!-- FOOTER -->
+<footer style="text-align:center; padding:48px 20px; border-top:1px solid var(--border); color:var(--text-dim); font-family:'JetBrains Mono',monospace; font-size:12px;">
+  Python HashMap Mastery · Built for Industry Engineers · Python 3.11+
+</footer>
+
+<script>
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.style.color = 'var(--accent2)';
+      btn.style.borderColor = 'var(--accent2)';
+      setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
+    });
+  }
+
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks  = document.querySelectorAll('.nav-link');
+
+  new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' }).observe
+    ? sections.forEach(s => new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
+        });
+      }, { rootMargin: '-20% 0px -70% 0px' }).observe(s))
+    : null;
+</script>
+
+</body>
+</html>

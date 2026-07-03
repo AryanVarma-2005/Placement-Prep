@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aptitude Mastery — Placement Prep</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #141720;
+    --card: #1a1e2e;
+    --border: #252a3d;
+    --accent: #6c63ff;
+    --accent2: #00d4aa;
+    --accent3: #ff6b6b;
+    --accent4: #ffa94d;
+    --text: #e8eaf6;
+    --muted: #7c82a3;
+    --formula-bg: #0a0c10;
+    --formula-border: #3a3f5c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  /* SIDEBAR NAV */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 260px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    z-index: 100;
+    padding: 24px 0;
+  }
+
+  .sidebar-logo {
+    padding: 0 24px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+
+  .sidebar-logo h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+
+  .sidebar-logo p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .sidebar-section {
+    padding: 8px 24px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 12px;
+  }
+
+  .sidebar a {
+    display: block;
+    padding: 8px 24px;
+    color: #a0a6c8;
+    text-decoration: none;
+    font-size: 13.5px;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+  }
+
+  .sidebar a:hover {
+    color: var(--text);
+    background: rgba(108,99,255,0.08);
+    border-left-color: var(--accent);
+  }
+
+  /* MAIN */
+  .main {
+    margin-left: 260px;
+    min-height: 100vh;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, #0d0f14 0%, #141030 50%, #0d1520 100%);
+    padding: 80px 64px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(108,99,255,0.12) 0%, transparent 70%);
+    top: -100px; right: -100px;
+    border-radius: 50%;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: rgba(108,99,255,0.15);
+    border: 1px solid rgba(108,99,255,0.4);
+    color: var(--accent);
+    padding: 4px 14px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -2px;
+    max-width: 600px;
+  }
+
+  .hero h1 span { color: var(--accent); }
+
+  .hero p {
+    margin-top: 20px;
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 500px;
+    font-family: 'Lora', serif;
+    font-style: italic;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 40px;
+    margin-top: 40px;
+  }
+
+  .hero-stat strong {
+    display: block;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent2);
+  }
+
+  .hero-stat span { font-size: 13px; color: var(--muted); }
+
+  /* CONTENT */
+  .content {
+    padding: 0 64px 80px;
+  }
+
+  /* TOPIC SECTION */
+  .topic {
+    padding: 60px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .topic-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 36px;
+  }
+
+  .topic-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    background: rgba(108,99,255,0.1);
+    border: 1px solid rgba(108,99,255,0.25);
+    padding: 6px 12px;
+    border-radius: 8px;
+    white-space: nowrap;
+    margin-top: 6px;
+  }
+
+  .topic-title h2 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.8px;
+  }
+
+  .topic-title p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 6px;
+    font-family: 'Lora', serif;
+    font-style: italic;
+  }
+
+  .topic-body {
+    display: grid;
+    gap: 24px;
+  }
+
+  /* CONCEPT BLOCK */
+  .concept {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    position: relative;
+  }
+
+  .concept h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--accent2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .concept h3::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent2);
+  }
+
+  .concept p {
+    color: #c2c7e0;
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  /* FORMULA BLOCK */
+  .formula-box {
+    background: var(--formula-bg);
+    border: 1px solid var(--formula-border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--accent4);
+    line-height: 2;
+  }
+
+  .formula-box .formula-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .formula-box .f {
+    color: var(--accent2);
+    font-weight: 500;
+  }
+
+  .formula-box .var {
+    color: #bd93f9;
+  }
+
+  .formula-box .op {
+    color: var(--accent);
+  }
+
+  /* EXAMPLE BOX */
+  .example-box {
+    background: rgba(0,212,170,0.04);
+    border: 1px solid rgba(0,212,170,0.2);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+
+  .example-box .ex-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 10px;
+  }
+
+  .example-box p {
+    font-size: 14px;
+    color: #c2c7e0;
+    line-height: 1.9;
+  }
+
+  .example-box .solution {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0,212,170,0.15);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent4);
+    line-height: 2;
+  }
+
+  /* TRICK BOX */
+  .trick-box {
+    background: rgba(255,107,107,0.04);
+    border: 1px solid rgba(255,107,107,0.2);
+    border-left: 3px solid var(--accent3);
+    border-radius: 0 10px 10px 0;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+
+  .trick-box .trick-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent3);
+    margin-bottom: 6px;
+  }
+
+  .trick-box p {
+    font-size: 14px;
+    color: #c2c7e0;
+    line-height: 1.8;
+  }
+
+  /* TABLE */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+
+  .data-table th {
+    background: rgba(108,99,255,0.15);
+    color: var(--accent);
+    font-weight: 600;
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .data-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    color: #c2c7e0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+
+  .data-table tr:hover td {
+    background: rgba(108,99,255,0.04);
+  }
+
+  /* TWO COLUMN */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  /* SEARCH BAR */
+  .search-wrap {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .search-wrap input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border 0.15s;
+  }
+
+  .search-wrap input:focus {
+    border-color: var(--accent);
+  }
+
+  .search-wrap input::placeholder { color: var(--muted); }
+
+  /* SCROLL TO TOP */
+  .top-btn {
+    position: fixed;
+    bottom: 30px; right: 30px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 999;
+  }
+
+  .top-btn.visible { opacity: 1; }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform-origin: left;
+    transform: scaleX(0);
+    z-index: 200;
+    transition: transform 0.1s;
+  }
+
+  /* RESPONSIVE */
+  @media(max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .hero, .content { padding-left: 24px; padding-right: 24px; }
+    .hero h1 { font-size: 32px; }
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h2>AptitudePro</h2>
+    <p>Placement Preparation Guide</p>
+  </div>
+  <div class="search-wrap">
+    <input type="text" id="searchInput" placeholder="Search topics…" oninput="filterTopics(this.value)">
+  </div>
+  <div class="sidebar-section">Quantitative</div>
+  <a href="#time-work">Time & Work</a>
+  <a href="#time-distance">Time & Distance</a>
+  <a href="#boats">Boats & Streams</a>
+  <a href="#ratio">Ratio & Proportion</a>
+  <a href="#age">Problems on Age</a>
+  <a href="#area">Area & Mensuration</a>
+  <a href="#pnc">Permutation & Combination</a>
+  <a href="#probability">Probability</a>
+  <a href="#simple-interest">Simple Interest</a>
+  <a href="#compound-interest">Compound Interest</a>
+  <a href="#number-system">Number System</a>
+  <a href="#geometry">Geometry</a>
+  <div class="sidebar-section">Logical</div>
+  <a href="#clocks">Clocks</a>
+  <a href="#calendar">Calendar</a>
+  <a href="#direction">Direction Sense</a>
+  <a href="#blood">Blood Relations</a>
+  <a href="#images">Water & Mirror Images</a>
+  <a href="#sitting">Sitting Arrangement</a>
+  <a href="#venn">Venn Diagram</a>
+  <a href="#syllogism">Syllogism</a>
+  <a href="#letter-series">Letter Series</a>
+  <a href="#number-series">Number Series</a>
+  <a href="#coding">Coding-Decoding</a>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="hero">
+    <div class="hero-badge">Placement Ready</div>
+    <h1>Aptitude <span>Mastery</span><br>from Zero</h1>
+    <p>Every formula, trick, and concept you need — explained simply, with examples.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><strong>29</strong><span>Topics Covered</span></div>
+      <div class="hero-stat"><strong>100+</strong><span>Formulas</span></div>
+      <div class="hero-stat"><strong>0→∞</strong><span>Beginner Friendly</span></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ============================== TIME & WORK ============================== -->
+    <div class="topic" id="time-work">
+      <div class="topic-header">
+        <div class="topic-number">#02</div>
+        <div class="topic-title">
+          <h2>Time & Work</h2>
+          <p>How long does it take multiple workers to finish a job?</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>Core Idea</h3>
+          <p>If a person completes a job in <em>N</em> days, their work rate (work done per day) is <strong>1/N</strong>. When multiple people work together, their rates ADD up.</p>
+          <div class="formula-box">
+            <div class="formula-label">Key Formulas</div>
+            <span class="f">Work Rate</span> = <span class="var">1 / Days_to_complete</span><br>
+            <span class="f">Combined Rate (A+B)</span> = <span class="var">1/A + 1/B</span><br>
+            <span class="f">Days together</span> = <span class="var">1 / (1/A + 1/B)</span> = <span class="var">(A×B) / (A+B)</span><br>
+            <span class="f">Work done</span> = <span class="var">Rate × Time</span>
+          </div>
+          <div class="example-box">
+            <div class="ex-label">Example</div>
+            <p>A can do a job in 10 days, B in 15 days. How long together?</p>
+            <div class="solution">
+              A's rate = 1/10, B's rate = 1/15<br>
+              Combined = 1/10 + 1/15 = 3/30 + 2/30 = 5/30 = 1/6<br>
+              ∴ Together = 6 days ✓
+            </div>
+          </div>
+          <div class="trick-box">
+            <div class="trick-label">⚡ Shortcut</div>
+            <p>For two people: Days together = <strong>(A × B) / (A + B)</strong>. For the above: (10×15)/(10+15) = 150/25 = 6 days.</p>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="concept">
+            <h3>Pipes & Cistern (same concept)</h3>
+            <p>Inlet pipe fills in A hours → rate = +1/A. Outlet pipe empties in B hours → rate = −1/B. Net rate = 1/A − 1/B.</p>
+            <div class="formula-box">
+              <span class="f">Time to fill</span> = <span class="var">1 / (1/A − 1/B)</span>
+            </div>
+          </div>
+          <div class="concept">
+            <h3>Partial Work / MDH Rule</h3>
+            <p>M men finish work in D days working H hours/day. Then <strong>M × D × H = Total Work (constant)</strong>.</p>
+            <div class="formula-box">
+              <span class="var">M₁ × D₁ × H₁</span> <span class="op">=</span> <span class="var">M₂ × D₂ × H₂</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== TIME & DISTANCE ============================== -->
+    <div class="topic" id="time-distance">
+      <div class="topic-header">
+        <div class="topic-number">#03</div>
+        <div class="topic-title">
+          <h2>Time & Distance</h2>
+          <p>Speed, distance, and the golden triangle relationship.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>The Golden Triangle</h3>
+          <div class="formula-box">
+            <div class="formula-label">Core Relationship</div>
+            <span class="f">Speed</span> = <span class="var">Distance / Time</span><br>
+            <span class="f">Distance</span> = <span class="var">Speed × Time</span><br>
+            <span class="f">Time</span> = <span class="var">Distance / Speed</span><br><br>
+            <span class="f">Unit Conversion:</span> <span class="var">1 km/hr = 5/18 m/s</span> | <span class="var">1 m/s = 18/5 km/hr</span>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="concept">
+            <h3>Average Speed</h3>
+            <p>When same DISTANCE is covered at two different speeds:</p>
+            <div class="formula-box">
+              <span class="f">Avg Speed</span> = <span class="var">2×S₁×S₂ / (S₁+S₂)</span>
+            </div>
+            <div class="trick-box">
+              <div class="trick-label">⚡ Warning</div>
+              <p>Do NOT simply average the speeds! Use the harmonic mean formula above.</p>
+            </div>
+          </div>
+          <div class="concept">
+            <h3>Relative Speed</h3>
+            <div class="formula-box">
+              <span class="f">Same direction:</span> <span class="var">|S₁ − S₂|</span><br>
+              <span class="f">Opposite direction:</span> <span class="var">S₁ + S₂</span>
+            </div>
+            <p style="font-size:14px;color:#c2c7e0;margin-top:12px;">Used in problems: trains crossing each other, catching up, etc.</p>
+          </div>
+        </div>
+        <div class="concept">
+          <h3>Train Problems</h3>
+          <div class="formula-box">
+            <div class="formula-label">Train crossing a pole / person</div>
+            <span class="f">Time</span> = <span class="var">Length of train / Speed of train</span><br><br>
+            <div class="formula-label">Train crossing a platform / bridge</div>
+            <span class="f">Time</span> = <span class="var">(Length of train + Length of platform) / Speed</span><br><br>
+            <div class="formula-label">Two trains crossing each other</div>
+            <span class="f">Time</span> = <span class="var">(L₁ + L₂) / Relative Speed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== BOATS & STREAMS ============================== -->
+    <div class="topic" id="boats">
+      <div class="topic-header">
+        <div class="topic-number">#04</div>
+        <div class="topic-title">
+          <h2>Boats & Streams</h2>
+          <p>Upstream vs downstream — how current affects speed.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>Key Terms & Formulas</h3>
+          <p><strong>Still Water Speed (u)</strong> = boat's speed without current. <strong>Stream Speed (v)</strong> = current speed.</p>
+          <div class="formula-box">
+            <div class="formula-label">Effective Speeds</div>
+            <span class="f">Downstream (with current)</span> = <span class="var">u + v</span><br>
+            <span class="f">Upstream (against current)</span> = <span class="var">u − v</span><br><br>
+            <div class="formula-label">Finding u and v from speeds</div>
+            <span class="f">u (boat speed)</span> = <span class="var">(Downstream + Upstream) / 2</span><br>
+            <span class="f">v (stream speed)</span> = <span class="var">(Downstream − Upstream) / 2</span>
+          </div>
+          <div class="example-box">
+            <div class="ex-label">Example</div>
+            <p>A boat goes 30 km downstream in 3 hrs and 20 km upstream in 4 hrs. Find boat & stream speed.</p>
+            <div class="solution">
+              Downstream speed = 30/3 = 10 km/hr<br>
+              Upstream speed = 20/4 = 5 km/hr<br>
+              Boat speed = (10+5)/2 = 7.5 km/hr<br>
+              Stream speed = (10−5)/2 = 2.5 km/hr ✓
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== RATIO & PROPORTION ============================== -->
+    <div class="topic" id="ratio">
+      <div class="topic-header">
+        <div class="topic-number">#05</div>
+        <div class="topic-title">
+          <h2>Ratio & Proportion</h2>
+          <p>Comparing quantities and scaling them correctly.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>Ratio Basics</h3>
+          <p>A ratio a:b means for every 'a' parts of one quantity, there are 'b' parts of another.</p>
+          <div class="formula-box">
+            <div class="formula-label">Proportion — Four quantities a, b, c, d</div>
+            <span class="f">a:b = c:d</span> → <span class="var">a×d = b×c</span> (cross multiplication)<br><br>
+            <span class="f">Mean proportion of a, b:</span> <span class="var">x = √(a×b)</span><br>
+            <span class="f">Third proportion to a, b:</span> <span class="var">x = b²/a</span>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="concept">
+            <h3>Compound Ratio</h3>
+            <p>Multiply the ratios: a:b and c:d → Compound = ac:bd</p>
+            <div class="example-box">
+              <div class="ex-label">Example</div>
+              <p>Compound ratio of 2:3 and 4:5 = 8:15</p>
+            </div>
+          </div>
+          <div class="concept">
+            <h3>Alligation / Mixture</h3>
+            <p>Mix two items at prices p₁ and p₂ to get a mean price M:</p>
+            <div class="formula-box">
+              <span class="f">Ratio</span> = <span class="var">(p₂−M) : (M−p₁)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== AGE ============================== -->
+    <div class="topic" id="age">
+      <div class="topic-header">
+        <div class="topic-number">#06</div>
+        <div class="topic-title">
+          <h2>Problems on Age</h2>
+          <p>Setting up equations from verbal age relationships.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>Strategy: Always Use Variables</h3>
+          <p>Let current age = x. Past/future ages shift by a constant: Past age = x − n, Future age = x + n.</p>
+          <div class="formula-box">
+            <div class="formula-label">Standard Setup</div>
+            <span class="f">Current age</span> = <span class="var">x</span><br>
+            <span class="f">Age n years ago</span> = <span class="var">x − n</span><br>
+            <span class="f">Age n years later</span> = <span class="var">x + n</span><br>
+            <span class="f">If ratio of ages is a:b →</span> <span class="var">ages = ak, bk for some k</span>
+          </div>
+          <div class="example-box">
+            <div class="ex-label">Example</div>
+            <p>The ratio of A's age to B's age is 3:5. After 10 years, the ratio becomes 5:7. Find their ages.</p>
+            <div class="solution">
+              Let ages = 3k and 5k<br>
+              After 10 yrs: (3k+10)/(5k+10) = 5/7<br>
+              7(3k+10) = 5(5k+10)<br>
+              21k + 70 = 25k + 50<br>
+              4k = 20 → k = 5<br>
+              A = 15, B = 25 ✓
+            </div>
+          </div>
+          <div class="trick-box">
+            <div class="trick-label">⚡ Key Insight</div>
+            <p>The DIFFERENCE between two people's ages is always constant, no matter what year you're in. Use this to simplify equations!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== AREA ============================== -->
+    <div class="topic" id="area">
+      <div class="topic-header">
+        <div class="topic-number">#07</div>
+        <div class="topic-title">
+          <h2>Area & Mensuration</h2>
+          <p>All area and perimeter formulas for 2D shapes.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>Formula Reference Table</h3>
+          <table class="data-table">
+            <thead><tr><th>Shape</th><th>Area</th><th>Perimeter</th></tr></thead>
+            <tbody>
+              <tr><td>Square (side a)</td><td>a²</td><td>4a</td></tr>
+              <tr><td>Rectangle (l × b)</td><td>l × b</td><td>2(l+b)</td></tr>
+              <tr><td>Triangle (base b, height h)</td><td>½ × b × h</td><td>a+b+c</td></tr>
+              <tr><td>Equilateral Triangle (side a)</td><td>√3/4 × a²</td><td>3a</td></tr>
+              <tr><td>Circle (radius r)</td><td>π r²</td><td>2πr</td></tr>
+              <tr><td>Parallelogram (base b, height h)</td><td>b × h</td><td>2(a+b)</td></tr>
+              <tr><td>Trapezium</td><td>½(a+b)×h</td><td>sum of sides</td></tr>
+              <tr><td>Rhombus (diagonals d₁,d₂)</td><td>½ × d₁ × d₂</td><td>4a</td></tr>
+              <tr><td>Semicircle</td><td>πr²/2</td><td>πr + 2r</td></tr>
+            </tbody>
+          </table>
+          <div class="formula-box">
+            <div class="formula-label">Heron's Formula (triangle with sides a, b, c)</div>
+            <span class="f">s</span> = <span class="var">(a+b+c)/2</span> (semi-perimeter)<br>
+            <span class="f">Area</span> = <span class="var">√[s(s−a)(s−b)(s−c)]</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== PnC ============================== -->
+    <div class="topic" id="pnc">
+      <div class="topic-header">
+        <div class="topic-number">#08</div>
+        <div class="topic-title">
+          <h2>Permutation & Combination</h2>
+          <p>Counting arrangements vs. selections.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>The Core Difference</h3>
+          <p><strong>Permutation (P)</strong> = ORDER matters (arrangements). <strong>Combination (C)</strong> = order does NOT matter (selections/groups).</p>
+          <div class="formula-box">
+            <div class="formula-label">Fundamental Formulas</div>
+            <span class="f">P(n,r)</span> = <span class="var">n! / (n−r)!</span>  ← r items from n, ordered<br>
+            <span class="f">C(n,r)</span> = <span class="var">n! / [r! × (n−r)!]</span>  ← r items from n, unordered<br>
+            <span class="f">Relation:</span> <span class="var">P(n,r) = C(n,r) × r!</span><br><br>
+            <span class="f">n!</span> = <span class="var">n × (n−1) × (n−2) × ... × 1</span><br>
+            <span class="f">0!</span> = <span class="var">1</span>  (by definition)
+          </div>
+          <div class="example-box">
+            <div class="ex-label">Example</div>
+            <p>In how many ways can 3 students be selected from 5 for a team (no order), and arranged in a line (order matters)?</p>
+            <div class="solution">
+              Select (no order) = C(5,3) = 5!/(3!×2!) = 10 ways<br>
+              Arrange (order matters) = P(5,3) = 5!/2! = 60 ways ✓
+            </div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="concept">
+            <h3>Circular Permutation</h3>
+            <p>Arranging n items in a circle:</p>
+            <div class="formula-box">
+              <span class="f">Circular P</span> = <span class="var">(n−1)!</span>
+            </div>
+            <p style="font-size:14px;color:#c2c7e0;margin-top:10px;">Because one position is fixed as reference, reducing arrangements by factor n.</p>
+          </div>
+          <div class="concept">
+            <h3>Repetition Allowed</h3>
+            <div class="formula-box">
+              <span class="f">Fill r positions from n items</span><br>(repetition allowed) = <span class="var">nʳ</span>
+            </div>
+            <div class="trick-box">
+              <div class="trick-label">⚡ Trick</div>
+              <p>PIN of 4 digits from 0–9 = 10⁴ = 10,000 possibilities (with repetition).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== PROBABILITY ============================== -->
+    <div class="topic" id="probability">
+      <div class="topic-header">
+        <div class="topic-number">#09</div>
+        <div class="topic-title">
+          <h2>Probability</h2>
+          <p>How likely is an event to happen?</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>Foundational Formula</h3>
+          <div class="formula-box">
+            <span class="f">P(Event)</span> = <span class="var">Favorable Outcomes / Total Outcomes</span><br><br>
+            <span class="f">P(A') [not A]</span> = <span class="var">1 − P(A)</span><br>
+            <span class="f">P(A or B)</span> = <span class="var">P(A) + P(B) − P(A and B)</span><br>
+            <span class="f">P(A and B)</span> [independent] = <span class="var">P(A) × P(B)</span><br><br>
+            <span class="var">0 ≤ P(E) ≤ 1</span> always
+          </div>
+        </div>
+        <div class="concept">
+          <h3>Standard Reference Values</h3>
+          <table class="data-table">
+            <thead><tr><th>Experiment</th><th>Sample Space</th><th>Total</th></tr></thead>
+            <tbody>
+              <tr><td>Coin toss</td><td>H, T</td><td>2</td></tr>
+              <tr><td>Two coins</td><td>HH, HT, TH, TT</td><td>4</td></tr>
+              <tr><td>Dice roll</td><td>1,2,3,4,5,6</td><td>6</td></tr>
+              <tr><td>Two dice</td><td>(1,1)…(6,6)</td><td>36</td></tr>
+              <tr><td>Deck of cards</td><td>52 cards</td><td>52</td></tr>
+            </tbody>
+          </table>
+          <div class="example-box">
+            <div class="ex-label">Example</div>
+            <p>A card is drawn from a deck. Find P(King or Heart).</p>
+            <div class="solution">
+              P(King) = 4/52, P(Heart) = 13/52<br>
+              P(King of Heart) = 1/52 (both)<br>
+              P(King or Heart) = 4/52 + 13/52 − 1/52 = 16/52 = 4/13 ✓
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== SIMPLE INTEREST ============================== -->
+    <div class="topic" id="simple-interest">
+      <div class="topic-header">
+        <div class="topic-number">#10</div>
+        <div class="topic-title">
+          <h2>Simple Interest</h2>
+          <p>Interest calculated only on the original principal.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>Core Formulas</h3>
+          <div class="formula-box">
+            <span class="f">SI</span> = <span class="var">(P × R × T) / 100</span><br>
+            <span class="f">Amount (A)</span> = <span class="var">P + SI</span> = <span class="var">P(1 + RT/100)</span><br><br>
+            <span class="f">P</span> = <span class="var">Principal</span>, <span class="f">R</span> = <span class="var">Rate % per year</span>, <span class="f">T</span> = <span class="var">Time in years</span><br><br>
+            <span class="f">P</span> = <span class="var">100 × SI / (R × T)</span><br>
+            <span class="f">R</span> = <span class="var">100 × SI / (P × T)</span><br>
+            <span class="f">T</span> = <span class="var">100 × SI / (P × R)</span>
+          </div>
+          <div class="example-box">
+            <div class="ex-label">Example</div>
+            <p>Find SI on ₹5000 at 8% per annum for 3 years. Also find total Amount.</p>
+            <div class="solution">
+              SI = (5000 × 8 × 3) / 100 = 1200<br>
+              Amount = 5000 + 1200 = ₹6200 ✓
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== COMPOUND INTEREST ============================== -->
+    <div class="topic" id="compound-interest">
+      <div class="topic-header">
+        <div class="topic-number">#11</div>
+        <div class="topic-title">
+          <h2>Compound Interest</h2>
+          <p>Interest calculated on principal AND previously earned interest.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>Core Formulas</h3>
+          <div class="formula-box">
+            <span class="f">Amount (A)</span> = <span class="var">P × (1 + R/100)ᵀ</span><br>
+            <span class="f">CI</span> = <span class="var">A − P</span> = <span class="var">P[(1+R/100)ᵀ − 1]</span><br><br>
+            <div class="formula-label">Compounded n times per year</div>
+            <span class="f">A</span> = <span class="var">P × (1 + R/n×100)ⁿᵀ</span><br><br>
+            <div class="formula-label">Half-yearly</div>
+            <span class="f">A</span> = <span class="var">P × (1 + R/200)²ᵀ</span>
+          </div>
+          <div class="two-col">
+            <div class="trick-box">
+              <div class="trick-label">⚡ CI vs SI (2 years)</div>
+              <p>CI − SI (2 yrs) = <strong>P(R/100)²</strong><br>This is a handy formula for quick calculation.</p>
+            </div>
+            <div class="example-box">
+              <div class="ex-label">Example</div>
+              <p>₹10,000 at 10% p.a. for 2 years CI.</p>
+              <div class="solution">A = 10000×(1.1)² = ₹12,100<br>CI = ₹2,100</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== NUMBER SYSTEM ============================== -->
+    <div class="topic" id="number-system">
+      <div class="topic-header">
+        <div class="topic-number">#14</div>
+        <div class="topic-title">
+          <h2>Number System</h2>
+          <p>Divisibility, LCM, HCF, and number properties.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>Divisibility Rules (quick recall)</h3>
+          <table class="data-table">
+            <thead><tr><th>Divisible by</th><th>Rule</th></tr></thead>
+            <tbody>
+              <tr><td>2</td><td>Last digit is 0,2,4,6,8</td></tr>
+              <tr><td>3</td><td>Sum of digits divisible by 3</td></tr>
+              <tr><td>4</td><td>Last 2 digits divisible by 4</td></tr>
+              <tr><td>5</td><td>Last digit 0 or 5</td></tr>
+              <tr><td>6</td><td>Divisible by both 2 and 3</td></tr>
+              <tr><td>8</td><td>Last 3 digits divisible by 8</td></tr>
+              <tr><td>9</td><td>Sum of digits divisible by 9</td></tr>
+              <tr><td>11</td><td>(Sum of odd-position digits) − (Sum of even-position) = 0 or 11</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="two-col">
+          <div class="concept">
+            <h3>HCF & LCM</h3>
+            <div class="formula-box">
+              <span class="f">HCF × LCM</span> = <span class="var">Product of two numbers</span><br><br>
+              <span class="f">HCF of fractions</span> = <span class="var">HCF of numerators / LCM of denominators</span><br>
+              <span class="f">LCM of fractions</span> = <span class="var">LCM of numerators / HCF of denominators</span>
+            </div>
+          </div>
+          <div class="concept">
+            <h3>Remainders & Patterns</h3>
+            <div class="formula-box">
+              <span class="f">Units digit of 2ⁿ:</span> <span class="var">cycles 2,4,8,6</span><br>
+              <span class="f">Units digit of 3ⁿ:</span> <span class="var">cycles 3,9,7,1</span><br>
+              <span class="f">Units digit of 7ⁿ:</span> <span class="var">cycles 7,9,3,1</span><br>
+              <span class="f">Units digit of 5ⁿ:</span> <span class="var">always 5</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== GEOMETRY ============================== -->
+    <div class="topic" id="geometry">
+      <div class="topic-header">
+        <div class="topic-number">#15</div>
+        <div class="topic-title">
+          <h2>Geometry</h2>
+          <p>Angles, triangles, circles, and 3D solids.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>Triangles — Key Theorems</h3>
+          <div class="formula-box">
+            <span class="f">Pythagoras:</span> <span class="var">a² + b² = c²</span>  (right triangle, c=hypotenuse)<br>
+            <span class="f">Angle sum:</span> <span class="var">A + B + C = 180°</span><br>
+            <span class="f">Exterior angle</span> = <span class="var">sum of two non-adjacent interior angles</span>
+          </div>
+          <div class="trick-box">
+            <div class="trick-label">⚡ Pythagorean Triples (memorize!)</div>
+            <p>3–4–5, 5–12–13, 8–15–17, 7–24–25, 9–40–41 (and all multiples of these)</p>
+          </div>
+        </div>
+        <div class="concept">
+          <h3>3D Solids — Volume & Surface Area</h3>
+          <table class="data-table">
+            <thead><tr><th>Solid</th><th>Volume</th><th>Total Surface Area</th></tr></thead>
+            <tbody>
+              <tr><td>Cube (side a)</td><td>a³</td><td>6a²</td></tr>
+              <tr><td>Cuboid (l,b,h)</td><td>l×b×h</td><td>2(lb+bh+lh)</td></tr>
+              <tr><td>Cylinder (r,h)</td><td>πr²h</td><td>2πr(r+h)</td></tr>
+              <tr><td>Cone (r,h,l)</td><td>⅓πr²h</td><td>πr(r+l)</td></tr>
+              <tr><td>Sphere (r)</td><td>⁴⁄₃πr³</td><td>4πr²</td></tr>
+              <tr><td>Hemisphere (r)</td><td>⅔πr³</td><td>3πr²</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== CLOCKS ============================== -->
+    <div class="topic" id="clocks">
+      <div class="topic-header">
+        <div class="topic-number">#12–13</div>
+        <div class="topic-title">
+          <h2>Clocks</h2>
+          <p>Angles between hands and coincidences in a 12-hour clock.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>Speed of Clock Hands</h3>
+          <div class="formula-box">
+            <span class="f">Minute hand speed:</span> <span class="var">360° in 60 min = 6°/min</span><br>
+            <span class="f">Hour hand speed:</span> <span class="var">360° in 720 min = 0.5°/min</span><br>
+            <span class="f">Relative speed of minute hand:</span> <span class="var">6 − 0.5 = 5.5°/min</span><br><br>
+            <span class="f">Angle between hands at H hrs M mins:</span><br>
+            <span class="var">θ = |30H − 5.5M|</span> (take the smaller angle if > 180°)
+          </div>
+          <div class="example-box">
+            <div class="ex-label">Example</div>
+            <p>Find angle between clock hands at 3:30.</p>
+            <div class="solution">
+              θ = |30×3 − 5.5×30| = |90 − 165| = 75° ✓
+            </div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="concept">
+            <h3>Hands Overlap (Coincide)</h3>
+            <p>Hands overlap every <strong>65 5/11 minutes</strong>. They overlap <strong>22 times</strong> in 24 hours.</p>
+            <div class="formula-box">
+              <span class="f">Coincidence after H o'clock:</span><br>
+              <span class="var">M = 60H/11 minutes</span>
+            </div>
+          </div>
+          <div class="concept">
+            <h3>Hands at Right Angles (90°)</h3>
+            <p>Hands form 90° every 32 8/11 minutes. Happens <strong>44 times</strong> in 24 hours.</p>
+            <div class="formula-box">
+              <span class="f">Time for 90°:</span> <span class="var">M = (60H ± 180)/11</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== CALENDAR ============================== -->
+    <div class="topic" id="calendar">
+      <div class="topic-header">
+        <div class="topic-number">#16–17</div>
+        <div class="topic-title">
+          <h2>Calendar</h2>
+          <p>Finding the day of the week for any date.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>Odd Days Concept</h3>
+          <p>Divide total days by 7. The remainder = "odd days". This tells you the day of the week (0=Sun, 1=Mon, … 6=Sat).</p>
+          <div class="formula-box">
+            <span class="f">Ordinary year:</span> <span class="var">365 days = 52 weeks + 1 odd day</span><br>
+            <span class="f">Leap year:</span> <span class="var">366 days = 52 weeks + 2 odd days</span><br><br>
+            <span class="f">Leap year rule:</span><br>
+            → <span class="var">Divisible by 4? → Leap (usually)</span><br>
+            → <span class="var">Century year (100,200…): ONLY if divisible by 400</span><br>
+            (e.g., 1900 is NOT a leap year, 2000 IS)
+          </div>
+        </div>
+        <div class="concept">
+          <h3>Odd Days in Centuries</h3>
+          <table class="data-table">
+            <thead><tr><th>Century</th><th>Odd Days</th><th>Day</th></tr></thead>
+            <tbody>
+              <tr><td>100 years</td><td>5</td><td>Friday</td></tr>
+              <tr><td>200 years</td><td>3</td><td>Wednesday</td></tr>
+              <tr><td>300 years</td><td>1</td><td>Monday</td></tr>
+              <tr><td>400 years</td><td>0</td><td>Sunday</td></tr>
+            </tbody>
+          </table>
+          <div class="trick-box">
+            <div class="trick-label">⚡ Same Calendar Year</div>
+            <p>Two years have the same calendar if they start on the same day AND are both ordinary OR both leap years. The cycle repeats every 28 years for non-century boundaries.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== DIRECTION SENSE ============================== -->
+    <div class="topic" id="direction">
+      <div class="topic-header">
+        <div class="topic-number">#18</div>
+        <div class="topic-title">
+          <h2>Direction Sense Test</h2>
+          <p>Tracking movement on a compass grid.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>The Compass & Turns</h3>
+          <div class="formula-box">
+            <span class="f">Facing North, turn Right →</span> <span class="var">now facing East</span><br>
+            <span class="f">Facing North, turn Left →</span> <span class="var">now facing West</span><br>
+            <span class="f">Turn 180° (about turn) →</span> <span class="var">reverse direction</span><br><br>
+            <span class="f">Shortest distance (straight line):</span><br>
+            <span class="var">√(horizontal displacement² + vertical displacement²)</span>
+          </div>
+          <div class="trick-box">
+            <div class="trick-label">⚡ Method</div>
+            <p>Draw it! Always sketch the path on paper. Assign N=up, S=down, E=right, W=left. Track x (East-West) and y (North-South) separately, then use Pythagoras for final distance.</p>
+          </div>
+          <div class="example-box">
+            <div class="ex-label">Example</div>
+            <p>Ravi walks 6km North, turns right and walks 8km. Find distance from start.</p>
+            <div class="solution">
+              North = 6 km (vertical), East = 8 km (horizontal)<br>
+              Distance = √(6² + 8²) = √(36+64) = √100 = 10 km ✓
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== BLOOD RELATIONS ============================== -->
+    <div class="topic" id="blood">
+      <div class="topic-header">
+        <div class="topic-number">#19</div>
+        <div class="topic-title">
+          <h2>Blood Relations</h2>
+          <p>Decoding family relationships from statements.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>Relationship Chart</h3>
+          <table class="data-table">
+            <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td>Son of my father's father</td><td>Uncle / Father</td></tr>
+              <tr><td>Daughter of my mother's mother</td><td>Aunt / Mother</td></tr>
+              <tr><td>Son/daughter of my uncle</td><td>Cousin</td></tr>
+              <tr><td>Father of my father/mother</td><td>Grandfather</td></tr>
+              <tr><td>Son of my grandfather (not my father)</td><td>Uncle</td></tr>
+              <tr><td>Spouse of my sibling</td><td>Brother-in-law / Sister-in-law</td></tr>
+            </tbody>
+          </table>
+          <div class="trick-box">
+            <div class="trick-label">⚡ Strategy</div>
+            <p>Always draw a family tree. Use ♂ for male and ♀ for female. Connect generations with vertical lines and couples with horizontal lines. Never assume gender from names — the problem may trick you!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== WATER & MIRROR IMAGES ============================== -->
+    <div class="topic" id="images">
+      <div class="topic-header">
+        <div class="topic-number">#20</div>
+        <div class="topic-title">
+          <h2>Water & Mirror Images</h2>
+          <p>How reflections transform figures and letters.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="two-col">
+          <div class="concept">
+            <h3>Mirror Image (Left-Right flip)</h3>
+            <p>Mirror is placed vertically to the right or left of the object. Image = left and right are swapped. UP and DOWN stay the same.</p>
+            <div class="formula-box">
+              <span class="f">Mirror image letters:</span><br>
+              A,H,I,M,O,T,U,V,W,X,Y<br>
+              <span class="var">← These look same in mirror!</span>
+            </div>
+          </div>
+          <div class="concept">
+            <h3>Water Image (Up-Down flip)</h3>
+            <p>Mirror is placed horizontally below the object. Image = top and bottom are swapped. Left and RIGHT stay the same.</p>
+            <div class="formula-box">
+              <span class="f">Water image letters:</span><br>
+              B,C,D,E,H,I,K,O,X<br>
+              <span class="var">← These look same in water!</span>
+            </div>
+          </div>
+        </div>
+        <div class="trick-box">
+          <div class="trick-label">⚡ Clock in Mirror</div>
+          <p>Time shown in mirror = <strong>11:60 − actual time</strong>. If clock shows 8:20 in mirror, real time = 11:60 − 8:20 = 3:40.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== SITTING ARRANGEMENT ============================== -->
+    <div class="topic" id="sitting">
+      <div class="topic-header">
+        <div class="topic-number">#21–22</div>
+        <div class="topic-title">
+          <h2>Sitting Arrangement</h2>
+          <p>Linear, circular, and complex seating puzzles.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>Types & Approach</h3>
+          <table class="data-table">
+            <thead><tr><th>Type</th><th>Key Rule</th></tr></thead>
+            <tbody>
+              <tr><td>Linear (facing same way)</td><td>Left and right are fixed as per direction they face</td></tr>
+              <tr><td>Linear (facing each other)</td><td>Left and right are OPPOSITE for people facing each other</td></tr>
+              <tr><td>Circular (facing center)</td><td>Left = anticlockwise, Right = clockwise</td></tr>
+              <tr><td>Circular (facing outward)</td><td>Left = clockwise, Right = anticlockwise</td></tr>
+            </tbody>
+          </table>
+          <div class="trick-box">
+            <div class="trick-label">⚡ Strategy</div>
+            <p>1) Draw a rough arrangement. 2) Fix definite clues first (e.g., "A sits at extreme left"). 3) Apply conditional clues. 4) Fill remaining by elimination.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== VENN DIAGRAM ============================== -->
+    <div class="topic" id="venn">
+      <div class="topic-header">
+        <div class="topic-number">#23</div>
+        <div class="topic-title">
+          <h2>Venn Diagram</h2>
+          <p>Visualizing overlapping sets and their counts.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>Key Formulas</h3>
+          <div class="formula-box">
+            <div class="formula-label">Two Sets A and B</div>
+            <span class="f">n(A∪B)</span> = <span class="var">n(A) + n(B) − n(A∩B)</span><br>
+            <span class="f">Only A</span> = <span class="var">n(A) − n(A∩B)</span><br>
+            <span class="f">Only B</span> = <span class="var">n(B) − n(A∩B)</span><br><br>
+            <div class="formula-label">Three Sets A, B, C</div>
+            <span class="f">n(A∪B∪C)</span> = <span class="var">n(A)+n(B)+n(C) − n(A∩B) − n(B∩C) − n(A∩C) + n(A∩B∩C)</span>
+          </div>
+          <div class="example-box">
+            <div class="ex-label">Example</div>
+            <p>In a class of 50: 30 like Maths, 25 like Science, 15 like both. How many like at least one?</p>
+            <div class="solution">
+              n(M∪S) = 30 + 25 − 15 = 40<br>
+              Only Maths = 30 − 15 = 15<br>
+              Only Science = 25 − 15 = 10<br>
+              Neither = 50 − 40 = 10 ✓
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== SYLLOGISM ============================== -->
+    <div class="topic" id="syllogism">
+      <div class="topic-header">
+        <div class="topic-number">#24</div>
+        <div class="topic-title">
+          <h2>Syllogism</h2>
+          <p>Drawing valid conclusions from given statements.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>Types of Statements</h3>
+          <table class="data-table">
+            <thead><tr><th>Type</th><th>Statement</th><th>Venn Diagram</th></tr></thead>
+            <tbody>
+              <tr><td>Universal Positive (A)</td><td>All A are B</td><td>Circle A inside Circle B</td></tr>
+              <tr><td>Universal Negative (E)</td><td>No A is B</td><td>Circles A and B separate</td></tr>
+              <tr><td>Particular Positive (I)</td><td>Some A are B</td><td>Circles A and B overlap</td></tr>
+              <tr><td>Particular Negative (O)</td><td>Some A are not B</td><td>A partially outside B</td></tr>
+            </tbody>
+          </table>
+          <div class="trick-box">
+            <div class="trick-label">⚡ Key Rules</div>
+            <p>1. "All + All = All" — All A→B, All B→C ∴ All A→C. &nbsp; 2. "All + No = No" — All A→B, No B→C ∴ No A→C. &nbsp; 3. "Some + All = Some" — Some A→B, All B→C ∴ Some A→C. &nbsp; 4. Two particular premises give NO definite conclusion.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== LETTER SERIES ============================== -->
+    <div class="topic" id="letter-series">
+      <div class="topic-header">
+        <div class="topic-number">#25–26</div>
+        <div class="topic-title">
+          <h2>Letter Series</h2>
+          <p>Finding the pattern in alphabetic sequences.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>Alphabet Positions (MUST memorize)</h3>
+          <table class="data-table">
+            <thead><tr><th>Letter</th><th>Position</th><th>Letter</th><th>Position</th></tr></thead>
+            <tbody>
+              <tr><td>A</td><td>1</td><td>N</td><td>14</td></tr>
+              <tr><td>E</td><td>5</td><td>O</td><td>15</td></tr>
+              <tr><td>I</td><td>9</td><td>P</td><td>16</td></tr>
+              <tr><td>M</td><td>13</td><td>Z</td><td>26</td></tr>
+            </tbody>
+          </table>
+          <div class="formula-box">
+            <div class="formula-label">Trick: EJOTY</div>
+            E=5, J=10, O=15, T=20, Y=25<br>
+            <span class="var">Every 5th letter — memorize this row!</span>
+          </div>
+          <div class="formula-box">
+            <div class="formula-label">Opposite Letter Rule</div>
+            <span class="f">Opposite of letter at position n</span> = <span class="var">position (27−n)</span><br>
+            A(1) ↔ Z(26), B(2) ↔ Y(25), C(3) ↔ X(24)…
+          </div>
+          <div class="trick-box">
+            <div class="trick-label">⚡ Pattern Types</div>
+            <p>Look for: fixed step (A, C, E, G… +2), alternating steps, reverse alphabets (Z,Y,X…), or group-based patterns (ACE / BDF / CEG…)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== NUMBER SERIES ============================== -->
+    <div class="topic" id="number-series">
+      <div class="topic-header">
+        <div class="topic-number">#27–28</div>
+        <div class="topic-title">
+          <h2>Number Series</h2>
+          <p>Identifying the rule behind a number sequence.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>Common Pattern Types</h3>
+          <table class="data-table">
+            <thead><tr><th>Pattern</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td>Arithmetic (constant difference)</td><td>2, 5, 8, 11, 14… (+3)</td></tr>
+              <tr><td>Geometric (constant ratio)</td><td>2, 6, 18, 54… (×3)</td></tr>
+              <tr><td>Squares</td><td>1, 4, 9, 16, 25… (n²)</td></tr>
+              <tr><td>Cubes</td><td>1, 8, 27, 64, 125… (n³)</td></tr>
+              <tr><td>Fibonacci-type</td><td>1, 1, 2, 3, 5, 8… (each = sum of previous 2)</td></tr>
+              <tr><td>Difference series</td><td>Differences themselves form a pattern</td></tr>
+              <tr><td>Two interleaved series</td><td>2, 5, 4, 10, 6, 15… (two alternating series)</td></tr>
+            </tbody>
+          </table>
+          <div class="trick-box">
+            <div class="trick-label">⚡ Step-by-step approach</div>
+            <p>1) Check if differences are equal (arithmetic). 2) Check if ratios are equal (geometric). 3) Check if differences of differences form a pattern. 4) Try squares/cubes. 5) Consider two interleaved series.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== CODING-DECODING ============================== -->
+    <div class="topic" id="coding">
+      <div class="topic-header">
+        <div class="topic-number">#29</div>
+        <div class="topic-title">
+          <h2>Coding-Decoding</h2>
+          <p>Finding the cipher rule and applying/reversing it.</p>
+        </div>
+      </div>
+      <div class="topic-body">
+        <div class="concept">
+          <h3>Types of Coding</h3>
+          <table class="data-table">
+            <thead><tr><th>Type</th><th>Example</th><th>Rule</th></tr></thead>
+            <tbody>
+              <tr><td>Letter shift</td><td>CAT → FDW</td><td>Each letter +3</td></tr>
+              <tr><td>Reverse coding</td><td>CAT → ZAG</td><td>Each letter = 27−position</td></tr>
+              <tr><td>Number coding</td><td>CAT → 3120</td><td>C=3, A=1, T=20</td></tr>
+              <tr><td>Word swap</td><td>DOG IS PET → PET IS DOG</td><td>First and last swapped</td></tr>
+              <tr><td>Alternate letters</td><td>FLOWER → GMPXFS</td><td>Odd letters +1, even +2</td></tr>
+            </tbody>
+          </table>
+          <div class="trick-box">
+            <div class="trick-label">⚡ Strategy</div>
+            <p>Compare two known coded pairs. Find the shift/rule applied. Verify with a second pair. Then apply the same rule to decode the unknown word.</p>
+          </div>
+          <div class="example-box">
+            <div class="ex-label">Example</div>
+            <p>If COLD = DPME, then HEAT = ?</p>
+            <div class="solution">
+              C→D (+1), O→P (+1), L→M (+1), D→E (+1)<br>
+              Rule: each letter +1<br>
+              H→I, E→F, A→B, T→U<br>
+              ∴ HEAT = IFBU ✓
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<button class="top-btn" id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const total = document.body.scrollHeight - window.innerHeight;
+    const pct = window.scrollY / total;
+    document.getElementById('progress').style.transform = `scaleX(${pct})`;
+    document.getElementById('topBtn').classList.toggle('visible', window.scrollY > 400);
+  });
+
+  // Sidebar search / filter
+  function filterTopics(q) {
+    const links = document.querySelectorAll('.sidebar a');
+    q = q.toLowerCase();
+    links.forEach(a => {
+      a.style.display = a.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }
+
+  // Highlight active section in sidebar
+  const sections = document.querySelectorAll('.topic');
+  const navLinks = document.querySelectorAll('.sidebar a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.style.fontWeight = '');
+        const id = entry.target.id;
+        const active = document.querySelector(`.sidebar a[href="#${id}"]`);
+        if (active) active.style.fontWeight = '700';
+      }
+    });
+  }, { threshold: 0.3 });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
